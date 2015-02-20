@@ -1,5 +1,5 @@
 ---
-layput: post
+layout: post
 title: Under construction
 categories: admin
 tags: [maintenance, fixing]
