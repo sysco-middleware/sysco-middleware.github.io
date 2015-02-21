@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Using RDAs health check
-categories: Health check
+categories: Health_check
 tags: [health check, rda]
 author: jph
 ---
