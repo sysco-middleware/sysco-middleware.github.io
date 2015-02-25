@@ -1,0 +1,100 @@
+/*
+Theme Name: sysco_no
+Theme URI: http://sysco.no/
+Description: A theme developed for the sysco webpages
+Author: Magnus Skaalsveen
+Author URI: http://sysco.no/
+Version: 1.0
+Tags:
+
+License: Ask for permission before use
+License URI: http://sysco.no/
+*/
+
+@import url(http://fonts.googleapis.com/css?family=Cabin+Condensed:600);
+@import "css/reset.css";
+@import "css/layout.css?v=1.2";
+@import "css/mobile.css?v=1.1";
+@import "css/tablet.css?v=1.1";
+@import "css/fonts.css";
+@import "css/format.css?v=1.1";
+/*@import "css/menu.css";*/
+@import "css/blog.css";
+@import "css/grey_logos.css";
+
+/* Changes 02-02-2013 */
+
+h3.ui-accordion-header,
+.wk-accordion-default h3.toggler{
+	line-height: 30px;
+	background: #a7a7a7; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2E3YTdhNyIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNhNGE0YTQiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top,  #a7a7a7 0%, #a4a4a4 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#a7a7a7), color-stop(100%,#a4a4a4)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top,  #a7a7a7 0%,#a4a4a4 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top,  #a7a7a7 0%,#a4a4a4 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top,  #a7a7a7 0%,#a4a4a4 100%); /* IE10+ */
+	background: linear-gradient(to bottom,  #a7a7a7 0%,#a4a4a4 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a7a7a7', endColorstr='#a4a4a4',GradientType=0 ); /* IE6-8 */
+	border-top: solid 1px #d7d7d7;
+	border-right: solid 1px #bababa;
+	border-bottom: solid 1px #999999;
+	border-left: solid 1px #bababa;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+
+}
+
+h3.ui-accordion-header a,
+h3.active a,
+.wk-accordion-default h3.toggler a,
+.wk-accordion-default h3.active a{
+	padding: 0 28px;
+}
+
+h3.ui-accordion-header a,
+.wk-accordion-default h3.toggler a{
+	display:block;
+	color: #303030 !important;
+	background: url(images/news/Accordions_SPWc.png) 10px 50% no-repeat !important;
+}
+
+h3.active,
+.wk-accordion-default h3.active{
+	border: solid 1px #0068a4;
+	background: #00afed; /* Old browsers */
+	/* IE9 SVG, needs conditional override of 'filter' to 'none' */
+	background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzAwYWZlZCIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMwMDdmYzMiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+	background: -moz-linear-gradient(top, #00afed 0%, #007fc3 100%); /* FF3.6+ */
+	background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#00afed), color-stop(100%,#007fc3)); /* Chrome,Safari4+ */
+	background: -webkit-linear-gradient(top, #00afed 0%,#007fc3 100%); /* Chrome10+,Safari5.1+ */
+	background: -o-linear-gradient(top, #00afed 0%,#007fc3 100%); /* Opera 11.10+ */
+	background: -ms-linear-gradient(top, #00afed 0%,#007fc3 100%); /* IE10+ */
+	background: linear-gradient(to bottom, #00afed 0%,#007fc3 100%); /* W3C */
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00afed', endColorstr='#007fc3',GradientType=0 ); /* IE6-8 */
+}
+
+h3.active a,
+.wk-accordion-default h3.active a{
+	color: #fff !important;
+	background: url(images/news/Accordions_SPWo.png) 9px 50% no-repeat  !important;
+}
+ 
+#content-inner .wk-accordion-default .content-wrapper{
+	padding: 0 10px;
+}
+.wrapper-tags{
+	border-bottom: 1px solid #E4E4E4;
+    border-top: 1px solid #E4E4E4;
+    color: #888888;
+    font-size: 12px;
+    margin: 10px 0;
+    padding: 10px 0;
+}
+
+.wrapper-tags p{
+	padding: 0 0 0 0;
+	margin: 0 0 0 0 !important;
+}
