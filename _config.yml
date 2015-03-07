@@ -40,7 +40,7 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Oslo
 future:      true
-highlighter: pygments
+highlighter: rouge
 markdown:    redcarpet
 gems:
   - jekyll-sitemap
@@ -73,3 +73,17 @@ exclude: ["lib", "config.rb", "Capfile", "config", "Gemfile", "Gemfile.lock", "R
 
 safe: true
 lsi: false
+
+authors:
+  catoaune:
+    name: Cato Aune
+    twitter: catoaune
+    aboutfile: cau.html
+  jph:
+    name: Jon Petter Hjulstad
+    twitter: jphjulstad
+    aboutfile: jph.html
+  jorge:
+    name: Jorge Quilcate
+    twitter: jeqo89
+    aboutfile: cau.html
