@@ -10,7 +10,7 @@ How can you know that your SOA installation is healthy? One thing is patching �
 
 ## Setup ##
 
-The first thing you should do is to keep RDA up to date – the latest Version is 8.0.3. A useful bulletin on MOS is: Resolve Problems Faster! Use Remote Diagnostic Agent ( RDA ) – Fusion Middleware and WebLogic Server (Doc ID [1498376.1][https://support.oracle.com/epmos/faces/DocumentDisplay?id=1498376.1]).
+The first thing you should do is to keep RDA up to date – the latest Version is 8.0.3. A useful bulletin on MOS is: Resolve Problems Faster! Use Remote Diagnostic Agent ( RDA ) – Fusion Middleware and WebLogic Server (Doc ID [1498376.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=1498376.1) ).
 
 ![RDA Bulletin on MOS](/images/rda_bulletin-610x489.png)
 
@@ -28,7 +28,7 @@ You can find information about Heath checks here:
 
 Remote Diagnostic Agent also offers a health check tool – known as the HCVE Rule Engine. A full description of the HCVE Rule Engine can be found in
 
-[Note: 250262.1][https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1] RDA – Health Check / Validation Engine Guide
+[Note: 250262.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1) RDA – Health Check / Validation Engine Guide
 
 To launch the rule engine, run the command
 
@@ -78,7 +78,7 @@ Here are some sample checks:
 ![Sample posts checks](/images/rda_post_checks-610x213.png)
 
 
-A full listing of the current health checks can be found [here][https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1#rulesets]. Information and instructions regards SOA health checks can be found in:  [Note: 1571554.2][https://support.oracle.com/epmos/faces/DocumentDisplay?id=1571554.2] How to Run Remote Diagnostic Agent ( RDA ) Against SOA Products.
+A full listing of the current health checks can be found [here](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1#rulesets). Information and instructions regards SOA health checks can be found in:  [Note: 1571554.2](https://support.oracle.com/epmos/faces/DocumentDisplay?id=1571554.2) How to Run Remote Diagnostic Agent ( RDA ) Against SOA Products.
 
 The Health check contains two types of items:
 
