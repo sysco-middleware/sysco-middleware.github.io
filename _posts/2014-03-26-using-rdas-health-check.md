@@ -12,11 +12,11 @@ How can you know that your SOA installation is healthy? One thing is patching �
 
 The first thing you should do is to keep RDA up to date – the latest Version is 8.0.3. A useful bulletin on MOS is: Resolve Problems Faster! Use Remote Diagnostic Agent ( RDA ) – Fusion Middleware and WebLogic Server (Doc ID [1498376.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=1498376.1)).
 
-![RDA Bulletin on MOS](/images/rda_bulletin-610x489.png)
+[RDA Bulletin on MOS](/images/rda_bulletin-610x489.png)
 
 The good news is that RDA now can be updated via OPatch. RDA is a tool for many products, so you should configure accourding to your installation. This bulletin is interactive, so you can select product and the description will update. For a SOA install there may be many relevant Products: SOA, OSB, BAM, WLS, JVM.
 
-![RDA SOA Config](/images/RDA_SOAConfig-610x489.png)
+[RDA SOA Config](/images/RDA_SOAConfig-610x489.png)
 
 CAUTION : Do NOT run “rda.sh” or “rda.cmd” without parameters unless you have created a result set configuration! If RDA finds no result set configuration file ([result set name].cfg) then running the RDA command script with no parameters will launch the result set configuration process for all data collection modules.
 
@@ -24,11 +24,11 @@ CAUTION : Do NOT run “rda.sh” or “rda.cmd” without parameters unless you
 
 You can find information about Heath checks here:
 
-![Health Check in Bulletin](/images/rda_bulletin_health_check-610x66.png)
+[Health Check in Bulletin](/images/rda_bulletin_health_check-610x66.png)
 
 Remote Diagnostic Agent also offers a health check tool – known as the HCVE Rule Engine. A full description of the HCVE Rule Engine can be found in
 
-![Note: 250262.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1) RDA – Health Check / Validation Engine Guide
+[Note: 250262.1](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1) RDA – Health Check / Validation Engine Guide
 
 To launch the rule engine, run the command
 
@@ -75,10 +75,10 @@ The command will list the available rule sets for the host platform. For example
 ```
 
 Here are some sample checks:
-![Sample posts checks](/images/rda_post_checks-610x213.png)
+[Sample posts checks](/images/rda_post_checks-610x213.png)
 
 
-A full listing of the current health checks can be found ![here](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1#rulesets). Information and instructions regards SOA health checks can be found in:  ![Note: 1571554.2](https://support.oracle.com/epmos/faces/DocumentDisplay?id=1571554.2) How to Run Remote Diagnostic Agent ( RDA ) Against SOA Products.
+A full listing of the current health checks can be found [here](https://support.oracle.com/epmos/faces/DocumentDisplay?id=250262.1#rulesets). Information and instructions regards SOA health checks can be found in:  [Note: 1571554.2](https://support.oracle.com/epmos/faces/DocumentDisplay?id=1571554.2) How to Run Remote Diagnostic Agent ( RDA ) Against SOA Products.
 
 The Health check contains two types of items:
 
@@ -86,13 +86,13 @@ The Health check contains two types of items:
 * Rules for checking compliance
 
 Here is a sample fact:
-![RDA Fact](/images/rda_fact-610x47.png)
+[RDA Fact](/images/rda_fact-610x47.png)
 
 Here is a sample rule:
-![RDA Rule](/images/rda_rule-610x304.png)
+[RDA Rule](/images/rda_rule-610x304.png)
 
 This means that configuration problems that have been identified and described on MOS now can be checked automaitcally in your installation. Here is a sample from a report:
-![RDA Report](/images/rda_report-610x343.png)
+[RDA Report](/images/rda_report-610x343.png)
 
 When is the appropriate time to run RDA Health checks?
 
