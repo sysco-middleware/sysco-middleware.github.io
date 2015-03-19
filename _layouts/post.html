@@ -46,17 +46,14 @@
         <span class="entry-tags">{% for tag in page.tags %}<a href="{{ site.url }}tags/#{{ tag }}" title="Pages tagged {{ tag }}" class="tag">{{ tag }}</a>{% unless forloop.last %}{% endunless %}{% endfor %}</span>
         {% if page.share != false %}{% include social-share.html %}{% endif %}
       </footer>
-	  {{site.authors}}
-	  {% assign author = site.authors[page.author] %}
-	   <p class="byline">
-      by |{{ author.name }}| - |{{page.author}}| - |{{author}}|
-	  {% for author in site.authors %}
-  |{{ author.name }}| -- |{{ author.twitter }}| -- |{{author.about}}|
-  {% assign aboutpages = author.about %}
-
-
-{% endfor %}
-    </p> 
+	  	   <p class="byline">
+      {% assign author = site.authors[page.author] %}
+      by {{ author.name }}
+      <div class="authorbio">
+      {% assign aboutfile = author.aboutfile %}
+      {% include authors.html author=page.author %}
+    </div>
+    </p>
     </div><!-- /.entry-content -->
     {% if page.comments != false %}<section id="disqus_thread"></section><!-- /#disqus_thread -->{% endif %}
     {% if site.related_posts.size %}{% include read-more.html %}{% endif %}
@@ -69,7 +66,7 @@
   </footer>
 </div><!-- /.footer-wrapper -->
 
-{% include scripts.html %}	        
+{% include scripts.html %}
 
 </body>
 </html>
