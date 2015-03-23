@@ -1,6 +1,6 @@
 title:            Sysco Middleware Blog
 description:      Oracle Fusion Middleware, Oracle Service Bus, Oracle SOA Suite, Oracle BPM Suite, Oracle WebLogic, Oracle VM
-disqus_shortname: syscomidddleware
+disqus_shortname: syscomiddlewareblog
 reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
@@ -12,13 +12,13 @@ url: //sysco-middleware.github.io/
 # Owner/author information
 owner:
   name:           Sysco Middleware
-  avatar:         me.jpeg
-  bio:            
-  email:          
+  avatar:         Sysco_logo_300px.png
+  bio:
+  email:
   # Social networking links used in footer. Update and remove as you like.
-  twitter:        
+  twitter:
   facebook:
-  github:         
+  github:
   stackexchange:
   linkedin:
   instagram:
@@ -26,13 +26,13 @@ owner:
   tumblr:
   # For Google Authorship https://plus.google.com/authorship
   # google plus id, include the '+', eg +mmistakes
-  google_plus:    
+  google_plus:
 
 # Background image to be tiled on all pages
 background:
 
 # Analytics and webmaster tools stuff goes here
-google_analytics: 
+google_analytics: UA-60980318-1
 google_verify:
 # https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
 bing_verify:
@@ -40,7 +40,7 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Oslo
 future:      true
-highlighter: rouge
+highlighter: pygments
 markdown:    redcarpet
 gems:
   - jekyll-sitemap
