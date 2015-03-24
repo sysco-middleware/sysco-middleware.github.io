@@ -3,7 +3,7 @@ layout: post
 title: Oracle Certifications
 categories: sysco
 tags: [sysco, oracle, certifications, specialized]
-author: jph
+author: jphjulstad
 ---
 
 In Sysco we are currently focusing on certifications and spezialization. With the latest approvals, we now are specialized in:

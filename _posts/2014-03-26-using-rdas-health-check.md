@@ -3,7 +3,7 @@ layout: post
 title: Using RDAs health check
 categories: Health_check
 tags: [health_check, rda]
-author: jonpetter
+author: jphjulstad
 ---
 
 How can you know that your SOA installation is healthy? One thing is patching – you must read notes on MOS or search MOS for suitable patches (or let EM12c help you). One other potential problem is keeping the configuration according to Best Practices. If you have filed a Service Request(SR), you know that the first thing Support will tell you is to send them an RDA. This blog will tell why this report is not only useful for Oracle Support, but also for you.

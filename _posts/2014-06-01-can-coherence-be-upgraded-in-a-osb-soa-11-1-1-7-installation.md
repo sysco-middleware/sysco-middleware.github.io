@@ -3,7 +3,7 @@ layout: post
 title: Can Coherence be upgraded in a OSB/SOA 11.1.1.7-installation?
 categories: coherence
 tags: [coherence, soa suite, osb]
-author: jph
+author: jphjulstad
 ---
 
 I am currently doing an install of SOA Suite/OSB 11.1.1.7, and want to apply the latest of patches (WLS, SOA, OSB, JVM). When I looked at the Exalogic Patch Set Update (PSU) I saw that the following patch is part of PSU: p18385410:

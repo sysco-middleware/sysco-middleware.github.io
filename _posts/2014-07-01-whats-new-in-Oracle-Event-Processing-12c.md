@@ -3,7 +3,7 @@ layout: post
 title: What’s new in Oracle Event Processing 12c?
 categories: event_processing
 tags: [oep, event processing, middleware]
-author: jph
+author: jphjulstad
 ---
 
 Oracle Event Processing is not the most frequently used tool in the Oracle SOA Suite, but more and more people now know about it. With some of the new features in BAM 12c many people will probably use it, without knowing that it is actually OEP behind there. OEP has allways been open and easy to adapt to your needs, but with this version it will be easier to show value fast. My personal favorite in this version is the REST adapter.
