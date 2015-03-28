@@ -5,16 +5,16 @@ reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
-url: //blog.sysco.no
-#url: //sysco-middleware.github.io
-#url: //localhost:4000/
+# url: //blog.sysco.no
+# url: //sysco-middleware.github.io
+url: //localhost:4000/
 #baseurl: ""
 
 # Owner/author information
 owner:
   name:           Sysco Middleware
   avatar:         Sysco_logo_300px.png
-  bio:
+  bio:            Sysco Middleware Department is focus in develop business solutions based on Oracle Fusion Middleware technology.
   email:
   # Social networking links used in footer. Update and remove as you like.
   twitter:
@@ -82,6 +82,6 @@ authors:
   jphjulstad:
     name: Jon Petter Hjulstad
     twitter: jphjulstad
-  jorge:
+  jeqo:
     name: Jorge Quilcate
     twitter: jeqo89

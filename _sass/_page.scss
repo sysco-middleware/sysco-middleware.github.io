@@ -2,7 +2,7 @@ body {
 	margin: 0;
 	padding: 0;
 	width: 100%;
-	background-color: $white;
+	background-color: rgba($base-color,0.05);
 }
 
 // Main
@@ -32,17 +32,17 @@ body {
 }
 .header-title {
 	text-align: center;
-	margin: 30px 0 0;
+	margin: 50px 0 0;
 	h1 {
-		margin: 10px 20px;
-		font-weight: 700;
-		@include font-rem(28);
-		color: lighten($base-color,20);
+		margin: 20px 30px;
+		font-weight: 200;
+		@include font-rem(25);
+		color: lighten($base-color,10);
 		@media #{$medium} {
-			@include font-rem(48);
+			@include font-rem(44);
 		}
 		@media #{$large} {
-			@include font-rem(60);
+			@include font-rem(50);
 		}
 	}
 	h2 {
@@ -64,7 +64,7 @@ body {
 	display: table;
 	margin-top: 0;
 	width: 100%;
-	height: 400px;
+	height: 200px;
 	overflow: hidden;
 	.header-title-wrap {
 		display: table-cell;
@@ -104,7 +104,7 @@ body {
 	left: -50%;
 	width: 200%;
 	height: 200%;
-	min-height: 400px;
+	min-height: 200px;
 	overflow: hidden;
 	&:after {
 		content: '';
