@@ -8,7 +8,7 @@ author: jeqo
 
 Oracle SOA Suite includes a component to handle user interactions into a SCA application:
 
-![SOA Composite with Human Task](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0840-610x210.png)
+![SOA Composite with Human Task](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0840-610x210.png)
 
 When you have completed Human Task definition, JDeveloper gives you the option to implement this tasks using Oracle ADF. This could be the easiest way if you have developers trained to use this framework. In this case you can go ahead and start implementing your task flows and pages. As this option is shown by default, you may think this is the only option to implement a Human Task.
 
@@ -24,13 +24,13 @@ Let's started with one simple business process: [https://github.com/jeqo/htjavae
 
 This project includes:
 
-![SCA Application](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904-610x237.png)
+![SCA Application](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904-610x237.png)
 
-![BPMN Process](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904_001.png)
+![BPMN Process](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904_001.png)
 
-![Human Task Definition](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0907-610x278.png)
+![Human Task Definition](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0907-610x278.png)
 
-![XML Schema](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0914.png)
+![XML Schema](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0914.png)
 
 This project was created with [JDeveloper 11g (11.1.1.7)](http://www.oracle.com/technetwork/developer-tools/jdev/downloads/jdeveloper11117-1917330.html)
 
@@ -43,37 +43,37 @@ Now, how my application would be invoked from Workspace application? As ADF does
 1. Go to Enterprise Manager application.
 2. Go to the Composite Application deployed and select the Human Task component:
 
-![Composite on EM](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0925-610x387.png)
+![Composite on EM](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0925-610x387.png)
 
 3. Go to the Administration tab and add a new URI:
 
-![Human Task configuration](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0927.png)
+![Human Task configuration](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0927.png)
 
 This form ask for your application name (only descriptive), and the URL parameters: host, port and context.
 
 4. To test your configuration, let's start a new process instance to create a new task on Workspace application:
 
-![Human Task configuration](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0934-610x280.png)
+![Human Task configuration](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0934-610x280.png)
 
 And this should be the result:
 
-![Oracle BPM Workspace](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0936-610x248.png)
+![Oracle BPM Workspace](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0936-610x248.png)
 
 This is because obviously we don't deploy an application with this URL (yet).
 
 5. Let's create a new Java EE web application. I'm using NetBeans and Glassfish, you can use your favorite IDE and Java EE application server. Then I will add some JavaScript code to print the request parameters sent by Workspace application:
 
-![NetBeans project - 1](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0940-610x422.png)
+![NetBeans project - 1](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0940-610x422.png)
 
-![NetBeans project - 2](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0941-610x302.png)
+![NetBeans project - 2](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0941-610x302.png)
 
-![NetBeans project - 3](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0942-610x195.png)
+![NetBeans project - 3](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0942-610x195.png)
 
-![NetBeans project - 4](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0944.png)
+![NetBeans project - 4](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0944.png)
 
 Now, try to open your task again:
 
-![NetBeans project - 5](images/2014-06-06-implementing-human-tasks-with-java-ee/Captura.png)
+![NetBeans project - 5](/images/2014-06-06-implementing-human-tasks-with-java-ee/Captura.png)
 
 Let's add this code to your HTML page to print the parameters:
 
@@ -113,7 +113,7 @@ Let's add this code to your HTML page to print the parameters:
 
 Now, you can refresh your task to see all the parameters:
 
-![Human Task parameters](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1001-610x366.png)
+![Human Task parameters](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1001-610x366.png)
 
 The most important parameters here are: **bpmWorklistTaskId (Task ID)** and **bpmWorklistContent (Security token)**.
 
@@ -140,13 +140,13 @@ Now we need implement the following steps to implement our Human Task UI with Ja
 
 2. Then, create a Web Service Proxy using the URLs mentioned above:
 
-![Create WS Proxies](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1042-610x429.png)
+![Create WS Proxies](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1042-610x429.png)
 
-![WS Proxies - 1](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1046.png)
+![WS Proxies - 1](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1046.png)
 
 Validate *"Wrapper Style"* property is disable on Web Service Reference:
 
-![WS Proxies - 2](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1049-610x409.png)
+![WS Proxies - 2](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1049-610x409.png)
 
 Now we should have access to these services. To test this, you can use the test case below:
 
@@ -201,7 +201,7 @@ Now we should have access to these services. To test this, you can use the test 
 
 1. Create a JAXB Binding from [Human Task name]Payload.xsd:
 
-![XSD to Java - 1](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1107-610x470.png)
+![XSD to Java - 1](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1107-610x470.png)
 
 Compile the project, and now we should have all the required classes to interact with the Human Task engine.
 
@@ -286,7 +286,7 @@ To test this, we can run the following use case:
 
 To set the task number, we can use the task already assigned. Go to EM and into the running instance you can check the task number:
 
-![Instance Number](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1123-610x285.png)
+![Instance Number](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1123-610x285.png)
 
 ### Implementing the UI
 
@@ -294,11 +294,11 @@ In this case I will use Primefaces 5.0 as JSF implementation.
 
 This is the page flow:
 
-![JSF Page Flow](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444.png)
+![JSF Page Flow](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444.png)
 
 And this is the page code:
 
-![JSF Page Code](images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444_001-610x386.png)
+![JSF Page Code](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444_001-610x386.png)
 
 The managed bean is the most important class here:
 
