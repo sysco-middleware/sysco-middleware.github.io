@@ -1,7 +1,7 @@
 ---
 layout: post
 title: How to use Parametric Roles and Extended User Properties with Oracle BPM 11g
-categories: javaee
+categories: bpm
 tags: [human, task, 11g, oracle, soa, bpm, javaee]
 author: jeqo
 ---
