@@ -57,7 +57,6 @@ Now log in to a new session and check:
 
 [root@testhost \~]\# **su - oracle**
 oracle-@testhost /home/oracle \# **ls -trl /u01**
-
 *total 18*
 
 *drwxrwxr-x 2 oracle oinstall 2 Jul 29 13:33 logs*
@@ -69,3 +68,4 @@ oracle-@testhost /home/oracle \# **ls -trl /u01**
 *-rw-r--r--. 1 oracle oinstall 31 Feb 11 06:40 afiedt.buf*
 
 *-rw-r--r--. 1 oracle oinstall 7813 Feb 12 08:06 testfile.zip*
+
