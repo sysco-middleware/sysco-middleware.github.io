@@ -55,7 +55,8 @@ last one will not do it.
 
 Now log in to a new session and check:
 
-[root@testhost \~]\# **su - oracle**
+[root@testhost \~]\# **su - oracle** \n
+
 oracle-@testhost /home/oracle \# **ls -trl /u01**
 
 *total 18*
