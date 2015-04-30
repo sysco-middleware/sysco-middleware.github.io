@@ -19,11 +19,11 @@ It might look like this:
 [root@testhost \~]\# **su - oracle**  
 oracle-@testhost /home/oracle \# **ls -trl /u01**  
 *total 18*  
-*drwxrwxr-x 2 nobody nobody 2 Jul 29 13:33 logs*  
-*drwxr-xr-x 3 nobody nobody 4096 Aug 12 10:51 bootscript*  
-*drwxrwxrwx 8 nobody nobody 8 Aug 28 12:53 tools*  
-*-rw-r--r--. 1 nobody nobody 31 Feb 11 06:40 afiedt.buf*  
-*-rw-r--r--. 1 nobody nobody 7813 Feb 12 08:06 testfile.zip*  
+_drwxrwxr-x 2 **nobody nobody** 2 Jul 29 13:33 logs_  
+_drwxr-xr-x 3 **nobody nobody** 4096 Aug 12 10:51 bootscript_  
+_drwxrwxrwx 8 **nobody nobody** 8 Aug 28 12:53 tools_  
+_-rw-r--r--. 1 **nobody nobody** 31 Feb 11 06:40 afiedt.buf_  
+_-rw-r--r--. 1 **nobody nobody** 7813 Feb 12 08:06 testfile.zip_  
 
 
 Solution:
@@ -51,10 +51,10 @@ Now log in to a new session and check:
 [root@testhost \~]\# **su - oracle**  
 oracle-@testhost /home/oracle \# **ls -trl /u01**  
 *total 18*   
-*drwxrwxr-x 2 oracle oinstall 2 Jul 29 13:33 logs*  
+_drwxrwxr-x 2 **oracle oinstall** 2 Jul 29 13:33 logs_  
 _drwxr-xr-x 3 **oracle oinstall** 4096 Aug 12 10:51 bootscript_  
-*drwxrwxrwx 8 oracle oinstall 8 Aug 28 12:53 tools*    
-*-rw-r--r--. 1 oracle oinstall 31 Feb 11 06:40 afiedt.buf*   
-*-rw-r--r--. 1 oracle oinstall 7813 Feb 12 08:06 testfile.zip*  
+_drwxrwxrwx 8 **oracle oinstall** 8 Aug 28 12:53 tools_    
+_-rw-r--r--. 1 **oracle oinstall** 31 Feb 11 06:40 afiedt.buf_   
+_-rw-r--r--. 1 **oracle oinstall** 7813 Feb 12 08:06 testfile.zip_  
 
 
