@@ -49,14 +49,22 @@ last one will not do it.
 Now log in to a new session and check:
 
 ```bash
+[root@testhost \~]\# su - oracle  
+oracle-@testhost /home/oracle \# ls -trl /u01  
+total 18   
+drwxrwxr-x 2 oracle oinstall 2 Jul 29 13:33 logs  
+drwxr-xr-x 3 oracle oinstall 4096 Aug 12 10:51 bootscript  
+drwxrwxrwx 8 oracle oinstall 8 Aug 28 12:53 tools    
+-rw-r--r--. 1 oracle oinstall 31 Feb 11 06:40 afiedt.buf   
+-rw-r--r--. 1 oracle oinstall 7813 Feb 12 08:06 testfile.zip  
 
-[root@testhost \~]\# **su - oracle**  
-oracle-@testhost /home/oracle \# **ls -trl /u01**  
-*total 18*   
-_drwxrwxr-x 2 **oracle oinstall** 2 Jul 29 13:33 logs_  
-_drwxr-xr-x 3 **oracle oinstall** 4096 Aug 12 10:51 bootscript_  
-_drwxrwxrwx 8 **oracle oinstall** 8 Aug 28 12:53 tools_    
-_-rw-r--r--. 1 **oracle oinstall** 31 Feb 11 06:40 afiedt.buf_   
-_-rw-r--r--. 1 **oracle oinstall** 7813 Feb 12 08:06 testfile.zip_  
+[comment]: <> [root@testhost \~]\# **su - oracle**  
+[comment]: <> oracle-@testhost /home/oracle \# **ls -trl /u01**  
+[comment]: <> *total 18*   
+[comment]: <> _drwxrwxr-x 2 **oracle oinstall** 2 Jul 29 13:33 logs_  
+[comment]: <> _drwxr-xr-x 3 **oracle oinstall** 4096 Aug 12 10:51 bootscript_  
+[comment]: <> _drwxrwxrwx 8 **oracle oinstall** 8 Aug 28 12:53 tools_    
+[comment]: <> _-rw-r--r--. 1 **oracle oinstall** 31 Feb 11 06:40 afiedt.buf_   
+[comment]: <> _-rw-r--r--. 1 **oracle oinstall** 7813 Feb 12 08:06 testfile.zip_  
 
 
