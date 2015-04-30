@@ -1,4 +1,4 @@
-﻿---
+---
 layout: post
 title: Exalogic guest filename ownership
 categories: exalogic
