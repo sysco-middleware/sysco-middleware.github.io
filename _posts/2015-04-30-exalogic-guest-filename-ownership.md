@@ -55,8 +55,10 @@ last one will not do it.
 
 Now log in to a new session and check:
 
-[root@testhost \~]\# **su - oracle**
+[root@testhost \~]\# **su - oracle** \n
+
 oracle-@testhost /home/oracle \# **ls -trl /u01**
+
 *total 18*
 
 *drwxrwxr-x 2 oracle oinstall 2 Jul 29 13:33 logs*
