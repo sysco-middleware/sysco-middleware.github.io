@@ -48,7 +48,7 @@ last one will not do it.
 
 Now log in to a new session and check:
 
-'''bash
+```bash
 
 [root@testhost \~]\# **su - oracle**  
 oracle-@testhost /home/oracle \# **ls -trl /u01**  
