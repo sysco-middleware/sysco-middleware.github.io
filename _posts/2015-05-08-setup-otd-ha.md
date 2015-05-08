@@ -28,7 +28,7 @@ will use in OTD.
 
 ![](/images/2015-05-08-setup-otd-ha/otd_ha_VIP3.png)
 
-Add the virtual IP allocated to /etc/hosts on all VM's. If you donÔÇÖt
+Add the virtual IP allocated to /etc/hosts on all VM's. If you don't
 have a DNS server inside the exalogic, this is to make sure the traffic
 remains inside the exalogic.
 
