@@ -6,7 +6,6 @@ tags: [access, identity, oam, middleware]
 author: tisaksen
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-
 After a full day of work some people working late started losing their session and were unable to log back on.
 
 This applies to OAM 11.1.2.2.0 and later and the basic configuration was as follows:
