@@ -20,7 +20,7 @@ Oracle Fusion Middleware agenda 4. june
 10.00 - 10.30 Coffee break
 10.30 - 11.15 Upgrade to SOA 12c - experiences (Sysco, Olve Slind)
 11.15 - 11.35 Customer experiences from project
-11.40 - 12.00 Provisioning - automating installation with Chef  (Simon Haslam & Sysco)
+11.40 - 12.00 Provisioning - automating installation (Simon Haslam & Sysco)
 12.00 - 13.00 Lunch
 13.00 - 13.45 Oracle Database Appliance, more on SOA provisioning (Simon Haslam & Sysco)
 13.45 - 14.30 Administration of SOA Suite / Customer experiences (Sysco, Jon Petter Hjulstad)
