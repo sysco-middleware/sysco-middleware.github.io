@@ -41,3 +41,5 @@ Here is a list of the certifications we have at the moment:
 * Oracle WebCenter Content 11g Certified Implementation Specialist 
 * Oracle WebLogic Server 12c Certified Implementation Specialist 
 
+We have 6 Oracle WebLogic Server 12c Certified Implementation Specialists and 4 Oracle Exalogic Elastic Cloud 2014 Certified Implementation Specialists. 
+ 
