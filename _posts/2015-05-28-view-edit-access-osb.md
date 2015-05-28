@@ -17,20 +17,20 @@ So what you have to do is the folowing:
 
 1. Login to Enterprise Manager - Fusion Middleware Control 12c.
 2. Select as below.
-```
+```bash
    WebLogic Domain
    > <domain-name> (right-click)
      > Security (Menu)
        > Application Policies (Menu)
 ```
 3. Set as below, then click the arrow (Search application security grants) next to Principal Name.
-```
+```bash
    Application Stripe: Service_Bus_Console
    Principal Type: Application Role
 ```
 4. Select MiddlewareAdministrator, then click Edit.
 5. Add AdminOnlyTaskAccess to Permissions as below, then click OK.
-```
+```bash
    Permission Class: oracle.soa.osb.console.common.permissions.OSBPermission
    Resource Name: AdminOnlyTaskAccess
    Permission Actions: update
