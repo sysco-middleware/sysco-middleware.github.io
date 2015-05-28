@@ -5,7 +5,7 @@ categories: MS SQL Server Non-XA
 tags: [weblogic, jdbc, mssql]
 author: jphjulstad
 ---
-If you want to use the non-XA MS Sql Driver, you must be sure that it actually does not use XA. If not, you will get error message. The way to verify this is to go into the System MBean Browser, find your JDBCSystemResource. From EM console, you go to your domain. Thern roght click and select System MBean Browser.
+If you want to use the non-XA MS Sql Driver (weblogic.jdbc.sqlserver.SQLServerDriver), you must be sure that it actually does not use XA. If not, you will get error message. The way to verify this is to go into the System MBean Browser, find your JDBCSystemResource. From EM console, you go to your domain. Thern roght click and select System MBean Browser.
 
 ![](/images/2015-05-28-mssql-non-xa/mbean_browser.png)
 
