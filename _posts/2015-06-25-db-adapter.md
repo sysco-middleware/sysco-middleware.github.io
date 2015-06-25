@@ -1,12 +1,12 @@
 ---
 layout: post
-title: DB-adapter tips
+title: Why does DB-adapter return duplicate rows?
 categories: DB adapter 
 tags: [osb, soa suite, db adapter, primary key, rowid]
 author: jphjulstad
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
-DB adapter tips.
+Here are some DB adapter tips regarding duplicate rows.
 
 The DB Adapter has some nice features, but sometimes you can get fooled. One of my colleagues experiences this one day. The query returned the same row - just repeated many times.
 
