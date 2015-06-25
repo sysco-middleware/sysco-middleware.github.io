@@ -12,7 +12,7 @@ The DB Adapter has some nice features, but sometimes you can get fooled. One of 
 
 The reason for this is because the primary key was not defined correctly.
 
-The good thing is that the documentation describes this - and more: [Doc link](http://docs.oracle.com/middleware/1213/adapters/develop-soa-adapters/adptr_db.htm#TKADP1294)
+The good thing is that the documentation describes this - and more: [Oracle documentation](http://docs.oracle.com/middleware/1213/adapters/develop-soa-adapters/adptr_db.htm#TKADP1294)
 
 For tables where primary key is defined - this should not be a problem, but in cases where it is not defined or you are querying a view - you would need to specify a primary key yourself. A couple of relevant notes here:
 
