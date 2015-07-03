@@ -129,7 +129,7 @@ AND R_CONSTRAINT_NAME IN
 
 Or you can use a tool to get the relationships visually. In that case, I got this
 
-![](/images/2015-07-02-db-locking/er.png)
+![](/images/2015-07-02-db-locking/ER.png)
 
 The previous image shows that Table_C has a relationship by FK (column NPCREDITEVALUATIONID) with the table Table_A. However, this FK is not indexed and this was the root cause of that problem.
 
