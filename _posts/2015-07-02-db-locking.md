@@ -131,7 +131,7 @@ Or you can use a tool to get the relationships visually. In that case, I got thi
 
 ![](/images/2015-07-02-db-locking/er.png)
 
-The previous image shows that table Table_C has a relationship by FK (column NPCREDITEVALUATIONID) with the table Table_A. However, this FK is not indexed and this was the root cause of that problem.
+The previous image shows that Table_C has a relationship by FK (column NPCREDITEVALUATIONID) with the table Table_A. However, this FK is not indexed and this was the root cause of that problem.
 
 After that a query was executed to detect other cases like this and after fixing them, the performance of that module was improved.
 
