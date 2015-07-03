@@ -34,7 +34,7 @@ It was clear we had a dead lock problem, but we needed the root cause. It was fo
 This is the TRC generated at that time:
 
 ``` sql
-/ora_control/admin/xxxxx_LM/udump/ora_24473.trc
+/ora_control/admin/xxxxx/udump/ora_24473.trc
 Oracle Database 10g Enterprise Edition Release 10.2.0.4.0 - 64bit Production
 With the Partitioning, Data Mining and Real Application Testing options
 ORACLE_HOME = /oracle10/product/db/10.2.0
