@@ -5,6 +5,7 @@ reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
+#url:
 url: //blog.sysco.no
 # url: //sysco-middleware.github.io
 # url: //localhost:4000/
@@ -99,5 +100,5 @@ authors:
     name: Olve Slind
     twitter: olveslind
   cliops:
-    name: Christopher Laurente Rodriguez
+    name: Christopher Laurente
     twitter: Cliops

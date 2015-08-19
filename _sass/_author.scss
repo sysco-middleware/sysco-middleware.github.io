@@ -2,15 +2,24 @@
   width: 80%;
   margin: auto;
   padding: 10px;
+  background-color:#D6D4D5;
+  border-radius: 25px;
 }
 
 .picture {
   width: 20%;
-  float: left;
+  float: left; 
+}
+
+.picture img{
+  	
+  border-radius: 25px;
+  width: 90%;
 }
 
 .bio {
   margin-left: 23%;
   line-height: 1;
+  border-radius: 25px;
 }
 
