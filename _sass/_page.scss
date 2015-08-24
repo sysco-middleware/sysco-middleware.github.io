@@ -49,7 +49,7 @@ body {
 		margin: 0;
 		@include font-rem(18);
 		text-transform: uppercase;
-		color: lighten($base-color,40);
+		color: #3f3e3e;
 		@media #{$medium} {
 			@include font-rem(30);
 		}
