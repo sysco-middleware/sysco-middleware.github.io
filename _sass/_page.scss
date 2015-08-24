@@ -58,6 +58,13 @@ body {
 		color: lighten($base-color,20);
 	}
 }
+
+h1.entry-title-b a {
+    color: white;
+    font-weight: 700;
+    text-shadow: 1px 1px 4px rgba(34,34,34,0.6);
+}
+
 .feature .header-title {
 	position: absolute;
 	top: 0;
@@ -231,6 +238,7 @@ body {
 		text-align: center;
 	}
 }
+
 .entry-tags {
 	display: block;
 	margin-bottom: 6px;
@@ -345,7 +353,7 @@ body {
 		}
 	}
 	article {
-		background: seashell;
+		background: #f9f8f3;
 		box-shadow: 0 0 0 0, 0 6px 12px rgba($base-color,0.1);
 		@include rounded(3px);
 		margin-bottom: 20px;
