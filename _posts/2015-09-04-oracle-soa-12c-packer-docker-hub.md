@@ -3,6 +3,7 @@ layout: post
 title: Oracle SOA Suite 12c Docker Image built with Packer
 categories: devops
 tags: [oracle, soa, docker, packer]
+author: jeqo
 ---
 
 After find some limitations on building SOA Docker image using Dockerfile
