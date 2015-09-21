@@ -5,7 +5,7 @@ categories: compression
 tags: [MAF,ADF Mobile]
 author: cliops
 ---
-This time, we will see some important advantages and disadvantages beetween these two versions. 
+This time, we will see some important advantages and disadvantages between these two versions. 
 There we go:
 
 #Overview#
