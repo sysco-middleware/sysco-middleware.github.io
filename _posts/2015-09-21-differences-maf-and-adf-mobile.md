@@ -121,7 +121,7 @@ By default a new MAF project uses the latest version of the mobileAlta skin Fami
 
 **V. MAF has additional plugins like barcode integration.**  
 
-We can use cordova plugins to handle more funcitonalities in the devices.
+We can use cordova plugins to handle more functionalities in the devices.
 
 - ![](/images/2015-09-21-differences-maf-and-adf-mobile/barCode.JPG) 
 
