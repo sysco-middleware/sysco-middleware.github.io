@@ -14,4 +14,4 @@ This document shows a comprehensive process to construct an architecture with hi
 
 You can download the guide using the following link.
 
-[High Availability](/files/guides/VirtualEnvironmentV2.1.pdf)
+[***High Availability***](/files/guides/VirtualEnvironmentV2.1.pdf)
