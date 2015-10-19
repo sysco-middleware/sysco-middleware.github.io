@@ -248,7 +248,7 @@ Before run algorithm:
 
 After run algorithm:   
 Basically, the algorithm let us to get the max sum of a 2D array in a complexity O(n^3).   
-This time the result was 108 and the rectangule goes from Top-Left to Bottom-right (1,1) (9,3) colored with blue. 
+This time the result was 108 and the rectangle goes from Top-Left to Bottom-right (1,1) (9,3) colored with blue. 
 
 - ![](/images/2015-10-19-update-dynamically-amx-tablelayout/TestAfter.jpg)
 
