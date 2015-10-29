@@ -10,12 +10,12 @@ There we go:
 
 ## Introduction ##
 
-OSB allows us to create DbAdpters and select a polling functionality, but there are some restrictions if we want to write a custom sql statement.   
+OSB allows us to create DbAdapters and select a polling functionality, but there are some restrictions if we want to write a custom sql statement.   
 There is a nice way to set a pure sql statement for polling database rows and after reading operation. I will show you how to handle it.   
 
 ## Create poller ##
 
-First, we have to create a dbAdpter on proxy services and select "Poll for New or Changed Records in a Table".   
+First, we have to create a dbAdapter on proxy services and select "Poll for New or Changed Records in a Table".   
 
 - ![](/images/2015-10-29-create-custom-sql-statements-pollers-OSB-12c/createPoller.jpg)
 
