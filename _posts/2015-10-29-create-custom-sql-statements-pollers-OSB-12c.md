@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Nice trick to create custom sql statements in DbAdapters for pollers using OSB 12c
+title: Nice trick to create custom sql statements in polling DbAdapters with OSB 12c
 categories: OSB
 tags: [OSB,Pollers]
 author: cliops
