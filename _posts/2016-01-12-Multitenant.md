@@ -318,3 +318,9 @@ Connecting to the development environment.
 Connecting to the testing environment.
 
 ![](/images/2016-01-12-Multitenant/56.png)
+
+### References
+
+[1] Oracle (2015) Oracle WebLogic Server Multitenant: The World’s First Cloud-Native Enterprise Java Platform [Online document] Available from: http://www.oracle.com/us/products/middleware/cloud-app-foundation/weblogic/weblogic-server-multitenant-ds-2742664.pdf (Accessed: 06 January 2016)
+
+[2] Oracle (2015) Configuring Resource Groups [Online document] Available from: https://docs.oracle.com/middleware/1221/wls/WLSMT/config_resource_grp.htm#WLSMT1213 (Accessed: 06 January 2016)
