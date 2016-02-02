@@ -1,16 +1,12 @@
 ---
 layout: post
 title: DB Link integration or ESB based
-categories: 'Multitenant, platform as a service'
-tags:
-  - Oracle
-  - Enterprise Service Bus
-  - SOA
-  - Architecture
+categories: soa
+tags: [Oracle, Enterprise Service Bus, SOA, Architecture]
 author: cubeprogramming
 ---
 
-# DB Link integration or ESB based. Pros. and Cons.
+# Pros. and Cons.
 As the state owned electric company of one East European country is undergoing transformation to conform to EU standards it has been transformed from one monolith organization to different smaller entities, each with his own task. Furthermore these entities have been further subdivided based on a region. Also the new players arrived on the market as the law has ben changed to accommodate that possibility. Now the different organizations that emerged from this dividing and subdividing have not been able to use a single monolith ERP and billing application to process and accommodate all possible use cases that the process of selling, producing, provisioning, and supplying electric current, requires. Different companies have been allowed to use their own IT systems to satisfy their business needs. IT systems have become heterogeneous. However because of the need for cooperation and data sharing between these organizations as both required by law and by business needs, numerous use cases requiring integration have emerged. Organizations are faced faced with dilemma whether to invest in ESB based integration solution or use, from his point of view, simpler and chipper solution. Point-to-Point Solution that is based on numerous database links between different heterogeneous databases.
 
 ## Integration entities
