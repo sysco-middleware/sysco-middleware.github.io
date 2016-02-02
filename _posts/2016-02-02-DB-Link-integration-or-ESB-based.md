@@ -3,7 +3,7 @@ layout: post
 title: DB Link integration or ESB based
 categories: soa
 tags: [Oracle, Enterprise Service Bus, SOA, Architecture]
-author: cubeprogramming
+author: dalibor
 ---
 
 # Pros. and Cons.
