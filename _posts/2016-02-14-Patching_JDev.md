@@ -9,11 +9,12 @@ author: jphjulstad
 # Keeping your JDeveloper Quickstart environment up to date
 Oracle has released new patches some weeks ago, and to keep a JDeveloper updated for SOA Suite and Oracle Service Bus there are three products you could patch:
 
-* ORacle SOA Suite
-* ORacle Service Bus
+* Oracle SOA Suite
+* Oracle Service Bus
 * Weblogic
 
 When you see in My Oracle Support (MOS) - you can see which ones are the recommended patches. There are also documents in MOS which are updated regularly:
+
 * OSB 11g and 12c: Bundle Patch Reference (Doc ID 1499170.1)
 * SOA 11g and 12c: Bundle Patch Reference (Doc ID 1485949.1)
 * Master Note on WebLogic Server Patch Set Updates (PSUs) (Doc ID 1470197.1) 
@@ -27,6 +28,7 @@ The patching is simplified in the 12-version, because now there is only one OPat
 I use Windows environment in this example, so I set the environment variables first (run as Administrator):
 ```bash
 SET ORACLE_HOME=D:\Oracle\Middleware1213\Oracle_Home
+
 SET PATH=%PATH%;%ORACLE_HOME%\OPatch
 ```
 
