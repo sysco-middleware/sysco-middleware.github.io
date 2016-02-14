@@ -6,7 +6,7 @@ tags: [Oracle, Oracle Service Bus, JDeveloper, SOA Suite]
 author: jphjulstad
 ---
 
-# Keeping your JDeveloper Quickstart environment up to date
+# Keeping your JDeveloper SOA/OSB Quickstart environment up to date
 Oracle has released new patches some weeks ago, and to keep a JDeveloper updated for SOA Suite and Oracle Service Bus there are three products you could patch:
 
 * Oracle SOA Suite
