@@ -298,13 +298,12 @@ INFO: Install area Control created with access level  0
 22364187;
 ```
 
-According to MOS Note Doc ID 1485949.1 it is recommended that the first time you start JDeveloper after applying the patch that you use the '-clean' option to clear any residual cache.
+According to MOS Note Doc ID 1485949.1 it is recommended that the first time you start JDeveloper after applying the patch that you use the '-clean' option to clear any residual cache. From the same note:
 
-Note:
-
-1. Apply the patch to both the SOA and oracle_common home
+1. Apply the patch to both the SOA and oracle_common home    (note: I am not sure if this is applicable in 12.1.3 - as there is only one OPatch)
 2. Backup and clean out the server tmp, cache, stage and dc folders before restarting the servers to refresh the runtime libraries
 3. In development environments, check for JDeveloper extension updates with the built in utility under the Help -> Check for Updates option.
 
 Note: BPM fixes are again merged with the SOA Suite fixes starting in this Bundle Patch.
 
+If you want to look into the patch details - look at /etc/config/inventory.xml and /etc/config/actions.xml.
