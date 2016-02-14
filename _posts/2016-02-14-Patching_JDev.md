@@ -7,23 +7,23 @@ author: jphjulstad
 ---
 
 # Keeping your JDeveloper SOA/OSB Quickstart environment up to date
-Oracle has released new patches some weeks ago, and to keep a JDeveloper updated for SOA Suite and Oracle Service Bus there are three products you could patch:
+Oracle released new patches some weeks ago, and to keep your JDeveloper updated for SOA Suite and Oracle Service Bus there are three products you should patch:
 
 * Oracle SOA Suite
 * Oracle Service Bus
 * Weblogic
 
-When you see in My Oracle Support (MOS) - you can see which ones are the recommended patches. There are also documents in MOS which are updated regularly:
+When you search My Oracle Support (MOS) for patches - you can see which ones are the recommended ones. There are also notes in MOS which are updated regularly:
 
 * OSB 11g and 12c: Bundle Patch Reference (Doc ID 1499170.1)
 * SOA 11g and 12c: Bundle Patch Reference (Doc ID 1485949.1)
 * Master Note on WebLogic Server Patch Set Updates (PSUs) (Doc ID 1470197.1) 
 
-You could also patch OPatch and JDeveloper, but I did not find this necessary here.
+In the environment I used for this example. Patch 19707784: SOA Bundle Patch 12.1.3.0.1 was applied before. This will be detected by OPatch, and that patch will be rolled back.
 
-In this environment Patch 19707784: SOA Bundle Patch 12.1.3.0.1 was applied before. This will be detected, and that patch will be rolled back.
+The patching is simplified in the 12c-version, because now there is only one OPatch-folder to care about (in version 11 there were one per product). You can read more about it here: [Oracle Documentation link](https://docs.oracle.com/middleware/1213/core/OPATC/toc.htm#OPATC101)
 
-The patching is simplified in the 12-version, because now there is only one OPatch-folder to care about - and in version 11 there were one per product. You can read more about it here: [Oracle Documentation link](https://docs.oracle.com/middleware/1213/core/OPATC/toc.htm#OPATC101)
+For each patch there is a README.txt, whick you should read. It contains Pre-Installation Instructions, Install and Post-Instructions. For the SOA-patch, you should look through the steps for  the Post-steps
 
 I use Windows environment in this example, so I set the environment variables first (run as Administrator):
 
@@ -182,7 +182,10 @@ OPatch succeeded.
 
 # Oracle SOA Suite
 
-For Oracle SOA Suite there has been many updates, the latest one is - 12.1.3.0.5. In the patch process, it is identified that al older patch should be rolled back before the new one is applied. The SOA patch applied has patch number: 22524811.
+For Oracle SOA Suite there has been many updates, the latest one is - 12.1.3.0.5. In the patch process, it is identified that an older patch should be rolled back before the new one is applied. The SOA patch applied has patch number: 22524811.
+
+If OPatch returns a message that this patch conflicts with a previous Bundle Patch, allow OPatch to perform the rollback and install this one. If the conflict is reported for some other patch you have installed, make note of it and contact Support.
+
 
 ```bash
 D:\download\1213patch\p22524811_121300_Generic\22524811>opatch apply
@@ -295,6 +298,13 @@ INFO: Install area Control created with access level  0
 22364187;
 ```
 
+According to MOS Note Doc ID 1485949.1 it is recommended that the first time you start JDeveloper after applying the patch that you use the '-clean' option to clear any residual cache.
 
+Note:
 
-After reading MOS Note BPM 12c Bundle Patch Reference (Doc ID 1983445.1) stating that "This patch is mutually exclusive with all SOA Bundle Patches after SOA Bundle Patch 1. For example, if you attempt to apply this patch on top of SOA Bundle Patch 2, all fixes from SOA Bundle Patch 2 will be rolled back." - I would be careful applying BPM and SOA Patches in the same environment.
+1. Apply the patch to both the SOA and oracle_common home
+2. Backup and clean out the server tmp, cache, stage and dc folders before restarting the servers to refresh the runtime libraries
+3. In development environments, check for JDeveloper extension updates with the built in utility under the Help -> Check for Updates option.
+
+Note: BPM fixes are again merged with the SOA Suite fixes starting in this Bundle Patch.
+
