@@ -23,7 +23,7 @@ You could also patch OPatch and JDeveloper, but I did not find this necessary he
 
 In this environment Patch 19707784: SOA Bundle Patch 12.1.3.0.1 was applied before. This will be detected, and that patch will be rolled back.
 
-The patching is simplified in the 12-version, because now there is only one OPatch-folder to care about - and in version 11 there were one per product. You can read more about it here: https://docs.oracle.com/middleware/1213/core/OPATC/toc.htm#OPATC101
+The patching is simplified in the 12-version, because now there is only one OPatch-folder to care about - and in version 11 there were one per product. You can read more about it here: [Oracle Documentation link](https://docs.oracle.com/middleware/1213/core/OPATC/toc.htm#OPATC101)
 
 I use Windows environment in this example, so I set the environment variables first (run as Administrator):
 ```bash
@@ -281,5 +281,19 @@ Log file location: D:\Oracle\Middleware1213\Oracle_Home\cfgtoollogs\opatch\22524
 
 OPatch succeeded.
 ```
+
+After successful patching you cold verify:
+
+```bash
+D:\download\1213patch\p21983457_121300_Generic\21983457>opatch lspatches
+feb 14, 2016 4:56:24 PM oracle.sysman.oii.oiii.OiiiInstallAreaControl initAreaCo
+ntrol
+INFO: Install area Control created with access level  0
+21983457;
+22524811;
+22364187;
+```
+
+
 
 After reading MOS Note BPM 12c Bundle Patch Reference (Doc ID 1983445.1) stating that "This patch is mutually exclusive with all SOA Bundle Patches after SOA Bundle Patch 1. For example, if you attempt to apply this patch on top of SOA Bundle Patch 2, all fixes from SOA Bundle Patch 2 will be rolled back." - I would be careful applying BPM and SOA Patches in the same environment.
