@@ -26,6 +26,7 @@ In this environment Patch 19707784: SOA Bundle Patch 12.1.3.0.1 was applied befo
 The patching is simplified in the 12-version, because now there is only one OPatch-folder to care about - and in version 11 there were one per product. You can read more about it here: [Oracle Documentation link](https://docs.oracle.com/middleware/1213/core/OPATC/toc.htm#OPATC101)
 
 I use Windows environment in this example, so I set the environment variables first (run as Administrator):
+
 ```bash
 SET ORACLE_HOME=D:\Oracle\Middleware1213\Oracle_Home
 
