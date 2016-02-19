@@ -8,7 +8,7 @@ author: raul
 
 ## Weblogic 12.2.1 Multi-Tenant ##
 
-As a weblogic administrator the interaction among the application server and the database is often strong. In fact, according to Confio Software (2013) approximately 70% of applications’ performance problems are caused by the dataWith the development of partitions on Weblogic, Oracle has developed an infrastructure that is similar to containers and that takes advantage of the Weblogic server’s capacities such as clustering, transaction management and security [1].
+With the development of partitions on Weblogic, Oracle has developed an infrastructure that is similar to containers, which takes advantage of the Weblogic server’s capacities such as clustering, transaction management and security [1].
 
 These are the advantages of using Weblogic Server Multitenant [1]:
 
