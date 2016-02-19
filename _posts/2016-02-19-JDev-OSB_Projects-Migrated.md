@@ -44,3 +44,4 @@ If we created a new Project - we saw that the SOA-technology scope was not there
    </hash>
 ```
 
+Oracle has verified this as a workaround, and gave me quick feedback with details. This can also happen in new 12.2.1 project - if you add an XQuery - see details here on MOS: Adding XQuery converts Service Bus projects onto SOA projects (Doc ID 2090174.1) - with a patch.
