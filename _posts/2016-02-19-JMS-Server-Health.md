@@ -7,7 +7,7 @@ author: jphjulstad
 ---
 
 # JMS Server health check not showing in WLS 12.2.1
-One of the problems we saw on a recent OSB 12.2.1-installation was that the JMS Server health check did not display. In EM console we could see the status show up correct.
+One of the problems we saw on a recent OSB 12.2.1-installation was that the JMS Server health check did not display. In EM console we could see the status show up correctly.
 
 Fortunately Oracle has very recently released a patch for this, and we could today verify that it solved our problem. Here are the patch details: Patch 21830665: HEALTH CHECK RESULT OF JMS SERVERS ARE LEFT BLANK.
 
