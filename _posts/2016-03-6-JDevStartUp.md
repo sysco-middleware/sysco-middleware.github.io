@@ -17,6 +17,7 @@ You will see something similar (my directory is named Jon Petter)
 To fix this  you can go to the directory mentioned - and change the file: /bin/setStartupEnv.cmd.
 
 From
+
 ```bash
   set EXTRA_JAVA_PROPERTIES=%EXTRA_JAVA_PROPERTIES% -Dem.oracle.home=D:\Oracle\Middleware1221\em -DINSTANCE_HOME=C:\Users\Jon Petter\AppData\Roaming\JDeveloper\system12.2.1.0.42.151011.0031\DefaultDomain -Djava.awt.headless=true -Doracle.sysman.util.logging.mode=dual_mode
 ```
