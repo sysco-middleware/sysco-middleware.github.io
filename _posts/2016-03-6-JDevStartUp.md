@@ -10,6 +10,7 @@ author: jphjulstad
 If you have a SOA Quickstart installation on Windows, and your domain directory name contains a space character - you will have a problem starting up the integrated WLS server.
 
 You will see something similar (my directory is named Jon Petter)
+
 ```bash
   Error: Could not find or load main class Petter\AppData\Roaming\JDeveloper\system12.2.1.0.42.151011.0031\DefaultDomain
 ```
