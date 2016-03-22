@@ -50,4 +50,5 @@ If it does not work fine - do the following - Clear the cache of Jdeveloper with
  1. Open the About Oracle Jdeveloper Dialog from menu, Help -> About 
  2. In the Properties tab , search for ide.system.dir 
  3. Stop Jdeveloper and delete/rename this folder 
- 4. Restart Jdev 
+ 4. Restart Jdev
+ 5. When restart Jdev, you will get a confirmation message to accept the preferences of the old version,then you have to press No.
