@@ -45,3 +45,9 @@ If we created a new Project - we saw that the SOA-technology scope was not there
 ```
 
 Oracle has verified this as a workaround, and gave me quick feedback with details. This can also happen in new 12.2.1 project - if you add an XQuery - see details here on MOS: Adding XQuery converts Service Bus projects onto SOA projects (Doc ID 2090174.1) - with a patch.
+
+If it does not work fine - do the following - Clear the cache of Jdeveloper with the following steps: 
+ 1. Open the About Oracle Jdeveloper Dialog from menu, Help -> About 
+ 2. In the Properties tab , search for ide.system.dir 
+ 3. Stop Jdeveloper and delete/rename this folder 
+ 4. Restart Jdev 
