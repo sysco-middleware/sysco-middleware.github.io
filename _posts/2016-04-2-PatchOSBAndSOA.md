@@ -16,7 +16,7 @@ The other reason is because JDeveloper has common features in the two products. 
 
 My advise is to create a predefined Patch Search in MOD so you can monitor existing patches. Here is some of my searches.
 
-![](/images/2016-03-25-osb/patch_search.png)
+![](/images/2016-04-02-osb/patch_search.png)
 
 For example for OSB - then WLS, SOA and OSB are relevant.
 
