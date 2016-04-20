@@ -50,7 +50,7 @@ So a puppet script for example could take care of the following activities in au
 
 ![](/images/2016-04-18-AutomatedProvisioning/2016-04-18-puppet.png)
 
-Specific properties and configuration details can usually be stored in "properties" files (hiera for example in puppet's case), in order to maximize the potential for reuse and to eliminate hardcoding from our scripts.
+Specific properties and configuration details can usually be stored in "properties" files (using hiera for example), in order to maximize the potential for reuse and to eliminate hardcoding from our scripts.
 
 ![](/images/2016-04-18-AutomatedProvisioning/2016-04-18-hiera.png)
 
@@ -71,8 +71,11 @@ Another very positive thing about all of this, is that you can benefit from the 
 So why not go look at some examples and try them out?; my recommendation is to do it, so here are some useful links to the fantastic work of some of my good friends and fellow Oracle ACEs (including my Sysco teammate Jorge) who have done some really groundbreaking work in this regard:
 
 [Jorge Quilcate](https://jeqo.github.io/blog/)
+
 [Edwin Biemond](http://biemond.blogspot.no)
+
 [Lucas Jellema](https://technology.amis.nl/author/lucas-jellema/)
+
 [Andreas Koop](http://multikoop.blogspot.no)
 
 I certainly hope you found this post interesting, thanks for reading!!
