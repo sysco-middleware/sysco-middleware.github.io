@@ -1,6 +1,6 @@
 ---
 layout: post
-title: How to fix Maven build problems in OSB
+title: How to fix Maven build problems in Oracle Service Bus 12c
 name: HowTo-fix-Maven-in-OSB
 categories: soa
 tags: [Oracle, Enterprise Service Bus, Maven]
