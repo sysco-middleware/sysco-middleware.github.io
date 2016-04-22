@@ -43,7 +43,8 @@ bing_verify:
 timezone:    Europe/Oslo
 future:      true
 highlighter: pygments
-markdown:    redcarpet
+#markdown:    redcarpet
+markdown:    kramdown
 gems:
   - jekyll-sitemap
   - jekyll-feed
