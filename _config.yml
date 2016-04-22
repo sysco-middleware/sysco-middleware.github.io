@@ -42,7 +42,8 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Oslo
 future:      true
-highlighter: pygments
+#highlighter: pygments
+highlighter: rouge
 #markdown:    redcarpet
 markdown:    kramdown
 gems:
