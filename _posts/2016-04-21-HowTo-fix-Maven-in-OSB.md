@@ -62,19 +62,23 @@ Before executing any operation or rules specified pom.xml file Maven is doing se
 ## Connecting with Oracle Maven repository
 In order to enable Maven to work from within JDeveloper and command line we have to establish connection with Oracel Maven repository. That is easier said than done as due to the legal reasons Oracle Maven repository requires SSL encryption and Oracle Single Sign On to access it. Therefore we must follow these steps:
 
-1.) Set ORACLE_HOME environment variable to your middleware home and not to your database home. E.g. in Linux/Unix environment:
+1.) Register your 'Oracle Single Sign On' account with Oracle Maven repositor:
+
+  Open [https://maven.oracle.com](https://maven.oracle.com) web page in your browser and on that page you will have link to registration page on which you can register your SSO account with Oracle Maven repository
+
+2.) Set ORACLE_HOME environment variable to your middleware home and not to your database home. E.g. in Linux/Unix environment:
 
   export ORACLE_HOME=/u01/app/Oracle/Middleware
 
   The best option is to put it in shell startup file like: .profile or .bashrc
 
-2.) Set MAVEN_HOME environment variable to your middleware Maven home. E.g. in Linux/Unix environment:
+3.) Set MAVEN_HOME environment variable to your middleware Maven home. E.g. in Linux/Unix environment:
 
   export MAVEN_HOME=/u01/app/Oracle/Middleware/oracle_common/modules/org.apache.maven_3.2.5
 
   Again, the best option is to put it in shell startup file like: .profile or .bashrc
 
-3.) Download the wagon-http version 2.8 shaded JAR file from Maven Central:
+4.) Download the wagon-http version 2.8 shaded JAR file from Maven Central:
 
   [http://central.maven.org/maven2/org/apache/maven/wagon/wagon-http/2.8/wagon-http-2.8-shaded.jar](http://central.maven.org/maven2/org/apache/maven/wagon/wagon-http/2.8/wagon-http-2.8-shaded.jar)
 
@@ -82,13 +86,13 @@ In order to enable Maven to work from within JDeveloper and command line we have
 
   /u01/app/Oracle/Middleware/oracle_common/modules/org.apache.maven_3.2.5/lib/ext/
 
-4.) encrypt your Oracle Single Sign On password with:
+5.) encrypt your Oracle Single Sign On password with:
 
   mvn --encrypt-master-password <password>
 
   save the results to clipboard
 
-5.) create file: 'settings-security.xml', put it in you maven home folder (e.g. ~/.m2/) and add this element to it using encripted password saved in step 4.:
+6.) create file: 'settings-security.xml', put it in you maven home folder (e.g. ~/.m2/) and add this element to it using encripted password saved in step 4.:
 
 ```xml
    <?xml version="1.0" encoding="UTF-8"?>
@@ -97,13 +101,13 @@ In order to enable Maven to work from within JDeveloper and command line we have
    </settingsSecurity>
 ```
 
-6.) encrypt your Oracle Single Sign On password again with:
+7.) encrypt your Oracle Single Sign On password again with:
 
    mvn --encrypt-password <password>
 
   save the results to clipboard
 
-7.) Modify the content of add 'settings.xml' file as follows. This file will be generated in your Maven home folder (e.g. ~/.m2/) the first time you run any maven command.
+8.) Modify the content of add 'settings.xml' file as follows. This file will be generated in your Maven home folder (e.g. ~/.m2/) the first time you run any maven command.
 
    a.) We have to replace <server> section with the content below that includes reference to Oracle Maven repository, your 'Oracle Single Sign On' email and encrypted Single Sign On password, saved in step 6.
 
@@ -198,7 +202,7 @@ In order to enable Maven to work from within JDeveloper and command line we have
   </profile>
 ```
 
-8.) Optionaly if you have not included <properties> in <profile> section you can
+9.) Optionaly if you have not included <properties> in <profile> section you can
 
   add it to each pom.xml
 
@@ -211,13 +215,13 @@ In order to enable Maven to work from within JDeveloper and command line we have
   </properties>
 ```
 
-9.) Now we have to test connectivity and synchronize Oracle Maven repository with our local repository by running following command:
+10.) Now we have to test connectivity and synchronize Oracle Maven repository with our local repository by running following command:
 
 ```sh
     mvn com.oracle.maven:oracle-maven-sync:12.2.1-0-0:push -DoracleHome=${ORACLE_HOME}
 ```
 
-10.) Finally to update archetype catalog with Oracle specific archetypes used to create OSB application and projects from the command line we use following command:
+11.) Finally to update archetype catalog with Oracle specific archetypes used to create OSB application and projects from the command line we use following command:
 
 ```sh
    mvn archetype:crawl -Dcatalog=$HOME/.m2/archetype-catalog.xml
