@@ -68,13 +68,17 @@ In order to enable Maven to work from within JDeveloper and command line we have
 
 2.) Set ORACLE_HOME environment variable to your middleware home and not to your database home. E.g. in Linux/Unix environment:
 
+```sh
   export ORACLE_HOME=/u01/app/Oracle/Middleware
+```
 
   The best option is to put it in shell startup file like: .profile or .bashrc
 
 3.) Set MAVEN_HOME environment variable to your middleware Maven home. E.g. in Linux/Unix environment:
 
+```sh
   export MAVEN_HOME=/u01/app/Oracle/Middleware/oracle_common/modules/org.apache.maven_3.2.5
+```
 
   Again, the best option is to put it in shell startup file like: .profile or .bashrc
 
@@ -88,7 +92,9 @@ In order to enable Maven to work from within JDeveloper and command line we have
 
 5.) encrypt your Oracle Single Sign On password with:
 
+```sh
   mvn --encrypt-master-password <password>
+```
 
   save the results to clipboard
 
@@ -103,7 +109,9 @@ In order to enable Maven to work from within JDeveloper and command line we have
 
 7.) encrypt your Oracle Single Sign On password again with:
 
+```sh
    mvn --encrypt-password <password>
+```
 
   save the results to clipboard
 
