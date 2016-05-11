@@ -5,11 +5,12 @@ reading_time:     true
 words_per_minute: 200
 # Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
 # When testing locally leave blank or use http://localhost:4000
-#url:
-url: //blog.sysco.no
+
+# url: //blog.sysco.no
 # url: //sysco-middleware.github.io
-# url: //localhost:4000/
-#baseurl: ""
+host: 0.0.0.0
+port: 4000
+baseurl: ""
 
 # Owner/author information
 owner:
@@ -42,7 +43,7 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Oslo
 future:      true
-highlighter: pygments
+highlighter: redcarpet
 markdown:    redcarpet
 gems:
   - jekyll-sitemap
@@ -61,7 +62,7 @@ kramdown:
   footnote_nr: 1
   entity_output: as_char
   toc_levels: 1..6
-  use_coderay: true
+  enable_coderay: true
 
   coderay:
     coderay_line_numbers: nil
@@ -108,4 +109,3 @@ authors:
   olveslind:
     name: Olve Slind
     twitter: olveslind
-
