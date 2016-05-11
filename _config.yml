@@ -45,8 +45,14 @@ timezone:    Europe/Oslo
 future:      true
 highlighter: redcarpet
 markdown:    redcarpet
+#highlighter: pygments
+#highlighter: rouge
+#markdown:    redcarpet
+#markdown:    kramdown
 gems:
   - jekyll-sitemap
+  - jekyll-feed
+  - jekyll-paginate
 sass:
   sass_dir: _sass
   style: compressed
@@ -109,3 +115,7 @@ authors:
   olveslind:
     name: Olve Slind
     twitter: olveslind
+  kolinnebo:
+    name: Knut Olav Linnebo
+  gugalnikov:
+    name: Arturo Viveros

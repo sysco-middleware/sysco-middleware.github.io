@@ -8,7 +8,7 @@ author: raul
 
 ## Weblogic 12.2.1 Multi-Tenant ##
 
-As a weblogic administrator the interaction among the application server and the database is often strong. In fact, according to Confio Software (2013) approximately 70% of applications’ performance problems are caused by the dataWith the development of partitions on Weblogic, Oracle has developed an infrastructure that is similar to containers and that takes advantage of the Weblogic server’s capacities such as clustering, transaction management and security [1].
+With the development of partitions on Weblogic, Oracle has developed an infrastructure that is similar to containers, which takes advantage of the Weblogic server’s capacities such as clustering, transaction management and security [1].
 
 These are the advantages of using Weblogic Server Multitenant [1]:
 
@@ -32,7 +32,7 @@ In the following diagram, the topology shows two partitions deployed on the same
 With this in mind, in this post, I will show you how to reach the topology described based on partitions. I have created a domain with a cluster and I have an Oracle Pluggable Database available so now these are the additional elements created in this post:
 
 1.	Virtual targets. According to [2] a virtual target is the target used by a resource group at the domain level and partition level. Virtual targets are targeted to managed servers or clusters and they define access points to resources.
-Virtual targets give a separate HTTP per each server as in the case of virtual hosts in Weblogic Server [2].
+Virtual targets give a separate HTTP server for each target as in the case of virtual hosts in Weblogic Server [2].
 Since virtual targets set the access to resources and resources are group by resource groups, these require one or more virtual targets. When a resource group has a global scope (related to the domain) it is possible to select any virtual target that is not assigned to a partition. On the other hand, when a resource group is assigned to a partition, this can use only available virtual targets in the partition [2].
 
 2.	Resource groups. We can define it with an example, many times when we need two environments like development and testing, we should create two domains in order to separate applications and resources such as data sources, JMS servers, etc. With the introduction of Weblogic Multi-Tenant, you can group applications and resources to create a resource group with the elements needed by each environment. In addition, we should create partitions (one per each environment) to target one or more resource groups on these partitions. This configuration can be seen in the following picture.

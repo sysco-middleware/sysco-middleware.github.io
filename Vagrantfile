@@ -24,7 +24,7 @@ Vagrant.configure(2) do |config|
   config.hostmanager.include_offline = true
 
   config.vm.define "blog" do |node|
-    node.vm.box = "jeqo/azul-zulu-8-ubuntu14"
+    node.vm.box = "jeqo/ansible-ubuntu14"
     node.vm.hostname = "sysco-middleware-blog"
 
     node.vm.network :private_network, :ip => '10.1.0.10'
