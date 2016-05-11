@@ -43,12 +43,8 @@ bing_verify:
 # http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 timezone:    Europe/Oslo
 future:      true
-highlighter: redcarpet
-markdown:    redcarpet
-#highlighter: pygments
-#highlighter: rouge
-#markdown:    redcarpet
-#markdown:    kramdown
+highlighter: rouge
+
 gems:
   - jekyll-sitemap
   - jekyll-feed
@@ -62,20 +58,6 @@ permalink:   /:categories/:title/
 
 # Amount of post to show on home page
 paginate: 5
-
-kramdown:
-  auto_ids: true
-  footnote_nr: 1
-  entity_output: as_char
-  toc_levels: 1..6
-  enable_coderay: true
-
-  coderay:
-    coderay_line_numbers: nil
-    coderay_line_numbers_start: 1
-    coderay_tab_width: 4
-    coderay_bold_every: 10
-    coderay_css: class
 
 include: [".htaccess"]
 exclude: ["lib", "config.rb", "Capfile", "config", "Gemfile", "Gemfile.lock", "README.md", "LICENSE", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules"]

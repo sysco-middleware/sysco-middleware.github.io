@@ -16,4 +16,4 @@
       file: src=/usr/bin/gem2.0 dest=/usr/local/bin/gem state=link
 
     - name: Install Jekyll Gems
-      command: gem install jekyll redcarpet
+      command: gem install jekyll

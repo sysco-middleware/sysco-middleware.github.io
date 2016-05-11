@@ -33,7 +33,6 @@ Vagrant.configure(2) do |config|
 
     node.vm.provision "ansible" do |ansible|
       ansible.playbook = "main.yml"
-      # ansible.galaxy_role_file = "roles.yml"
     end
 
     node.trigger.after [:up, :reload] do
