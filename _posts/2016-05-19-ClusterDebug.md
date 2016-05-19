@@ -25,23 +25,18 @@ Change the below setting to DEBUG
 
 ```sh
  Debug >weblogic >core 
+```
  
  cluster Collapse Node 
+```sh
  
  DebugAsyncQueue 
- 
  DebugCluster 
- 
  DebugClusterAnnouncements 
- 
  DebugClusterFragments 
- 
  DebugClusterHeartbeats 
- 
  DebugLeaderElection 
- 
  DebugReplication 
- 
  DebugReplicationDetails 
 ```
 
