@@ -23,9 +23,8 @@ Change the below setting to DEBUG
 
  enable below debugs from the weblogic admin console. 
 
- ```sh
+```sh
  Debug >weblogic >core 
-```
  
  cluster Collapse Node 
  
@@ -44,6 +43,7 @@ Change the below setting to DEBUG
  DebugReplication 
  
  DebugReplicationDetails 
+```
 
 
  Change the logging severity to Debug 
