@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Cluster debugging?
+title: Cluster debugging - some tips
 categories: oracle soa
 tags: [Oracle, Clustering, SOA]
 author: jphjulstad
@@ -12,18 +12,18 @@ In one environment we had problems with cluster stability - and there were unnec
 Here are some settings that gave more info in logs. Set the following for the JVM:
 
 ```
--Dweblogic.debug.DebugServerMigration=true 
- -Dweblogic.debug.DebugSingletonServices=true 
+-Dweblogic.debug.DebugServerMigration=true -Dweblogic.debug.DebugSingletonServices=true 
 ```
  
 Change the below setting to DEBUG 
-```
+
+```bash
  Home >Summary of Servers >AdminServer >Logging >General >Advanced >Minimum severity to log: 
 ```
 
  enable below debugs from the weblogic admin console. 
 
- ```
+ ```bash
  Debug >weblogic >core 
  cluster Collapse Node 
  DebugAsyncQueue 
