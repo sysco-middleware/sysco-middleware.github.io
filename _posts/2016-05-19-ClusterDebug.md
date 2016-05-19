@@ -25,14 +25,23 @@ Change the below setting to DEBUG
 
  ```bash
  Debug >weblogic >core 
+ 
  cluster Collapse Node 
+ 
  DebugAsyncQueue 
+ 
  DebugCluster 
+ 
  DebugClusterAnnouncements 
+ 
  DebugClusterFragments 
+ 
  DebugClusterHeartbeats 
+ 
  DebugLeaderElection 
+ 
  DebugReplication 
+ 
  DebugReplicationDetails 
 ```
 
