@@ -2,7 +2,7 @@
 layout: post
 title: Cluster debugging - some tips
 categories: oracle soa
-tags: [Oracle, Clustering, SOA]
+tags: [Oracle, Clustering, SOA, Debugging]
 author: jphjulstad
 ---
 
@@ -46,9 +46,12 @@ Change the below setting to DEBUG
 ```
 
  Change the logging severity to Debug 
- ```
+ 
+```bash
  Servers-->Server_name-->Logging-->Advanced--> Standard out :Severity level:Debug 
  Log file :Severity level:Debug 
 ```
+
+Restart.
 
 Also look at Cluster >> Monitoring >> Summary to see the number of sent / received / retransmitted. For a healthy system sent and received should be almost same - and retransmissions low.
