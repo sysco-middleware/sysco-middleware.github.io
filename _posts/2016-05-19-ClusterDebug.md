@@ -17,13 +17,13 @@ Here are some settings that gave more info in logs. Set the following for the JV
  
 Change the below setting to DEBUG 
 
-```bash
+```sh
  Home >Summary of Servers >AdminServer >Logging >General >Advanced >Minimum severity to log: 
 ```
 
  enable below debugs from the weblogic admin console. 
 
- ```bash
+ ```sh
  Debug >weblogic >core 
  
  cluster Collapse Node 
@@ -47,7 +47,7 @@ Change the below setting to DEBUG
 
  Change the logging severity to Debug 
  
-```bash
+```sh
  Servers-->Server_name-->Logging-->Advanced--> Standard out :Severity level:Debug 
  Log file :Severity level:Debug 
 ```
