@@ -25,6 +25,7 @@ Change the below setting to DEBUG
 
  ```sh
  Debug >weblogic >core 
+```
  
  cluster Collapse Node 
  
@@ -43,7 +44,7 @@ Change the below setting to DEBUG
  DebugReplication 
  
  DebugReplicationDetails 
-```
+
 
  Change the logging severity to Debug 
  
