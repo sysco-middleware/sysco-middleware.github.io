@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Cluster debugging - some tips
+title: WLS Cluster debugging - some tips
 categories: oracle soa
 tags: [Oracle, Clustering, SOA, Debugging]
 author: jphjulstad
 ---
 
-# Some tips when debugging cluster stability
+# Some tips when debugging WLS cluster stability
 In one environment we had problems with cluster stability - and there were unnecessary migrations of JMS Servers.
 
 Here are some settings that gave more info in logs. Set the following for the JVM:
