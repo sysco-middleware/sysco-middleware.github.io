@@ -18,14 +18,14 @@ The machines in the example are called clienthost, jumphost and serverhost.
 
 **_Jumphost   --> the machine in the middle_**
 
-**Serverhost --> the machine which you are going to log into**
+**_Serverhost --> the machine which you are going to log into_**
 
 
 
 Earlier you typically logged into the machines like this:
 
  
-*clienthost --> jumphost --> serverhost*
+**_clienthost --> jumphost --> serverhost_**
 
 Eks (putty)
 
