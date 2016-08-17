@@ -10,11 +10,16 @@ Simplifying ssh login to Linux by using Bash on Ubuntu on Windows 10
 
 Earlier you had to install/use third party software in Windows to run ssh. The new Bash on Ubuntu on Windows gives Windows new built in possibilities.  Under is an explanation on howto setup and login into a machine in an organization which is behind a jumphost. Earlier you typically used putty, cygwin, etc.. for this.
  
+
 The machines in the example are called clienthost, jumphost and serverhost.
 
-+Clienthost is your Windows machine
-+Jumphost is the machine in the middle
-+Serverhost is the machine which you are going to log into
+
+*Clienthost --> your Windows machine*
+
+*Jumphost   --> the machine in the middle*
+
+*Serverhost --> the machine which you are going to log into*
+
 
 
 Earlier you typically logged into the machines like this:
