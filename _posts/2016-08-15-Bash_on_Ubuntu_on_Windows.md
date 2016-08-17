@@ -12,12 +12,11 @@ Earlier you had to install/use third party software in Windows to run ssh. The n
  
 The machines in the example are called clienthost, jumphost and serverhost.
 
- 
 +Clienthost --> your Windows machine
-+ Jumphost   --> the machine in the middle
-+*Serverhost --> the machine which you are going to log into*
++Jumphost   --> the machine in the middle
++Serverhost --> the machine which you are going to log into
 
- 
+
 Earlier you typically logged into the machines like this:
 
  
