@@ -14,11 +14,11 @@ Earlier you had to install/use third party software in Windows to run ssh. The n
 The machines in the example are called clienthost, jumphost and serverhost.
 
 
-*Clienthost --> your Windows machine*
+**_Clienthost --> your Windows machine_**
 
-*Jumphost   --> the machine in the middle*
+**_Jumphost   --> the machine in the middle_**
 
-*Serverhost --> the machine which you are going to log into*
+**Serverhost --> the machine which you are going to log into**
 
 
 
