@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Bash on Ubuntu on Windows
-categories: exalogic
+categories: windows bash
 tags: [windows, windows 10, linux, ubuntu, ssh]
 author: pah
 ---
@@ -50,9 +50,11 @@ myuser@serverhost's password:
 
 ```
 
-You can also do the last one in Bash on Ubuntu for Windows.
+You can also do the last one in Bash on Ubuntu for Windows. 
+
  
   - The -t option is to force pseudo-tty allocation
+
  
 So how can we simplify this. This is nothing new in windows bash. Just to exploit the new possibilities. Start the bash shell on Ubuntu on Windows.
 
