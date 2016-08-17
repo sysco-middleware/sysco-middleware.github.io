@@ -15,7 +15,6 @@ The machines in the example are called clienthost, jumphost and serverhost.
 
 
 *Clienthost --> your Windows machine*
-
 *Jumphost   --> the machine in the middle*
 
 *Serverhost --> the machine which you are going to log into*
