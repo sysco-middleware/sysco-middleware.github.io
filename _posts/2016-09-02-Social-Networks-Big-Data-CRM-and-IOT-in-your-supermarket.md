@@ -1,15 +1,16 @@
 ---
 layout: post
-title: Social networks, Big Data, CRM and IOT in your supermarket
+title: Social networks, Big Data, CRM and IoT in your supermarket
 categories: CRM IoT Big Data
 tags: [Crm, IoT, Big Data, Business Case]
 author: kresimirjuric
 ---
 
+How to make your customer's shopping experience unforgettable
 
 ![Cover](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Cover.png)
 
-Customer’s decision making has been demonstrated as something not based upon fully rational behavior. There is therefore no optimal solution but only good enough which will lead the consumer. Therefore, we need to create a surrounding in which our customer will feel great and we need to provide him with the relevant information so that we can tailor his buying experience.
+Customer’s decision making has been demonstrated as something not based upon fully rational behavior. There is therefore no optimal solution but only good enough which will lead the consumer. Therefore, we need to create a surrounding in which our customer will feel great and we need to provide him with the relevant information so that we can tailor his shopping experience.
 
 Using Social connectors for capturing data, Big Data for analyzing it, then providing analyzed data to CRM which uses IoT to communicate with the customer, we can create the surrounding and interaction which is optimal for each individual customer, which leads to the customer’s loyalty and to maximizing customer’s value.
 We shall now take a look at three different scenarios in our fictional supermarket and see how we can use Social Networks, Big Data, CRM and IoT systems to engage our customers.
@@ -57,7 +58,7 @@ In this scenario we could gather the information from the customer’s social ne
 ![Scenario 3.](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Scenario 3.png)
 
 But why to stop there? We can also become familiar with what kind of music and even lightning our customer prefers, so we can tailor the best shopping experience for our customer.
-With this approach, we have achieved customer loyalty and we can maximize the impact of our interaction which leads to better upsell and cross-sell, and which consequently, leads to greater customer value.
+With this approach, we have achieved customer loyalty and we can maximize the impact of our interaction which leads to better up-sell and cross-sell, and which consequently, leads to greater customer value.
 
 
 In my next post we will discuss how we can achieve the third scenario using Oracle products.
