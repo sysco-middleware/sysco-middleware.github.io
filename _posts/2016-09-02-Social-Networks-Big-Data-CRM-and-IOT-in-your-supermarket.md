@@ -48,8 +48,11 @@ As we already established, we do not make decisions based on the facts. We make 
 The first thing that we need to do is to gather the information. In a previous scenario, we have used our “in house” data about the purchases to model our interaction with each customer.
 We can do predictions from his behavior, but it is not optimal, because the data that we have does not provide us the complete picture.
 Let’s investigate further this scenario. We have all the information about our customer from our “in house” database and we know he prefers to buy the stakes. When our customer is walking near a meat produce isle, we inform him that we have a discount on stakes and a barbeque sauce, but the information that we did not know was that our customer has chosen a vegetarian lifestyle.
+
 In this scenario our messages have had a negative impact on customer’s shopping experience, but how we were able to know that?
+
 Easy, all the information that were needed for us to communicate the best information to our customer is available on the Social Networks. We can use Social Network connectors to gather the information involving our customers, so that we can achieve the best interaction and also we can tailor buying experience per customer.
+
 In this scenario we could gather the information from the customer’s social network which would inform us about his lifestyle change. Knowing this, we could use Big Data to do the analysis consisting of his own behaviors and the data that we have about the other people who have been doing a similar lifestyle change to communicate the best offer to our customer.
 
 ![Scenario 3.](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Scenario 3.png)
