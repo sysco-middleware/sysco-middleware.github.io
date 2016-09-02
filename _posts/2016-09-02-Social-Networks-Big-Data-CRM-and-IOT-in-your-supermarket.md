@@ -8,7 +8,6 @@ author: kresimirjuric
 
 #### How to make your customer's shopping experience unforgettable ####
 
-![Cover](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Cover.png)
 
 Customer’s decision making has been demonstrated as something not based upon fully rational behavior. There is therefore no optimal solution but only good enough which will lead the consumer. Therefore, we need to create a surrounding in which our customer will feel great and we need to provide him with the relevant information so that we can tailor his shopping experience.
 
