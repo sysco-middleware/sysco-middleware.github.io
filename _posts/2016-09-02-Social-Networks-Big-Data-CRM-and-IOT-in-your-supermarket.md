@@ -6,7 +6,6 @@ tags: [Crm, IoT, Big Data, Business Case]
 author: kresimirjuric
 ---
 
-## Social networks, Big Data, CRM and IOT in your supermarket ##
 
 ![Cover](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Cover.png)
 
