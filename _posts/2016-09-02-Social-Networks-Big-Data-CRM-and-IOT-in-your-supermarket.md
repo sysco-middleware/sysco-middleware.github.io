@@ -6,7 +6,7 @@ tags: [Crm, IoT, Big Data, Business Case]
 author: kresimirjuric
 ---
 
-How to make your customer's shopping experience unforgettable
+#### How to make your customer's shopping experience unforgettable ####
 
 ![Cover](/images/2016-09-02-Social-Networks-Big-Data-CRM-and-IoT-in-your-supermarket/Cover.png)
 
