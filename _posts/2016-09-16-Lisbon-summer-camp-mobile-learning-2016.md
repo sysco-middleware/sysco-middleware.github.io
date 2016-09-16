@@ -110,7 +110,7 @@ We added new resources like apis and connectors, I will show bellow:
 
   package.json
 
-  ```javascript
+```javascript
   {
   "name" : "summitapplicationapi_13",
   "version" : "1.0.0",
@@ -123,7 +123,8 @@ We added new resources like apis and connectors, I will show bellow:
        }
       }
    }
-   ```
+
+```
 
   Here we could define and handle the json request or response of the connector while the API rest services are invoked.
  ![](/images/2016-09-16-Lisbon-summer-camp-mobile-learning-2016/MCS-APISimplementationJson.jpg)
