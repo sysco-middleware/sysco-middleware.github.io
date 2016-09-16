@@ -109,7 +109,8 @@ We added new resources like apis and connectors, I will show bellow:
   - summitapplicationapi_00.js is the main javascript file. The functions included in the javascript file define where we are expecting API implementation code to appear.
 
   package.json
-  ```json
+
+  ```javascript
   {
   "name" : "summitapplicationapi_13",
   "version" : "1.0.0",
@@ -123,6 +124,7 @@ We added new resources like apis and connectors, I will show bellow:
       }
    }
    ```
+
   Here we could define and handle the json request or response of the connector while the API rest services are invoked.
  ![](/images/2016-09-16-Lisbon-summer-camp-mobile-learning-2016/MCS-APISimplementationJson.jpg)
 
