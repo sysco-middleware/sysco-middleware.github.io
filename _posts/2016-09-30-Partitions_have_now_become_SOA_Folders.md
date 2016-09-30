@@ -9,12 +9,16 @@ Have you upgraded to Oracle SOA Suite 12.2.1.1 and can't find the Partitions con
 
 Between Oracle SOA Suite 12.2.1.0 and 12.2.1.1 Partitions have been renamed to SOA Folders.
 
+12.2.1.0
 ![From 12.2.1 docs](/images/2016-09-30_Partitions_have_now_become_SOA_Folders/index_1221.png)
 
+12.2.1.1
 ![From 12.2.1.1 docs](/images/2016-09-30_Partitions_have_now_become_SOA_Folders/index_12211.png)
 
+12.2.1.0
 ![From 12.2.1 docs](/images/2016-09-30_Partitions_have_now_become_SOA_Folders/doc_1221.png)
 
+12.2.1.1
 ![From 12.2.1.1 docs](/images/2016-09-30_Partitions_have_now_become_SOA_Folders/doc_12211.png)
 
 Why would Oracle do this in a minor update?
