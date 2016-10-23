@@ -5,7 +5,7 @@ categories: osb messaging
 tags: [OSB, UMS]
 author: cliops
 ---
-In this post, we will how to send emails using a UMS adapter in OSB 12c. There we go:
+In this post, we will learn how to send emails using a UMS adapter in OSB 12c. There we go:
 
 ### Configuration in the server side ###
 
