@@ -39,8 +39,13 @@ And set a output parameter, let say htmlEncodedContent
 
 ![](/images/2016-11-27-UMS_Adapter_send_html_content_email_OSB_12C/Image6.JPG)
 
-Finally, replace the content body with the request of the UMS business service as the image bellow.
+Replace the content body with the request of the UMS business service as the image bellow.
 
 ![](/images/2016-11-27-UMS_Adapter_send_html_content_email_OSB_12C/Image7.JPG)
+
+Finally, go to routing and include a transport header. Add the following header field name "jca.ums.part.content-type" and the value 'text/html; charset=utf-8' as the image bellow.
+
+![](/images/2016-11-27-UMS_Adapter_send_html_content_email_OSB_12C/Image8.JPG)
+This setting will be used to handle html content in the email.
 
 Deploy changes and enjoy sending email with HTML content. Good luck!
