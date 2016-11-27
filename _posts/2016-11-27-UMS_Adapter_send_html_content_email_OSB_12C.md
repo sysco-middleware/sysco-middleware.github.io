@@ -9,7 +9,7 @@ In this post, we will learn how to send html content for the emails using a UMS 
 
 ### Pre-requirements ###
 
-First, we need to verify that we have the UMS adapter and the email driver already working. These configurations are in the previous post [Use HTML Content with UMS Adapters in OSB 12c](http://blog.sysco.no/osb/messaging/UMS_Adapter_send_email_OSB_12C/).
+First, we need to verify that we have the UMS adapter and the email driver already working. These configurations are in the previous post [Using UMS Adapter to send emails with OSB 12c](http://blog.sysco.no/osb/messaging/UMS_Adapter_send_email_OSB_12C/).
 
 ### Steps ###
 
