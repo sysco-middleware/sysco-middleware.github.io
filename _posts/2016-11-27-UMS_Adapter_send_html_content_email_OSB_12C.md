@@ -5,15 +5,15 @@ categories: osb messaging
 tags: [OSB, UMS]
 author: cliops
 ---
-In this post, we will learn how to send hmtl content for the emails using a UMS adapter in OSB 12c. There we go:
+In this post, we will learn how to send html content for the emails using a UMS adapter in OSB 12c. There we go:
 
 ### Pre-requirements ###
 
-First, we need to verify that we have the UMS adapter and the email driver already working. These configurations are in the previous post [Create custom sql statements in polling DbAdapters with OSB 12c](http://blog.sysco.no/osb/messaging/UMS_Adapter_send_email_OSB_12C/).
+First, we need to verify that we have the UMS adapter and the email driver already working. These configurations are in the previous post [Use HTML Content with UMS Adapters in OSB 12c](http://blog.sysco.no/osb/messaging/UMS_Adapter_send_email_OSB_12C/).
 
 ### Steps ###
 
-Then, now we have to edit the UMS adapter and go to the step 5, Set the option "Message is Opaque (Base64Binary)"
+So first we have to edit the UMS adapter and go to the step 5, Set the option "Message is Opaque (Base64Binary)"
 
  ![](/images/2016-11-27-UMS_Adapter_send_html_content_email_OSB_12C/Image1.JPG)
 
