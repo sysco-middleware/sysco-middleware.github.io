@@ -14,17 +14,17 @@ What do you feel when you hear word “database”? What about “database model
 
 What I want is to discuss today a tool called SQL Developer Data Modeler (SQL DDM). As always, no 100 pages analysis, only some particular facts from experience. Some time ago, I needed to develop database model and my knowledge in this area at that point was so good.
 
-![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/Planets.jpg)
+![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/Planetspic.jpg)
 
 [Source][1]
 
 So, after some internet surfing I found several options which are available on the market as a free of charge tools. One of them was SQL Developer Data Modeler.
 
-![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/SQLModeler.jpg)
+![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/SQLModelerpic.jpg)
 
 Strangely enough that product was a “rare guest” in the data modelling discussions on the different forums. Why strangely? That we will find out very soon. So, I started from preliminary GUI analysis.
 
-![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/BabyPC.jpg)
+![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/BabyPCpic.jpg)
 
 [Source][2]
 
@@ -56,14 +56,14 @@ Point number…whatever:
 These features are definitely rare, which brings possibility to construct complex models for enterprise level needs involving several developers and designers at the same time.
 As an extra, there are several very useful features: built in quality check, three different notation types, DDL preview, easy reporting tool, advanced search engine, wide variety of import sources and export targets (yes, it is not only for Oracle databases, but also MS SQL Server and IBM DB2).
 
-![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/NotBad.jpg)
+![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/NotBadpic.jpg)
 
 I would not say that SQL DDM is absolutely best in all categories rather that for a free of charge tool, with all these features it is very hard to find a better alternative. That’s true, some pretty expensive software products are available and deliver very good performance and have very high flexibility, but again it is crucial to understand what the goals of the particular task are and what you actually need. SQL DDM will also suit very well for wide variety of users, starting from very beginners and up to experienced professional developers.
 For those who as interested, my advice is to read this blog - [Check here][3]. It helped me to get going with the tool. A lot of good tips and tricks and generally it is a good practice to learn from the best. And, of course, official documentation is pretty well written - [right here][4].
 
 As I mentioned before, I think…
 
-![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/WhoCares.jpg)
+![](/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/WhoCarespic.jpg)
 
 [Source][5]
 
