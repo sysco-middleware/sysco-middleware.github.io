@@ -22,7 +22,7 @@ an independent repository: [github.com/jeqo/oracle-soa-12c-docker](https://githu
 Basically Dockerfile scripts were moved to shell scripts and are called
 from Packer.
 
-```json
+```json 
   "provisioners": [
     {
       "type": "shell",
@@ -41,7 +41,7 @@ from Packer.
         "scripts/install-java.sh"
       ],
       "environment_vars": [
-        "JAVA_RPM=/data/{{user `java_rpm`}}"
+        {% raw %}"JAVA_RPM=/data/{{user `java_rpm`}}"{% endraw %}
       ]
     },
     {
@@ -50,11 +50,11 @@ from Packer.
         "scripts/install-soa.sh"
       ],
       "environment_vars": [
-        "SOA_ZIP=/data/{{user `soa_zip`}}",
+        {% raw %}"SOA_ZIP=/data/{{user `soa_zip`}}",
         "SOA_PKG={{user `soa_pkg`}}",
         "SOA_PKG2={{user `soa_pkg2`}}",
         "JAVA_HOME=/usr/java/default",
-        "MW_HOME=/u01/oracle/soa"
+        "MW_HOME=/u01/oracle/soa"{% endraw %}
       ]
     }
   ]
