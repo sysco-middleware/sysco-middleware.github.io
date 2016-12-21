@@ -64,6 +64,9 @@ It has to look something like this:
 
 ![](/images/2016-12-20-SFTP_Transfer_in_Oracle_Service_Bus_12c/KnownHostsFile.jpg)
 
+> **Handle the 'known_hosts' file extra carefully, and make sure that file has no CR/LF at the end.
+So the file should always be backed up before changing, or might even be added to subversion.**
+
 To obtain the SSH Public Key you need to GET public key (login to the weblogic with putty and run command from the root):
 
 **ssh-keyscan -t rsa,dsa sftp-endpoint-example-dev.org**
