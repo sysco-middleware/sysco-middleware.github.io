@@ -20,41 +20,41 @@ To start and stop AdminServer and the managed servers, we use a Jython (Python) 
 import sys
 
 def startAdmin():
-    print 'Starting AdminServer' 
+    print 'Starting AdminServer'
     nmConnect(userConfigFile=nmUserFile, userKeyFile=nmKeyFile, host=nmHost, port=nmPort, domainName=domain, domainDir=domainPath, nmType=nmType)
-    nmStart('AdminServer') 
+    nmStart('AdminServer')
     nmDisconnect()
     return
 
 def stopAdmin():
-    print 'Stopping AdminServer' 
-    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl) 
+    print 'Stopping AdminServer'
+    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl)
     shutdown('AdminServer', force='true')
     disconnect()
     return
 
 def startManaged(managed):
-    print 'Starting ', managed 
-    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl) 
+    print 'Starting ', managed
+    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl)
     start(managed)
     disconnect()
 return
 
 def stopManaged(managed):
-    print 'Stopping ', managed 
-    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl) 
-    shutdown(managed, force='true') 
+    print 'Stopping ', managed
+    connect(userConfigFile=wlsUserFile, userKeyFile=wlsKeyFile, url=adminUrl)
+    shutdown(managed, force='true')
     disconnect()
 return
 
-if ((len(sys.argv) < 2) | (len(sys.argv) > 3)): 
+if ((len(sys.argv) < 2) | (len(sys.argv) > 3)):
     print ' Wrong number of arguments'
 elif (sys.argv[1] == 'startadmin'):
     startAdmin()
-elif (sys.argv[1] == 'stopadmin'): 
+elif (sys.argv[1] == 'stopadmin'):
     stopAdmin()
-elif (sys.argv[1] == 'start'): 
-    startManaged(sys.argv[2]) 
+elif (sys.argv[1] == 'start'):
+    startManaged(sys.argv[2])
 elif (sys.argv[1] == 'stop'):
     stopManaged(sys.argv[2])
 ```
@@ -80,15 +80,15 @@ adminUrl must point to the AdminServer (often a VIP address) while nmHost points
 *config.properties*
 
 ```bash
-adminUrl=t3://wls12c.dev.sysco.no:7001 
+adminUrl=t3://wls12c.dev.sysco.no:7001
 nmHost=wls12c.dev.sysco.no
-nmPort=5556 
-nmUserFile=/u01/app/oracle/config/nmUserFile 
-nmKeyFile=/u01/app/oracle/config/nmKeyFile 
-nmType=plain 
-wlsUserFile=/u01/app/oracle/config/wlsUserFile 
-wlsKeyFile=/u01/app/oracle/config/wlsKeyFile 
-domain=mydomain 
+nmPort=5556
+nmUserFile=/u01/app/oracle/config/nmUserFile
+nmKeyFile=/u01/app/oracle/config/nmKeyFile
+nmType=plain
+wlsUserFile=/u01/app/oracle/config/wlsUserFile
+wlsKeyFile=/u01/app/oracle/config/wlsKeyFile
+domain=mydomain
 domainPath=/u01/app/oracle/user_projects/domains/mydomain
 ```
 
@@ -178,7 +178,7 @@ start() {
 
         RETVAL=$?
         echo
-        [ $RETVAL -eq 0 ] &amp;&amp; touch $LOCKFILE
+        [ $RETVAL -eq 0 ] && touch $LOCKFILE
 }
 
 stop() {
@@ -191,7 +191,7 @@ stop() {
         fi
         echo
         /bin/rm -f $NodeManagerLockFile
-        [ $RETVAL -eq 0 ] &amp;&amp; rm -f $LOCKFILE
+        [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
 
 }
 
@@ -232,7 +232,7 @@ The weblogic scripts call the startall.sh when the server starts, and stopall.sh
 # description: Oracle Weblogic service
 
 ### BEGIN INIT INFO
-# Provides: 
+# Provides:
 # Required-Start: $nodemanager
 # Required-Stop:
 # Should-Start:
@@ -261,13 +261,13 @@ RETVAL=0
 start() {
  echo -n $"Starting $SERVICE_NAME: "
  /bin/su $DAEMON_USER -c "$PROGRAM_START &amp;" RETVAL=$?
- echo [ $RETVAL -eq 0 ] &amp;&amp; touch $LOCKFILE
+ echo [ $RETVAL -eq 0 ] && touch $LOCKFILE
 }
 
  stop() {
  echo -n $"Stopping $SERVICE_NAME: "
  /bin/su $DAEMON_USER -c "$PROGRAM_STOP &amp;" RETVAL=$?
- [ $RETVAL -eq 0 ] &amp;&amp; rm -f $LOCKFILE
+ [ $RETVAL -eq 0 ] && rm -f $LOCKFILE
  }
 
  restart() {
@@ -293,5 +293,4 @@ esac
 exit 1
 ```
 
-For both the nodemanager and the weblogic scripts, they must be made runable (chmod 0755) and activated (chkconfig --add) before they will be used next time the server starts or stops.
-
+For both the nodemanager and the weblogic scripts, they must be made runnable (chmod 0755) and activated (chkconfig --add) before they will be used next time the server starts or stops.
