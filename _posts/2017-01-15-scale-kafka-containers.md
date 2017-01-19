@@ -14,6 +14,7 @@ the cluster.
 
 ***
 Repository: https://github.com/jeqo/post-scale-kafka-containers
+
 ***
 
 # Single-Node Cluster
@@ -237,4 +238,5 @@ And, you know, run ...
 
 ***
 Published originally here: https://jeqo.github.io/post/2017-01-15-scale-kafka-containers/
+
 ***

@@ -24,12 +24,25 @@ Vagrant.configure(2) do |config|
   config.hostmanager.include_offline = true
 
   config.vm.define "blog" do |node|
-    node.vm.box = "jeqo/ansible-ubuntu14"
+    node.vm.box = "debian86-vagrant"
     node.vm.hostname = "sysco-middleware-blog"
 
-    node.vm.network :private_network, :ip => '10.1.0.10'
+    # node.vm.network :private_network, :ip => '10.1.0.10'
 
-    node.hostmanager.aliases = %w(sysco-middleware-blog.localdomain)
+    # node.hostmanager.aliases = %w(sysco-middleware-blog.localdomain)
+
+    node.vm.network :public_network,
+        :dev => "virbr0",
+        :mode => "bridge",
+        :type => "bridge"
+
+    node.vm.provider :libvirt do |libvirt|
+      libvirt.driver = "kvm"
+      libvirt.uri = "qemu+unix:///system"
+      libvirt.memory = 512
+      libvirt.cpus = 1
+      libvirt.host = "sysco-middleware-blog.localdomain"
+    end
 
     node.vm.provision "ansible" do |ansible|
       ansible.playbook = "main.yml"
