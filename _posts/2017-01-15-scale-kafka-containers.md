@@ -13,7 +13,7 @@ the cluster.
 <!--more-->
 
 ***
-Repository: https://github.com/jeqo/post-scale-kafka-containers
+Repository: [https://github.com/jeqo/post-scale-kafka-containers](https://github.com/jeqo/post-scale-kafka-containers)
 
 ***
 
@@ -237,6 +237,6 @@ And, you know, run ...
 <script async src="//platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 ***
-Published originally here: https://jeqo.github.io/post/2017-01-15-scale-kafka-containers/
+Published originally here: [https://jeqo.github.io/post/2017-01-15-scale-kafka-containers/](https://jeqo.github.io/post/2017-01-15-scale-kafka-containers/)
 
 ***
