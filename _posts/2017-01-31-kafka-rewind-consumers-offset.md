@@ -51,8 +51,7 @@ Before continue, let's check a simple Kafka Producer implemented with Java:
 
 `KafkaSimpleProducer.java`:
 
-
-{{< highlight java >}}
+```java
 public static void main(String[] args) {
     ...
     Properties properties = new Properties();
@@ -72,7 +71,7 @@ public static void main(String[] args) {
             .forEach(result -> printMetadata(result));
     producer.close();
 }
-{{</ highlight >}}
+```
 
 This will create 100 `records` in topic `topic-1`, with `offsets` from 0-99
 
@@ -148,7 +147,7 @@ So I will focus in options available in `Kafka Consumer`.
 
 A simple Consumer will look something like this:
 
-{{< highlight java >}}
+```java
 public static void main(String[] args) {
     Properties props = new Properties();
     props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
@@ -167,7 +166,7 @@ public static void main(String[] args) {
             System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
     }
 }
-{{</ highlight >}}
+```
 
 This will poll by `100ms` for records and print them out.  In this case
 it should print 100 records.
@@ -186,7 +185,7 @@ this also deserves its own post.
 To go to the beginning we can use `#seekToBeginning(topicPartition)`
 operation to go back to earliest offset:
 
-{{< highlight java >}}
+```java
 boolean flag = true;
 
 while (true) {
@@ -201,7 +200,7 @@ while (true) {
     for (ConsumerRecord<String, String> record : records)
         //Consume record
 }
-{{</ highlight >}}
+```
 
 Once the seek to beginnning is done, it will reprocess all records from
 `topic=topic-1` and `partition=0`.
@@ -212,7 +211,7 @@ If we can recognized the specific `record` (by `partition`)
 from where we need to reprocess all the log,
 we can use `#seek(topicPartition, offset)` directly.
 
-{{< highlight java >}}
+```java
 boolean flag = true;
 
 while (true) {
@@ -226,7 +225,7 @@ while (true) {
     for (ConsumerRecord<String, String> record : records)
         System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 }
-{{</ highlight >}}
+```
 
 In this case, we will consume from `record` with `offset=90`from
 `topic=topic-1` and `partition=0`.
@@ -248,7 +247,7 @@ were added and a new operation was added to `Kafka Consumer API`: `#offsetsForTi
 
 Here is how to use it:
 
-{{< highlight java >}}
+```java
 boolean flag = true;
 
 while (true) {
@@ -272,7 +271,7 @@ while (true) {
     for (ConsumerRecord<String, String> record : records)
         System.out.printf("offset = %d, key = %s, value = %s%n", record.offset(), record.key(), record.value());
 }
-{{</ highlight >}}
+```
 
 In this case, we are using a query first to get the offset inside a timestamp (10 minutes ago)
 and then using that offset to go back with `#seek` operation.
