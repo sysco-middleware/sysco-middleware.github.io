@@ -10,7 +10,7 @@ author: kresimirjuric
 
 #### Human side of IT in Business environment ####
 
-
+iPhone changed way we use and develop our apps on smartphones. Is docker changing classical Business IT environment in same way?
 
 
 ### 1. What has changed? ###
