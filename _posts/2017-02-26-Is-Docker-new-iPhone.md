@@ -3,7 +3,7 @@ layout: post
 title: Is Docker new iPhone?
 categories: CRM IoT Big Data
 tags: [Docker, DevOps]
-author: Kresimir Juric
+author: kresimirjuric
 ---
 
 ![Is Docker new iPhone](/images/2017-02-26-Is-Docker-new-iPhone/HeadPicture.png)
