@@ -20,6 +20,6 @@ The event did go through many services - and the participants got hands-on exper
 
 They also got a sneak preview of the new API Platform we all are waiting from.
 
-The hands-on was lead by local and EMEA resources from Oracle in cooperation with Sysco. Thanks to all that contributed - Jan Leemans, Tim Graves, Ian Wallis, Bjarte Drivenes, Bastiaan Van Os, Inge Os, Cato Aune, Jürgen Kress, Thrasos Thrasyvoulou, Ulle Strobel and Ann-Sofie Often.
+The hands-on was lead by local and EMEA resources from Oracle in cooperation with Sysco. Thanks to all that contributed - Jan Leemans, Tim Graves, Ian Wallis, Bjarte Drivenes, Bastiaan Van Os, Inge Os, Cato Aune, Jürgen Kress, Thrasos Thrasyvoulou, Ulla Strobel and Ann-Sofie Often.
 
-We are looking forward to host a similar event later.
+We are looking forward to host a similar event later. 
