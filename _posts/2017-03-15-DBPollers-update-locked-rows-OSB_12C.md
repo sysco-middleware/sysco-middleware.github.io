@@ -5,7 +5,7 @@ categories: osb dbpollers
 tags: [OSB, DBpollers]
 author: cliops
 ---
-In this post, we will learn some ways to handle a database row that is locked by a Databse Adapter with Distributed polling capablity in OSB 12c. There we go:
+In this post, we will learn some ways to handle a database row that is locked by a Database Adapter with Distributed polling capablity in OSB 12c. There we go:
 
 ### Introduction ###
 
