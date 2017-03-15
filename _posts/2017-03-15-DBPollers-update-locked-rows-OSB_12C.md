@@ -72,7 +72,7 @@ In this case (for error handler) I'm sending POLLER_READ=0 to process again the 
 
 -Finally open the file xxx-or-mappings.xml with an external text editor and update the querying element as the source below.
 
-```HTML
+```html
 <querying>
             <queries>
                <query name="PollClientSelect" xsi:type="read-all-query">
