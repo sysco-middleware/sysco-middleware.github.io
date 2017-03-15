@@ -49,7 +49,7 @@ This would be posible if we are able to insert data. Also even when we are dupli
 
 ### 3.- Exploit the delete operation ###
 
-If we don't have acces to external resources (JMS resources) or we are not able to have permissions to write then I would like to propose this solution.
+If we don't have access to external resources (JMS resources) or we are not able to have permissions to write then I would like to propose this solution.
 
 First, create a DbPoller with Delete operation. So we will be able to modify the Poller read query and after read query. Also, I have written about this topic in the following link [Using custom SQL queries for Distributed polling in OSB 12C](http://blog.sysco.no/osb/pollers/Use_custom_sql_Distributed_Polling_OSB_12C/).
 
