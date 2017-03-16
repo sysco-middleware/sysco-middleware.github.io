@@ -10,6 +10,8 @@ If words "Cloud" and "Integration" are something you are interested in and you a
 
 This is a book review on the book “Implementing Oracle Integration Cloud Service” written by Robert van Mölken and Phil Wilkins – on PACKT. For more information visit this [link][1].
 
+![](/images/2017-03-16-Implementing_Oracle_Integration_Cloud_Service_book_review/BookCover.png)
+
 Book Details:
 
 ISBN 139781786460721
