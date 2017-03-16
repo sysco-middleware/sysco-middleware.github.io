@@ -10,8 +10,6 @@ If words "Cloud" and "Integration" are something you are interested in and you a
 
 This is a book review on the book “Implementing Oracle Integration Cloud Service” written by Robert van Mölken and Phil Wilkins – on PACKT. For more information visit this [link][1].
 
-![](/images/2017-03-16-Implementing_Oracle_Integration_Cloud Service_book_review/BookCover.png)
-
 Book Details:
 
 ISBN 139781786460721
@@ -94,12 +92,6 @@ In the last chapter of this book authors concentrate on several things: import/e
 Oracle Integration Cloud Service is a part of Oracles effort to reach for their competitors in the cloud. This book is a detailed look at what this cloud service is capable of. It describes quite an extensive amount of functionality and many different tools. Authors put in extra effort to introduce us to several tools/services/languages outside of the integration cloud scope (Apiary, Mockable.io, API Blueprint, Salesforce, Twilio etc.). It is possible to say that they have done some good job to show that ICS can be integrated with many different technologies in a simple way without very complex development.
 Book consists mainly from the different usage examples of the Integration Cloud. "Down to earth", example-based structure of the book makes it easy to read and understand some particular functions and usage scenarios.
 
-At one of the Oracle hands-on trainings I was able to go through some of the similar labs which are present in this book and can say that this books does a decent job on helping readers to visualize by suppling generous amount of pictures and diagrams.
+At one of the Oracle hands-on trainings I was able to go through some of the similar labs which are present in this book and can say that this books does a decent job on helping readers to visualize by supplying generous amount of pictures and diagrams.
 
 It is safe to say that this book is oriented on developers and sales/pre-sales specialists who want to learn about particular Oracle service and already have some general knowledge and understanding of integration principles and concepts. It is not a book for beginners or those who want to know more about cloud in general or about integration.
-
-
-
-
-
-[1]: https://www.packtpub.com/virtualization-and-cloud/implementing-oracle-integration-cloud-service
