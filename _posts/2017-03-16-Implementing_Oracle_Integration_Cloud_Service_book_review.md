@@ -95,3 +95,9 @@ Book consists mainly from the different usage examples of the Integration Cloud.
 At one of the Oracle hands-on trainings I was able to go through some of the similar labs which are present in this book and can say that this books does a decent job on helping readers to visualize by supplying generous amount of pictures and diagrams.
 
 It is safe to say that this book is oriented on developers and sales/pre-sales specialists who want to learn about particular Oracle service and already have some general knowledge and understanding of integration principles and concepts. It is not a book for beginners or those who want to know more about cloud in general or about integration.
+
+
+
+
+
+[1]: https://www.packtpub.com/virtualization-and-cloud/implementing-oracle-integration-cloud-service
