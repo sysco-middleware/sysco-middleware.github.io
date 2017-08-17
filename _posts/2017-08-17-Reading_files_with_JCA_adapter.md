@@ -3,10 +3,8 @@ layout: post
 title: Reading files in the right order with JCA FTP adapter
 categories: oracle soa osb
 tags: [Oracle, OPatch, OSB, SOA, Fusion Middleware]
-author: dalibor, cliops
+author: dalibor cliops
 ---
-
-# Introduction
 
 Weblogic server FTP JCA adapter can be used to connect to both FTP and SFTP servers from Java, SOA and OSB applications. Therefore it is important to understand how it is working and how it can be properly tuned.
 
