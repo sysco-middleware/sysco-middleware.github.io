@@ -47,7 +47,7 @@ Fig. 2\. Setting right FTP JCA adapter properties for timestamp based file retre
 
 # Testing the concept
 
-To test the configured functionality we have created several files with alphabetic names sorted in descendant order while timestamp value has been sorted ascending. All files had the same size. After logging the downloaded files we have observed that server is providing us files in right timestamp based order.
+To test the configured functionality we have created several files with alphabetic names sorted in descendant order while timestamp value has been sorted ascending. All files had the same size. After logging the downloaded files we have observed that server is providing us files in right timestamp based order. (All testing credits goes to my colegue Christoper Laurente)
 
 # Conclusion
 
