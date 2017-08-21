@@ -3,7 +3,7 @@ layout: post
 title: Reading files in the right order with JCA FTP adapter
 categories: oracle soa osb
 tags: [Oracle, OPatch, OSB, SOA, Fusion Middleware]
-author: dalibor
+author: dalibor, cliops
 ---
 
 Weblogic server FTP JCA adapter can be used to connect to both FTP and SFTP servers from Java, SOA and OSB applications. Therefore it is important to understand how it is working and how it can be properly tuned.
@@ -47,7 +47,7 @@ Fig. 2\. Setting right FTP JCA adapter properties for timestamp based file retre
 
 # Testing the concept
 
-To test the configured functionality we have created several files with alphabetic names sorted in descendant order while timestamp value has been sorted ascending. All files had the same size. After logging the downloaded files we have observed that server is providing us files in right timestamp based order. (All testing credits goes to my colegue Christoper Laurente)
+To test the configured functionality we have created several files with alphabetic names sorted in descendant order while timestamp value has been sorted ascending. All files had the same size. After logging the downloaded files we have observed that server is providing us files in right timestamp based order.
 
 # Conclusion
 
