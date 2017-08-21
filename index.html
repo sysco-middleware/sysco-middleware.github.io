@@ -22,8 +22,8 @@ image:
 	  <img style="margin-left:10px;margin-top:-15px;width:30px;border-radius: 25px;float:right;" src="/images/{{post.author}}.jpg"/>
 	  <span class="author vcard  pull-right"><span class="fn">{{ site.authors[post.author].name }}</span></span>
 {% elsif authorCount == 1 %}
-	  <img style="margin-left:10px;margin-top:-15px;width:30px;border-radius: 25px;float:right;" src="/images/{{post.author}}.jpg"/>
-	  <span class="author vcard  pull-right"><span class="fn">{{ site.authors[post.author].name }}</span></span>
+	  <img style="margin-left:10px;margin-top:-15px;width:30px;border-radius: 25px;float:right;" src="/images/{{post.authors}}.jpg"/>
+	  <span class="author vcard  pull-right"><span class="fn">{{ site.authors[post.authors].name }}</span></span>
 {% else %}
     {% for authorid in post.authors %}
         {% if forloop.first %}
