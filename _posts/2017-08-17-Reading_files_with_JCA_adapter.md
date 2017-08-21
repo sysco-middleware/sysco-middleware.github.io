@@ -3,7 +3,9 @@ layout: post
 title: Reading files in the right order with JCA FTP adapter
 categories: oracle soa osb
 tags: [Oracle, OPatch, OSB, SOA, Fusion Middleware]
-author: dalibor
+authors:
+- dalibor
+- cliops
 ---
 
 Weblogic server FTP JCA adapter can be used to connect to both FTP and SFTP servers from Java, SOA and OSB applications. Therefore it is important to understand how it is working and how it can be properly tuned.
@@ -22,7 +24,7 @@ One important thing to mention is that successful timestamp based retrieval will
 
 Now on the very first page of the adapter configuration options, as seen on the picture bellow, we have to replace **ControlDir** option value **${user.dir}** with the value that points to the directory found on the shared mounted drive that is accessible by all cluster members
 
-![](../images/2017-08-17-Reading_files_with_JCA_adapter/ControlDir.PNG)
+![](/images/2017-08-17-Reading_files_with_JCA_adapter/ControlDir.PNG)
 
 Fig. 1\. FTP JCA adapter Control directory configuration option
 
@@ -41,7 +43,7 @@ First property assures that retrieving of files will be done in right timestamp 
 
 Options can be inserted into the file as seen on the picture bellow.
 
-![](../images/2017-08-17-Reading_files_with_JCA_adapter/OrderProperties.PNG)
+![](/images/2017-08-17-Reading_files_with_JCA_adapter/OrderProperties.PNG)
 
 Fig. 2\. Setting right FTP JCA adapter properties for timestamp based file retreival
 
