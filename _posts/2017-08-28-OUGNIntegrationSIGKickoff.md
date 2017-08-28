@@ -16,5 +16,5 @@ I did present some our experiences from our SOA / OSB migrations from 11g to 12c
 
 Oracle sponsored beer and pizza - and this informal meeting was was a great success!
 
-![](/images/2017-08-28-OUGNSIG/Picture.jpeg)
+![](/images/2017-08-28-OUGNSIG/Picture.gif)
 
