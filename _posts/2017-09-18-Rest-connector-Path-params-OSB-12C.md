@@ -3,7 +3,7 @@ layout: post
 title: Handle dynamic params in metadata for REST connectors in OSB 12C
 categories: OSB tips
 tags: [REST, OSB]
-author:
+authors:
 - cliops
 - dalibor
 ---
