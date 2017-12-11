@@ -18,6 +18,6 @@ Agenda for day day 2 is to show some of the improvements in 12c (12.2) - and giv
 * Demo 4 for MDS Support in OSB 12c.
 
 Expect more demos to be added over time. All can be tailored to customer needs.
-Thanks to Dalibor and Denis for arrangis this first training.
+Thanks to Dalibor and Denis for arrangeing this first training.
 
 Contact Jon Petter to get more details if this is interesting for you. 
