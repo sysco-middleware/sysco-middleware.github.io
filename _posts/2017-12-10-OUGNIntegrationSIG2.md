@@ -5,7 +5,7 @@ categories: OUGN DevOps
 tags: [DCS, Maven, Archetypes, Jira]
 author: jphjulstad
 ---
-The second OUGN Integration SIG was dedicated to: Implementing Practical DevOps for Integration Projects. All customers and Partners do things that make them more efficient on the FMW platform - things which are not supported out of the box. The SIG is a perfect arena to share such knowledge.
+The second OUGN Integration SIG was dedicated to: Implementing Practical DevOps for Integration Projects. All customers and Partners do things that make them more efficient on the FMW platform - things which are not available out of the box. The SIG is a perfect arena to share such knowledge.
 
 ## Content ##
 More than 20 people showed up - despite a busy december.
