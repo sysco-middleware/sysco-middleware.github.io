@@ -26,6 +26,7 @@ In this post, we will take a look at 3 libraries/tools for testing end points of
 5. Summary
 
 ## 1. Application under test  
+[Application repository](https://github.com/NikitaZhevnitskiy/ern-card-game)  
 Application is a card-game RESTapi, build with: Spring-boot, kotlin, netflix tech stack (Zuul, Ribbon, Eureka) micro-services architecture. 
 Project is exam delivery for subject PG6100-1 Java enterprise-2 at [Westerdals](https://www.westerdals.no/).
 ### 2. [RestAssured](https://github.com/rest-assured/rest-assured)  
