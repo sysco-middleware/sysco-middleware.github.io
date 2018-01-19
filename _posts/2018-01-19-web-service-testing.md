@@ -38,7 +38,7 @@ Library for testing and validation REST APIs.
 In current project RestAssured uses in each module, to perform http calls and validate responses.  
 ### 2.3. Use case 
 Create new player.    
-![Use case 1](../images/2018-01-19-web-service-testing/case1.png)  
+![Use case 1](/images/2018-01-19-web-service-testing/case1.png)  
 Setup RestAssured configuration.
 `no.ern.game.player.controller.TestBase.kt`  
 ```
@@ -81,7 +81,7 @@ Wiremock provides range of opportunities to test microservices in isolation from
 * Mocking, stubbing, verifying, proxying  
 * Support SSL (HTTPS)  
 ### 3.3. Use case  
-![Use case 2 ](../images/2018-01-19-web-service-testing/case2.png)
+![Use case 2 ](/images/2018-01-19-web-service-testing/case2.png)
 Setup wiremock testbase.  
 `no.ern.game.player.controller.WiremockTestBase.kt`  
 ```
@@ -149,7 +149,7 @@ We use this library for end-to-end tests, validation and check most important co
 * Validate microservices security access
 * Validate main system features
 * Validate game logic processes 
-![Application](../images/2018-01-19-web-service-testing/case3.png)  
+![Application](/images/2018-01-19-web-service-testing/case3.png)  
 Setup docker-compose environment.
 `no.ern.game.e2etests.AuthFeatureIT` 
 ```
