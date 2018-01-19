@@ -26,22 +26,36 @@ In this post, we will take a look at 3 libraries/tools for testing end points of
 5. Summary
 
 ## 1. Application under test  
+
 [Application repository](https://github.com/NikitaZhevnitskiy/ern-card-game)  
 Application is a card-game RESTapi, build with: Spring-boot, kotlin, netflix tech stack (Zuul, Ribbon, Eureka) micro-services architecture. 
 Project is exam delivery for subject PG6100-1 Java enterprise-2 at [Westerdals](https://www.westerdals.no/).
+
 ### 2. [RestAssured](https://github.com/rest-assured/rest-assured)  
+
 ### 2.1. Definition
+
 Library for testing and validation REST APIs.  
+
 ### 2.2. Main features  
+
 * Maven / Gradle integration  
 * Json- Xml-, path for simple parse
 * JVM languages support (Java, Kotlin, etc...)  
+
 In current project RestAssured uses in each module, to perform http calls and validate responses.  
+
 ### 2.3. Use case 
+
 Create new player.    
+
 ![Use case 1](/images/2018-01-19-web-service-testing/case1.png)  
-Setup RestAssured configuration.
-`no.ern.game.player.controller.TestBase.kt`  
+
+Setup RestAssured configuration.  
+
+`no.ern.game.player.controller.TestBase.kt`    
+
+
 ```
 ...
 
@@ -54,9 +68,14 @@ fun clean() {
     RestAssured.basePath = "/players"
 }
 ...
-```         
+```   
+
+      
 Test example.  
-`no.ern.game.player.controller.PlayerControllerTest.kt`
+
+`no.ern.game.player.controller.PlayerControllerTest.kt`  
+
+
 ```
 ...
 @Test
@@ -72,19 +91,30 @@ fun createAndGetPlayer_Valid() {
             
     ...           
 }
-```
+```  
+
 ## 3. [WireMock](http://wiremock.org)
+
 WireMock is an HTTP mock server. Provide opportunity to test services in isolation.
+
 ### 3.1. Definition
+
 This library gives opportunity to trigger outbound request, mock target service and stub response.
 Wiremock provides range of opportunities to test microservices in isolation from each other.
+
 ### 3.2. Main features
+
 * Mocking, stubbing, verifying, proxying  
 * Support SSL (HTTPS)  
+
 ### 3.3. Use case  
+
 ![Use case 2 ](/images/2018-01-19-web-service-testing/case2.png)
+
 Setup wiremock testbase.  
+
 `no.ern.game.player.controller.WiremockTestBase.kt`  
+
 ```
 companion object {
     lateinit var wiremockServerItem: WireMockServer
@@ -106,8 +136,10 @@ companion object {
   
 }        
 ```
+
 Kotlin did not support `static` when application was developed (maybe it has been changed already), we used companion object instead.   
 Test example.  
+
 ```
 @Test
 fun testAddItemToPlayer_Valid() {
@@ -134,9 +166,13 @@ fun testAddItemToPlayer_Valid() {
         .post("/$savedId/items")
         .statusCode(200)
 ```
+
 ## 4. [Testcontainers](https://www.testcontainers.org/)
+
 ### 4.1. Definition
+
 In two words tests in docker containers. Testcontainers offers opportunities to test -integration, -application layers, and UI tests(i.e. with selenium).
+
 ### 4.2. Main features  
 * Simple access layer integration test: MySQL, PostgreSQL & Oracle.  
 * Tests against docker-compose environment
@@ -145,14 +181,20 @@ In two words tests in docker containers. Testcontainers offers opportunities to 
 * Generic containers (use own images)
 * Accessing containers from tests
 ### 4.3. Use case
+
 We use this library for end-to-end tests, validation and check most important components in application. Application deployed in docker-compose environment, using local docker-compose and generic containers. 
+
 * Validate infrastructure (gateway, service discovery and access)
 * Validate microservices security access
 * Validate main system features
 * Validate game logic processes 
+
 ![Application](/images/2018-01-19-web-service-testing/case3.png)  
+
 Setup docker-compose environment.
+
 `no.ern.game.e2etests.AuthFeatureIT` 
+
 ```
 ...
 companion object {
@@ -184,8 +226,11 @@ companion object {
 ...
 
 ```   
+
 Test example.  
+
 `no.ern.game.e2etests.AuthFeatureIT`   
+
 ```
 ...
 @Test
@@ -220,8 +265,10 @@ fun testLogin() {
 ```
 
 ### 4.4. Additional [Awatility](https://github.com/awaitility/awaitility)  
+
 Java library for sync async operations. It is very convenient tool to write automated test in async environment.
-```
+
+```kotlin
 await().atMost(240, TimeUnit.SECONDS)
     .ignoreExceptions()
     .until({
@@ -229,11 +276,14 @@ await().atMost(240, TimeUnit.SECONDS)
 
         true
 })
-```
+```  
+
 We use it at: 
+
 * Waiting until all nodes in application will be deployed, registered in service discovery and be accessible.
 We wait max 4 minutes, while waiting call gateway with RestAssured GET /user in a loop until success, 
-ignore any exceptions. Success symbolize that last microservice in application is UP and system  run tests, if timeout riches than fail test suite
+ignore any exceptions. Success symbolize that last microservice in application is UP and system 
+run tests, if timeout riches than fail test suite
 * Async operations: message broker processing, node communications and etc...
 
 ## 5. Summary  
