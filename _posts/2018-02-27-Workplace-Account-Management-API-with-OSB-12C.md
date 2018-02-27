@@ -55,7 +55,7 @@ Basically, the content body of the request of get user will look like this below
 
 ```
 
-If we want to create a NXSD transfomrations from this sample json then we will get an error since the fields of the json have colons ":"  that are not accepted as names of xml elements.
+If we want to create a NXSD transformation from this sample json then we will get an error since the fields of the json have colons ":"  that are not accepted as names of xml elements.
 
 ![](/images/2018-02-27-Workplace-Account-Management-API-with-OSB-12C/Image1.jpg)
 

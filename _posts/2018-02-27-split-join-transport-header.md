@@ -9,7 +9,7 @@ In this post, we will see a way to receive and transfer header parameters into a
 
 ### Create the split join WSDL ###
 
-First, we needed to create a WSDL file for the split join component.
+First, we need to create a WSDL file for the split join component.
 
 ```xml
 <?xml version= '1.0' encoding= 'UTF-8' ?>
