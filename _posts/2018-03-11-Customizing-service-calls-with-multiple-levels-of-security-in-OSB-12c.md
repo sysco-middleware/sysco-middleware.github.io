@@ -6,31 +6,31 @@ tags: [Oracle, Oracle Service Bus, JDeveloper, File Transfer, Security, Client C
 author: denzza
 ---
 
-This will be a part two of my previous post which you can read [here](http://blog.sysco.no/osb/jdeveloper/Service-call-with-multiple-levels-of-security-in-OSB-12c/ "Service call with multiple levels of security in OSB 12c").
-
-In this post I will talk about customization part of the solution for service calls with different levels of security in OSB 12c. So, we had to develop two different solutions ei. two different service calls to different environments with different levels of security.
+This will be a part two of my previous post which you can read [here](http://blog.sysco.no/osb/jdeveloper/Service-call-with-multiple-levels-of-security-in-OSB-12c/ "Service call with multiple levels of security in OSB 12c"). In this post I will talk about customization part of the solution for service calls with different levels of security in OSB 12c. So, we had to develop two different solutions ei. two different service calls to different environments with different levels of security.
 
 Let see what was the requirement in the first place, this is part of the previous post but just for a refresh:
-“In one of the Oracle Service Bus 12c integrations we had system which had different security for different environments for its services. So, for Development environment there was a simple Basic authentication (Username/Password combo) which was theirs Test environment also. Then in their Production environment they had Basic authentication + Client Certificate authentication combined. So, only two environments with two different set of security and there was no option for us to test any kind of solution in theirs one and only Dev/Test/QA environment which from now on I will refer as PREPROD. We had to do it directly in their PROD environment.”
++ In one of the Oracle Service Bus 12c integrations we had system which had different security for different environments for its services. So, for Development environment there was a simple Basic authentication (Username/Password combo) which was theirs Test environment also. Then in their Production environment they had Basic authentication + Client Certificate authentication combined. So, only two environments with two different set of security and there was no option for us to test any kind of solution in theirs one and only Dev/Test/QA environment which from now on I will refer as PREPROD. We had to do it directly in their PROD environment.
 
 So, basically what we have here is that every service call has a Proxy service as initial call. After that proxy calls Business service or in other cases calls a Pipeline. But even those business services were different. We had to develop PREPROD_Proxy and PREPROD_Business service for each service call. And then the same for PROD, we created PROD_Proxy and PROD_Business. 
 This means that you will need to replace PREPROD_Proxy for PROD_Proxy in the customization file. 
 And this can be done in the **ReferenceCustomizationType** element in your customization file:
+```xml
 <cus:customization xsi:type="cus:ReferenceCustomizationType">
+```
 
 This element is usually generated last in the customization file and here you can find your Proxy and do the change easily as **externalReferenceMap** element. For example:
 
 ```xml
 <cus:externalReferenceMap>
-      <xt:oldRef>
-        <xt:type>ProxyService</xt:type>
-        <xt:path>Testing_Security_Customization/Proxy/PutFiles_to_External_PS_PREPROD</xt:path>
-      </xt:oldRef>
-      <xt:newRef>
-        <xt:type>ProxyService</xt:type>
-        <xt:path>Testing_Security_Customization /Proxy/PutFiles_to_External_PS_PROD</xt:path>
-      </xt:newRef>
-    </cus:externalReferenceMap>
+    <xt:oldRef>
+      <xt:type>ProxyService</xt:type>
+      <xt:path>Testing_Security_Customization/Proxy/PutFiles_to_External_PS_PREPROD</xt:path>
+    </xt:oldRef>
+    <xt:newRef>
+      <xt:type>ProxyService</xt:type>
+      <xt:path>Testing_Security_Customization /Proxy/PutFiles_to_External_PS_PROD</xt:path>
+    </xt:newRef>
+</cus:externalReferenceMap>
 ```
 And the proxy will be replaced in the entire OSB project. But there is also an option if you want this to be replaced in a specific Pipeline. 
 As a last entry in the customization file just add the same element with the xsi:type="cus:ReferenceCustomizationType" to override all the changes above.
