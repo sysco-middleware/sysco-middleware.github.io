@@ -2,12 +2,8 @@
 layout: post
 title: Kafka and the state of the software industry
 categories: OpenSource
-tags:
-  - Kafka
-  - Messaging
-  - OpenSource
-authors:
-  - dalibor
+tags: [Kafka, Messaging, OpenSource]
+author: dalibor
 ---
 
 By following the latest **Kafka Summit** in London (<https://kafka-summit.org/events/kafka-summit-london-2018/>) I found analogy between software industry and long distance race where racers have different opinion about the length of the race. In 80-ties big players like IBM thought it will be a sprint that can be easily won. Small players of that time like Apple understood that they need more endurance and that race will be at least 5000 meters. No one anticipated it will be longer than that. As they passed 5000 meter line, they all realised more realistic goal should be set. So 10 000 meter limit was set. As they were approaching this goal, dispersion of runners was evident. Some ware leading in the front some are lagging behind.
