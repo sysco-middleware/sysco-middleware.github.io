@@ -7,7 +7,6 @@ author: denzza
 ---
 
 ![Fire and Forget call in OSB 11g](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g.jpg)
-----------------
 
 #####Requirement:#####
 
