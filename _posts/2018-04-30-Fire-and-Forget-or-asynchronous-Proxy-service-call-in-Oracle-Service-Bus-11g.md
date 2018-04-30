@@ -6,8 +6,6 @@ tags: [Oracle, Oracle Service Bus, Eclipse, OSB 11g, Fire and Forget, Asynchrono
 author: denzza
 ---
 
-![Fire and Forget call in OSB 11g](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g.jpg)
-
 **Requirement:**
 
 As an requirement client wanted to trigger the Integration (Oracle Service Bus 11g) in "Fire and Forget" manner or asynchronous manner. Just the option to trigger the OSB to start executing without any waiting for process to finish. 
@@ -74,7 +72,7 @@ Our requirement was to call (trigger) the OSB in scheduled times during the day.
 
 **curl -X POST http://localhost/int/TestPro/ProxyServiceTrigger --data-binary "@../request.xml" --header "SOAPAction: process"  -H "Content-Type: text/xml;charset=UTF-8"**
 
-request.xml file from the command has the content:
+**request.xml** file from the command has the content:
 
 ```xml
 <soapenv:Envelope xmlns:phar="http://xmlns.oracle.com/int_TestPro/TriggerInstructionGenerator_v1/InstructionGeneratorProcess" xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
