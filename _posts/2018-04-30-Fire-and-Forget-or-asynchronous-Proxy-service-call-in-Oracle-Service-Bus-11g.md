@@ -1,10 +1,12 @@
 ---
 layout: post
-title: "Fire and Forget" or asynchronous Proxy service call in Oracle Service Bus 11g
+title: Fire and Forget or asynchronous Proxy service call in Oracle Service Bus 11g
 categories: osb eclipse
 tags: [Oracle, Oracle Service Bus, Eclipse, OSB 11g, Fire and Forget, Asynchronous Call]
 author: denzza
 ---
+
+![Fire and Forget call in OSB 11g](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g.jpg)
 
 **Requirement:**
 
