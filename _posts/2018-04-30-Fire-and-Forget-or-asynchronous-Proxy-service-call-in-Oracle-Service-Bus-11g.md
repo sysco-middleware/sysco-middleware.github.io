@@ -15,6 +15,7 @@ In our case we had an integration which did some processing of data from the dat
 
 
 **Solution:**
+
 We already had implemented logic in the Proxy Service which takes some time to finish the process. Reason for that is that we had to call DB multiple times and it had a lot of data. So, if we call our Proxy Service directly we would need to wait until whole process is complete to get a response back. We know that asynchronous call can be achieved with additional Queue as a recommended solution in OSB 11g, but we didn’t want to have another one, because our integration already has one JMS queue and one topic. 
 First thing I have tried is to call our Proxy with another Proxy from the same project. But that of course didn’t work. 
 
@@ -60,7 +61,7 @@ Second insert should add the text to the response message.
 Your integration is now ready for deployment and a test.
 
 
-**Test**
+**Test:**
 
 To test the trigger from the SoapUI create the SoapUI project and run the test:
 
