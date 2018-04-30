@@ -8,13 +8,13 @@ author: denzza
 
 ![Fire and Forget call in OSB 11g](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g.jpg)
 
-#####Requirement:#####
+**Requirement:**
 
 As an requirement client wanted to trigger the Integration (Oracle Service Bus 11g) in "Fire and Forget" manner or asynchronous manner. Just the option to trigger the OSB to start executing without any waiting for process to finish. 
 In our case we had an integration which did some processing of data from the database couple of times and saving it to the Topic which took some time (in this case just a couple of minutes). But that was not something that the client side wanted to wait to finish and it didn’t need to wait. Specification was that they want to trigger our proxy service in the scheduled times. 
 
 
-#####Solution:#####
+**Solution:**
 We already had implemented logic in the Proxy Service which takes some time to finish the process. Reason for that is that we had to call DB multiple times and it had a lot of data. So, if we call our Proxy Service directly we would need to wait until whole process is complete to get a response back. We know that asynchronous call can be achieved with additional Queue as a recommended solution in OSB 11g, but we didn’t want to have another one, because our integration already has one JMS queue and one topic. 
 First thing I have tried is to call our Proxy with another Proxy from the same project. But that of course didn’t work. 
 
@@ -60,7 +60,7 @@ Second insert should add the text to the response message.
 Your integration is now ready for deployment and a test.
 
 
-#####Test:#####
+**Test**
 
 To test the trigger from the SoapUI create the SoapUI project and run the test:
 
@@ -68,7 +68,7 @@ To test the trigger from the SoapUI create the SoapUI project and run the test:
 
 You will not get the response in the XML instead you have to click on the Raw tab to see the response header from the service and here you see the response was OK.
 
-#####Triggering with cURL command:#####
+**Triggering with cURL command:**
 
 Our requirement was to call (trigger) the OSB in scheduled times during the day. We found that cURL command will do the job for us and with cURL it can be triggered from the external system which was responsible for triggering schedule. I will not go into details of curl command but in this case should be self explanatory:
 
