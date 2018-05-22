@@ -12,7 +12,7 @@ At Sysco we have recently started using Vue.js. Vue is an amazing, powerfull and
 
 Much of our previous work was made in Angular. And although, Angular is a great front-end framework, it also has its con's. One of our main issues with Angular is its slow learning curve.
 
-It was very difficult for developers that had little to none front-end experience to make simple changes, corrections or building an additional modules.
+It was very difficult for developers that had little to none front-end experience to make simple changes, corrections or building additional modules.
 
 Therefore we started looking for alternatives. We required a framework that had a short learning curve and could be used for a wide variety of projects.
 
