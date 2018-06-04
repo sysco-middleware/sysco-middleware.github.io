@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  {% include head.html %}
+
+  <body>
+    {% if page.layout == "home" %}
+      <nav class="nav is-expanded">
+    {% else %}
+      <nav class="nav">
+    {% endif %}
+      <div class="nav-container">
+        <a href="{{ site.baseurl }}/">
+          <h1 class="nav-title">{{ site.title }}</h1>
+          {% if page.layout == "home" %}<h2 class="nav-subtitle">Placeholder subtitle</h2>{% endif %}
+        </a>
+        <ul>
+          <li><a href="https://sysco.no/about-sysco/?lang=en" target="_blank">About</a></li>|
+          <li><a href="{{ site.baseurl }}/">Posts</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <main>
+      {{ content }}
+    </main>
+
+    <footer>
+      <span>
+        &copy; <time datetime="{{ site.time }}">{{ site.time | date: '%Y' }}</time> {{ site.owner.name }}. Made with Jekyll
+      </span>
+
+      <a href="https://sysco.no"><img src="{{'/images/logo.png' | prepend: site.baseurl}}" alt="Sysco logo" class="logo"></a>
+    </footer>
+  </body>
+</html>

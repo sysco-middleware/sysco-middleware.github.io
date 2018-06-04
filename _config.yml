@@ -1,112 +1,98 @@
-title:            Sysco Middleware Blog
+
+title:            Sysco Middleware
 description:      Oracle Fusion Middleware, Oracle Service Bus, Oracle SOA Suite, Oracle BPM Suite, Oracle WebLogic, Oracle VM
 disqus_shortname: syscomiddlewareblog
 reading_time:     true
 words_per_minute: 200
-# Your site's domain goes here (eg: //mmistakes.github.io, http://mademistakes.com, etc)
-# When testing locally leave blank or use http://localhost:4000
 
-# url: //blog.sysco.no
-# url: //sysco-middleware.github.io
+url: //blog.sysco.no
 host: 0.0.0.0
 port: 4000
 baseurl: ""
 
-# Owner/author information
+# Owner
 owner:
-  name:           Sysco Middleware
-  avatar:         Sysco_logo_300px.png
-  bio:            Sysco Middleware Department is focus in develop business solutions based on Oracle Fusion Middleware technology.
-  email:
-  # Social networking links used in footer. Update and remove as you like.
-  twitter:
-  facebook:
-  github:
-  stackexchange:
-  linkedin:
-  instagram:
-  flickr:
-  tumblr:
-  # For Google Authorship https://plus.google.com/authorship
-  # google plus id, include the '+', eg +mmistakes
-  google_plus:
+  name:         Sysco Middleware
+  url:          https://sysco.no
+  email:        info@sysco.no
 
-# Background image to be tiled on all pages
-background: Sysco_Background.jpg
-
-# Analytics and webmaster tools stuff goes here
-google_analytics: UA-60980318-1
-google_verify:
-# https://ssl.bing.com/webmaster/configure/verify/ownership Option 2 content= goes here
-bing_verify:
-
-# http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
-timezone:    Europe/Oslo
-future:      true
-highlighter: rouge
-
-gems:
-  - jekyll-sitemap
-  - jekyll-feed
-  - jekyll-paginate
-sass:
-  sass_dir: _sass
-  style: compressed
-
-# https://github.com/mojombo/jekyll/wiki/Permalinks
-permalink:   /:categories/:title/
-
-# Amount of post to show on home page
-paginate: 5
-
-include: [".htaccess"]
-exclude: ["lib", "config.rb", "Capfile", "config", "Gemfile", "Gemfile.lock", "README.md", "LICENSE", "log", "Rakefile", "Rakefile.rb", "tmp", "less", "*.sublime-project", "*.sublime-workspace", "test", "spec", "Gruntfile.js", "package.json", "node_modules"]
-
-safe: true
-lsi: false
-
+# Authors
 authors:
+  jeroenrinzema:
+    name: Jeroen Rinzema
+    avatar: /images/avatars/jeroenrinzema.jpg
   catoaune:
     name: Cato Aune
     twitter: catoaune
+    avatar: /images/avatars/catoaune.jpg
   jphjulstad:
     name: Jon Petter Hjulstad
     twitter: jphjulstad
+    avatar: /images/avatars/jphjulstad.jpg
   jeqo:
     name: Jorge Quilcate
     twitter: jeqo89
+    avatar: /images/avatars/jeqo.jpg
   pah:
     name: Paal Holmen
     twitter: paalholmen
+    avatar: /images/avatars/pah.jpg
   tisaksen:
     name: Thomas Isaksen
     twitter: tisaksen
+    avatar: /images/avatars/catoaune.jpg
   raul:
     name: Raul Castillo
+    avatar: /images/avatars/raul.jpg
   oleg:
     name: Oleg Bezemchuk
+    avatar: /images/avatars/oleg.jpg
   cliops:
     name: Chris Laurente
     twitter: Cliops
+    avatar: /images/avatars/cliops.jpg
   dalibor:
     name: Dalibor Blazevic
     twitter: cubeprogramming
+    avatar: /images/avatars/dalibor.jpg
   olveslind:
     name: Olve Slind
     twitter: olveslind
+    avatar: /images/avatars/olveslind.jpg
   kolinnebo:
     name: Knut Olav Linnebo
+    avatar: /images/avatars/kolinnebo.jpg
   gugalnikov:
     name: Arturo Viveros
+    avatar: /images/avatars/gugalnikov.jpg
   kresimirjuric:
     name: Kresimir Juric
+    avatar: /images/avatars/kresimirjuric.jpg
   trygveiversland:
     name: Trygve Iversland
+    avatar: /images/avatars/trygveiversland.jpg
   sergei-ko:
     name: Sergei Kosolapov
+    avatar: /images/avatars/sergei-ko.jpg
   denzza:
     name: Denis Velagic
+    avatar: /images/avatars/denzza.jpg
   NikitaZhevnitskiy:
     name: Nikita Zhevnitskiy
-  jeroenrinzema:
-    name: Jeroen Rinzema
+    avatar: /images/avatars/NikitaZhevnitskiy.jpg
+
+# Build settings
+markdown:       kramdown
+
+# Assets
+sass:
+  sass_dir:     _sass
+  style:        compressed
+
+# Gems
+plugins:
+  - jekyll-paginate
+
+# Permalinks
+permalink:      /:categories/:title/
+paginate:       7
