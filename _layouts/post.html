@@ -52,12 +52,12 @@ layout: default
 </div>
 
 <div class="pagination">
-  {% if page.next.url %}
-    <a href="{{ page.next.url | prepend: site.baseurl }}" class="left arrow">&#8592;</a>
-  {% endif %}
-  {% if page.previous.url %}
-    <a href="{{ page.previous.url | prepend: site.baseurl }}" class="right arrow">&#8594;</a>
-  {% endif %}
-
-  <a href="#" class="top">Top</a>
+  <ul>
+    {% if page.next.url %}
+      <li><a href="{{ page.next.url | prepend: site.baseurl }}" class="left arrow">&#8592; Previous</a></li>
+    {% endif %}
+    {% if page.previous.url %}
+      <li><a href="{{ page.previous.url | prepend: site.baseurl }}" class="right arrow">Next &#8594;</a></li>
+    {% endif %}
+  </ul>
 </div>
