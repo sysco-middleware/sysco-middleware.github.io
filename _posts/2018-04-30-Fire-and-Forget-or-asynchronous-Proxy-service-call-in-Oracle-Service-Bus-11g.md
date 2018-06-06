@@ -10,22 +10,22 @@ author: denzza
 
 **Requirement:**
 
-As an requirement client wanted to trigger the Integration (Oracle Service Bus 11g) in "Fire and Forget" manner or asynchronous manner. Just the option to trigger the OSB to start executing without any waiting for process to finish. 
-In our case we had an integration which did some processing of data from the database couple of times and saving it to the Topic which took some time (in this case just a couple of minutes). But that was not something that the client side wanted to wait to finish and it didn’t need to wait. Specification was that they want to trigger our proxy service in the scheduled times. 
+As an requirement client wanted to trigger the Integration (Oracle Service Bus 11g) in "Fire and Forget" manner or asynchronous manner. Just the option to trigger the OSB to start executing without any waiting for process to finish.
+In our case we had an integration which did some processing of data from the database couple of times and saving it to the Topic which took some time (in this case just a couple of minutes). But that was not something that the client side wanted to wait to finish and it didn’t need to wait. Specification was that they want to trigger our proxy service in the scheduled times.
 
 
 **Solution:**
 
-We already had implemented logic in the Proxy Service which takes some time to finish the process. Reason for that is that we had to call DB multiple times and it had a lot of data. So, if we call our Proxy Service directly we would need to wait until whole process is complete to get a response back. We know that asynchronous call can be achieved with additional Queue as a recommended solution in OSB 11g, but we didn’t want to have another one, because our integration already has one JMS queue and one topic. 
-First thing I have tried is to call our Proxy with another Proxy from the same project. But that of course didn’t work. 
+We already had implemented logic in the Proxy Service which takes some time to finish the process. Reason for that is that we had to call DB multiple times and it had a lot of data. So, if we call our Proxy Service directly we would need to wait until whole process is complete to get a response back. We know that asynchronous call can be achieved with additional Queue as a recommended solution in OSB 11g, but we didn’t want to have another one, because our integration already has one JMS queue and one topic.
+First thing I have tried is to call our Proxy with another Proxy from the same project. But that of course didn’t work.
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g_Fail.jpg)
 
-But, then I created additional Business Service in between these two Proxy services which worked for us and did the desired effect. 
+But, then I created additional Business Service in between these two Proxy services which worked for us and did the desired effect.
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/AsynchronousCall_OSB11g.jpg)
 
-Now I will show how did I simply set my Proxy and Business services in OSB 11g. First let’s start with the Business service which was really simple. 
+Now I will show how did I simply set my Proxy and Business services in OSB 11g. First let’s start with the Business service which was really simple.
 For Service Type I used **Messaging Service** and for Request Message Type: **Text** and Response Message Type: **None**. As last thing is to set Endpoint URI to point to your Proxy service you want to invoke (in our case that is long running Proxy). The rest of the setup is default.
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/BusinessServiceTrigger_1.jpg)
@@ -37,7 +37,7 @@ For Service Type I used **Messaging Service** and for Request Message Type: **Te
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/BusinessServiceTrigger_4.jpg)
 
 
-For the Proxy service I used a custom made WSDL so I can trigger this from SoapUI as well. But it should work with the Messaging Service option as well because we don’t use any data in the request. 
+For the Proxy service I used a custom made WSDL so I can trigger this from SoapUI as well. But it should work with the Messaging Service option as well because we don’t use any data in the request.
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/ProxyServiceTrigger_1.jpg)
 
@@ -45,7 +45,7 @@ For the Proxy service I used a custom made WSDL so I can trigger this from SoapU
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/ProxyServiceTrigger_3.jpg)
 
-In the message flow all you need is a Publish activity to call our business service we created first. 
+In the message flow all you need is a Publish activity to call our business service we created first.
 
 ![](/images/2018-04-30-Fire-and-Forget-or-asynchronous-Proxy-service-call-in-Oracle-Service-Bus-11g/ProxyMessageFlow.jpg)
 
@@ -95,7 +95,7 @@ Our requirement was to call (trigger) the OSB in scheduled times during the day.
 ```
 
 Save the file where the cURL command will be executed from and has access to.
- 
+
 
 
 [1]: http://www.darkroastedblend.com/2007/01/stars-planets-scale-comparison.html

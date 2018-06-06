@@ -1,121 +1,63 @@
-<!doctype html>
-<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if (IE 7)&!(IEMobile)]><html class="no-js lt-ie9 lt-ie8" lang="en"><![endif]-->
-<!--[if (IE 8)&!(IEMobile)]><html class="no-js lt-ie9" lang="en"><![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"><!--<![endif]-->
-<head>
-{% include head.html %}
-</head>
+---
+layout: default
+---
 
-<body id="post" {% if page.image.feature %}class="feature"{% endif %}>
-
-{% include browser-upgrade.html %}
-{% include navigation.html %}
-
-{% if page.image.feature %}
-<div class="entry-header">
-  {% if page.image.credit %}<div class="image-credit">Image source: {% if page.image.creditlink %}<a href="{{ page.image.creditlink }}">{% endif %}{{ page.image.credit }}{% if page.image.creditlink %}</a>{% endif %}</div><!-- /.image-credit -->{% endif %}
-  <div class="entry-image">
-    <!--<img src="{{ site.url }}images/{{ page.image.feature }}" alt="{{ page.title }}">-->
-  </div><!-- /.entry-image -->
-</div><!-- /.entry-header -->
-{% endif %}
-
-<div id="main" role="main">
-  <article class="hentry">
-    <header class="header-title">
-      <div class="header-title-wrap">
-        {% if page.link %}
-          <h1 class="entry-title-b"><a href="{{ page.link }}">{{ page.title }}</a></h1>
-        {% else %}
-          <h1 class="entry-title-b"><a href="{{ site.url }}{{ page.url }}" rel="bookmark" title="{{ page.title }}">{{ page.title }}</a></h1>
-        {% endif %}
-        <h2>{{ page.date | date: "%B %d, %Y" }}</h2>
-	  	   <p class="byline">
-{% assign authorCount = page.authors | size %}
-{% if authorCount == 0 %}
-{% assign author = site.authors[page.author] %}
-      by {{ author.name }} </p>
-{% elsif authorCount == 1 %}
-      {% assign author = site.authors[page.author] %}
-      by {{ author.name }} </p>
-{% else %}
-    {% for authorid in page.authors %}
-        {% if forloop.first %}
-{% assign author = site.authors[authorid] %}
-      by {{ author.name }}
-        {% elsif forloop.last %}
-            and {% assign author = site.authors[authorid] %}
-       {{ author.name }}</p>
-        {% else %}
-            {% assign author = site.authors[authorid] %}
-      , {{ author.name }} 
-        {% endif %}
-    {% endfor %}
-{% endif %}
+<div class="post">
+  <div class="post-meta">
+    <span class="post-meta-avatar" style="background-image:url({{site.authors[page.author].avatar | prepend: site.baseurl}});"></span>
+    <div class="post-meta-info">
+      <div class="row">
+        <span class="post-meta-author">
+          {% assign authorCount = page.authors | size %}
+          {% if authorCount == 0 %}
+          {% assign author = site.authors[page.author] %}
+                {{ author.name }}
+          {% elsif authorCount == 1 %}
+                {% assign author = site.authors[page.author] %}
+                {{ author.name }}
+          {% else %}
+              {% for authorid in page.authors %}
+                  {% if forloop.first %}
+          {% assign author = site.authors[authorid] %}
+                {{ author.name }}
+                  {% elsif forloop.last %}
+                      and {% assign author = site.authors[authorid] %}
+                 {{ author.name }}
+                  {% else %}
+                      {% assign author = site.authors[authorid] %}
+                , {{ author.name }}
+                  {% endif %}
+              {% endfor %}
+          {% endif %},
+        </span>
+      </div>
+      <div class="row">
+        <time datetime="{{ post.date }}" class="post-meta-time">{{ page.date | date: "%B %d, %Y" }}</time>
         {% if site.reading_time %}
-        <p class="entry-reading-time">
-          <i class="fa fa-clock-o"></i>
-          {% assign readtime = content | number_of_words | divided_by:site.words_per_minute %}
-          Reading time ~{% if readtime <= 1 %}1 minute{% else %}{{ readtime }} minutes{% endif %}
-        </p><!-- /.entry-reading-time -->
+          <span class="post-meta-devider">&#183;</span>
+          <span class="post-readingtime">
+            {% assign readtime = page.content | number_of_words | divided_by:site.words_per_minute %}
+            {% if readtime <= 1 %}1{% else %}{{ readtime }}{% endif %} min read
+          </span>
         {% endif %}
-      </div><!-- /.header-title-wrap -->
-    </header>
-    <div class="entry-content">
-      {{ content }}
-      <footer class="entry-meta">
-        <span class="entry-tags">{% for tag in page.tags %}<a href="{{ site.url }}/tags/#{{ tag }}" title="Pages tagged {{ tag }}" class="tag">{{ tag }}</a>{% unless forloop.last %}{% endunless %}{% endfor %}</span>
-        {% if page.share != false %}{% include social-share.html %}{% endif %}
-      </footer>
-      {% assign aboutfile = author.aboutfile %}
-{% if authorCount == 0 %}
-      <div class="authorbio">
-      {% assign aboutfile = author.aboutfile %}
-      {% include authors.html author=page.author %}
+      </div>
     </div>
-{% elsif authorCount == 1 %}
-      <div class="authorbio">
-      {% assign aboutfile = author.aboutfile %}
-      {% include authors.html author=page.author %}
-    </div>
-{% else %}
-    {% for authorid in page.authors %}
-        {% if forloop.first %}
-      <div class="authorbio">
-      {% assign aboutfile = author.aboutfile %}
-      {% include authors.html author=authorid %}
-    </div>
-<p/>
-        {% elsif forloop.last %}
-      <div class="authorbio">
-      {% assign aboutfile = author.aboutfile %}
-      {% include authors.html author=authorid %}
-    </div>
-        {% else %}
-      <div class="authorbio">
-      {% assign aboutfile = author.aboutfile %}
-      {% include authors.html author=authorid %}
-    </div>
-<p/>
-        {% endif %}
-    {% endfor %}
-{% endif %}
+  </div>
 
-    </p>
-    </div><!-- /.entry-content -->
-    {% if page.comments != false %}<section id="disqus_thread"></section><!-- /#disqus_thread -->{% endif %}
-    {% if site.related_posts.size %}{% include read-more.html %}{% endif %}
-  </article>
-</div><!-- /#main -->
+  <h1 class="post-title">{{ page.title }}</h1>
+  <div class="post-line"></div>
 
-<div class="footer-wrapper">
-  <footer role="contentinfo">
-    {% include footer.html %}
-  </footer>
-</div><!-- /.footer-wrapper -->
+  {{ content }}
 
-{% include scripts.html %}
+</div>
 
-</body>
-</html>
+<div class="pagination">
+  <ul>
+    {% if page.next.url %}
+      <li><a href="{{ page.next.url | prepend: site.baseurl }}" class="left arrow">&#8592; Previous</a></li>
+    {% endif %}
+    {% if page.previous.url %}
+      <li><a href="{{ page.previous.url | prepend: site.baseurl }}" class="right arrow">Next &#8594;</a></li>
+    {% endif %}
+  </ul>
+</div>

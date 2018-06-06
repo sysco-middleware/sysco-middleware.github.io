@@ -1,0 +1,28 @@
+.pagination {
+  ul {
+    display: flex;
+    flex-direction: row;
+    list-style-type: none;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+    align-items: center;
+  }
+
+  li {
+    display: inline-block;
+    padding: .5rem;
+    text-align: center;
+  }
+
+  .arrow {
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+
+    > i {
+      margin: .5rem;
+    }
+  }
+}
