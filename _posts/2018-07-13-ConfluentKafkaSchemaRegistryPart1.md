@@ -13,11 +13,11 @@ Let's talk about Kafka Schema Registry essentials.
 # Repository
 
 Repository contains examples of schema evolution - full compatibility.
-[Kafka-schema-registry-poc](https://github.com/sysco-middleware/kafka-schema-registry-poc)
+[poc-confluent-schema-registry-p1](https://github.com/sysco-middleware/poc-confluent-schema-registry-p1)
 
 ## Content: 
 
-1. What is schema registry and why we need it?  
+1. What is Confluent Schema Registry and why we need it?  
 1.1. Use case.  
 1.2. Full compatibility.  
 1.3. Avro serializer.
@@ -28,13 +28,18 @@ Repository contains examples of schema evolution - full compatibility.
 3. Schema evolution example.  
 3.1. Up kafka.  
 3.2. Up project.
+3.2. Up project.
 4. Important notes.
 
-## 1. What is schema registry and why we need it?
+## 1. What is Confluent Schema Registry and why we need it? 
 
-Kafka schema registry is service(app) which stores schemas and provides RESTful interface to preform CRUD operations. 
-Schemas can be applied to key/value or both.
-Kafka schema registry is separate node. Kafka Consumer/Producer should have `schema.registry.url` in properties, 
+Confluent Schema Registry is application, which manage compatibility and provides RESTful interface to preform CRUD operations. 
+Schemas can be applied to key/value or both.  
+
+`!NB`[issue680](https://github.com/confluentinc/schema-registry/pull/680) 
+Kafka producer will accept any mixture of Avro record types and publish them to the same topic.  
+
+Kafka schema registry is separate node. Kafka Consumer/Producer should have `schema.registry.url` and specific `serializer/deserializer` in properties, 
 if schema registry is in use.
 ```
   Properties properties = new Properties();
@@ -44,7 +49,7 @@ if schema registry is in use.
 Kafka schema registry should be fault tolerant.
 Why? Short answer is to `centralize` message verification.
 Kafka itself is not responsible for data verification, it stores only bytes and publish them.
-![Confluent Schema registry](https://cdn-images-1.medium.com/max/1500/1*ZDWhGdCZ-4ZVKxYONcuj0Q.png)
+![Confluent Schema registry](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/confluent_schema_registry.png)
 [Source](https://medium.com/@stephane.maarek/introduction-to-schemas-in-apache-kafka-with-the-confluent-schema-registry-3bf55e401321)
 ### 1.1. Use case
 All of us faced with continuously coming new requirements from customers. 
@@ -53,14 +58,14 @@ which will cause mapping.
 Schema registry is answer to - how to support schema versions and achieve full compatibility. 
 Do all those changes without breaking any dependent parts.
 
-### 1.2. Full compatibility
+### 1.2. Full compatibility (Forward/Backward compatibility)
 
 Full compatibility means that message which is produced with Old-schema can be consumed with New-Schema 
 and opposite, message which is produced with New-schema can be consumed using Old-Schema.   
 
-![Full compatibility](/images/2018-07-13-KafkaSchemaRegistryPart1/full_compatibility.png)  
+![Full compatibility](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/full_compatibility.png)  
 
- Full compatibility is a goal in most of cases.
+ Full compatibility (Forward/Backward compatibility) is a goal in most of cases.
 
 ### 1.3. Avro serializer.  
 
@@ -125,7 +130,7 @@ Schema schema = ReflectData.get().getSchema(ReflectedCustomer.class);
 
 ### 2.3. Using json.
 
-Common practise is to define schema in file `.avsc`. Definition's syntax is `json`. 
+The way is to define schema in file `.avsc`. Definition's syntax is `json`. 
 
 [Avro-maven-plugin](https://mvnrepository.com/artifact/org.apache.avro/avro-maven-plugin) generates classes from `.avsc`. 
 
@@ -192,8 +197,8 @@ These important notes help to achieve full compatibility
 * [Apache Avro doc 1.8.2](https://avro.apache.org/docs/1.8.2/index.html)
 * [Stephane Maarek](https://medium.com/@stephane.maarek/introduction-to-schemas-in-apache-kafka-with-the-confluent-schema-registry-3bf55e401321)
 
-## Next chapters
+## Next posts
 
 * More Complex examples
-* Kafka Schema Registry with Streams API
+* Confluent Schema Registry with Kafka Streams API
 * REST Proxy Schema registry
