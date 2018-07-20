@@ -19,7 +19,7 @@ Repository contains examples of schema evolution - full compatibility.
 
 1. What is Confluent Schema Registry and why we need it?  
 1.1. Use case.  
-1.2. Full compatibility.  
+1.2. Compatibility types.  
 1.3. Avro serializer.
 2. How to define schema?  
 2.1. In source code.  
@@ -39,33 +39,44 @@ Schemas can be applied to key/value or both.
 `!NB`[issue680](https://github.com/confluentinc/schema-registry/pull/680) 
 Kafka producer will accept any mixture of Avro record types and publish them to the same topic.  
 
-Kafka schema registry is separate node. Kafka Consumer/Producer should have `schema.registry.url` and specific `serializer/deserializer` in properties, 
+Confluent schema registry is separate node. Kafka Consumer/Producer should have `schema.registry.url` and specific `serializer/deserializer` in properties, 
 if schema registry is in use.
 ```
   Properties properties = new Properties();
   properties.setProperty("schema.registry.url", "http://localhost:8081");
 ```
 
-Kafka schema registry should be fault tolerant.
-Why? Short answer is to `centralize` message verification.
-Kafka itself is not responsible for data verification, it stores only bytes and publish them.
+Confluent schema registry should be fault tolerant. 
+If node with schema registry not available, all clients will fail while producing/consuming (if no caching on client's sides).  
+Kafka itself is not responsible for data verification, it stores only bytes and publish them.  
+
 ![Confluent Schema registry](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/confluent_schema_registry.png)
 [Source](https://medium.com/@stephane.maarek/introduction-to-schemas-in-apache-kafka-with-the-confluent-schema-registry-3bf55e401321)
+
 ### 1.1. Use case
+
 All of us faced with continuously coming new requirements from customers. 
 Sometimes we need to change data transfer objects: add additional fields or remove some of them,  
 which will cause mapping. 
 Schema registry is answer to - how to support schema versions and achieve full compatibility. 
 Do all those changes without breaking any dependent parts.
 
-### 1.2. Full compatibility (Forward/Backward compatibility)
+### 1.2. Compatibility types 
+
+| Type          | Description | 
+| ------------- |:-------------:| 
+| Backward | Old schema can be used to read New data | 
+| Forward | New schema can be used to read Old data | 
+| Full compatibility (Forward and Backward)  | Both (Old & New) schemas can be used to read old & new data | 
+| Breaking | None of those |
+  
+Target is type `Full compatibility`.  
+
+![Full compatibility](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/full_compatibility.png)   
+
 
 Full compatibility means that message which is produced with Old-schema can be consumed with New-Schema 
-and opposite, message which is produced with New-schema can be consumed using Old-Schema.   
-
-![Full compatibility](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/full_compatibility.png)  
-
- Full compatibility (Forward/Backward compatibility) is a goal in most of cases.
+and opposite, message which is produced with New-schema can be consumed using Old-Schema. 
 
 ### 1.3. Avro serializer.  
 
