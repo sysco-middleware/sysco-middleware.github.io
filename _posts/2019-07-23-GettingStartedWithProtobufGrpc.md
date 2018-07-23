@@ -1,14 +1,21 @@
 ---
 layout: post
-title: Http2 with Protobuf and Grpc. Part 1
-categories: Grpc
-tags: [Protobuf, Grpc, Http2]
+title: Getting started with gRPC. Part 1
+categories: gRPC
+tags: [Protobuf, gRPC, HTTP/2]
 author: PrakharSrivastav
 ---
 
 # Introduction
 
-Understanding what is Http2 protocol. How it differs from conventional Http1.1 and how can we implement it?
+gRPC is a RPC platform developed by Google which was made open source (Apache 2.0 license) in early 2015. It consists of two components:- an HTTP/2 based protocol called the gRPC and a data serialization framework called protobuf. By default gRPC uses protobuf for serialization, but it is possible to replace the serialization layer by other content types like Thrift and FlatBuffers.
+
+From gRPC website:
+
+> gRPC is a modern, open source remote procedure call (RPC) framework that can run anywhere. It enables client and server applications to communicate transparently, and makes it easier to build connected systems.
+
+
+
 
 # Repository
 
@@ -17,85 +24,77 @@ Repository contains examples of schema evolution - full compatibility.
 
 ## Content: 
 
-1. What is Http2 and why do we need it?  
-1.1. What is Http.  
-1.2. What is Http1.1.  
-1.3. How is Http2 different from Http1.
-2. How to implement Http2?
-2.1 What is Protobuf?
-2.2 What is Grpc?
-2.3 How does Grpc and Protobuf fit together?
-3. How to define message structure in protobuf?  
-3.1. Defining Protobuf Messages.  
-3.2. Defining Protobuf Services.  
-3.3. Compiling Grpc stubs out of Protobuf.
-3.4. What does these stubs contain?
-4. Example: Simulating a Banking service.
-4.1. Defining Schema and Services.  
-4.2. Compiling Stubs out of Protobuf Schema.
-4.3. Implementing Client and Server.
-5. Whats is next.
-6. Useful references.
+1. What is gRPC and why would we use it?  
+1.1. Features.  
+1.2. Supported programming languages.  
+1.3. Supported data formats.
+1.4. Typical applications that can be built with gRPC.
 
-## 1. What is Confluent Schema Registry and why we need it? 
+2. Fitting pieces together. [General workflow for a simple project]
+2.1. Defining message structure.
+2.2. Defining service definition.
+2.3. Generating client/server stubs in your favourite programming language.
+2.4. Implementing client/server logic.
 
-Confluent Schema Registry is application, which manage compatibility and provides RESTful interface to preform CRUD operations. 
-Schemas can be applied to key/value or both.  
+3. Working example. [] 
+3.1. Defining message structure (protobuf).  
+3.2. Defining service definitions (protobuf).  
+3.3. Compiling Grpc client/server stubs out of protobuf.
+3.4. More references?
 
-`!NB`[issue680](https://github.com/confluentinc/schema-registry/pull/680) 
-Kafka producer will accept any mixture of Avro record types and publish them to the same topic.  
+4. Whats is next.
+5. Useful references.
 
-Confluent schema registry is separate node. Kafka Consumer/Producer should have `schema.registry.url` and specific `serializer/deserializer` in properties, 
-if schema registry is in use.
-```
-  Properties properties = new Properties();
-  properties.setProperty("schema.registry.url", "http://localhost:8081");
-```
+## 1. What is gRPC and why would we use it? 
 
-Confluent schema registry should be fault tolerant. 
-If node with schema registry not available, all clients will fail while producing/consuming (if no caching on client's sides).  
-Kafka itself is not responsible for data verification, it stores only bytes and publish them.  
+gRPC framework is based on a client-server model of remote procedural calls, where a client can directly call methods on the server application as if it was a local object. The framework inherits transport features from HTTP/2 protocol, utilizing strongly typed schema support provided by protobuf for serialization. 
 
-![Confluent Schema registry](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/confluent_schema_registry.png)
-[Source](https://medium.com/@stephane.maarek/introduction-to-schemas-in-apache-kafka-with-the-confluent-schema-registry-3bf55e401321)
+A gRPC based project usually starts with defining the underlying data-structure and service definition i.e a contract between the client and the server. Next steps would include generating client and server stubs in preferred programming language. Once the client-server stubs are available, developers would concentrate on implementing the contract interfaces (bushiness logic), while ignoring the nuances of infrastructure and transport protocols.
 
-### 1.1. Use case
+![gRPC client-server communication](/images/2019-07-23-GettingStartedWithProtobufGrpc/gRPC.svg)
+[Source](https://grpc.io/)
 
-All of us faced with continuously coming new requirements from customers. 
-Sometimes we need to change data transfer objects: add additional fields or remove some of them,  
-which will cause mapping. 
-Schema registry is answer to - how to support schema versions and achieve full compatibility. 
-Do all those changes without breaking any dependent parts.
+Apart from providing a robust framework for client-server communication, gRPC provides a tons of other features which make it indispensable choice for modern application development and design. A few of these notable features are detailed below.
 
-### 1.2. Compatibility types 
+### 1.1. Features
+Few noticeable features offered by gRPC are:
+- Simple and strongly typed message and service definition. Ensures that the contract between client and server remains consistent.
+- Api versioning and backward compatibility. If done right, the gRPC apis can be changed transparently without breaking client contracts.
+- Supports unary and streaming communication. Also, supports bidirectional streaming.
+- Pluggable auth, tracing, load balancing and health checking.
+- Works across languages and platforms. Provides code generation in organizations preferred programming language of choice.
+- Better performance over the wire as the protocol is inherently binary in nature. It is smaller, faster and more efficient.
+- Supports reliable gRPC clients as well as clients for web, android and iOS.
+- Cloud native and integrates well wih cloud technologies.
 
-| Type          | Description | 
-| ------------- |:-------------:| 
-| Backward | Old schema can be used to read New data | 
-| Forward | New schema can be used to read Old data | 
-| Full compatibility (Forward and Backward)  | Both (Old & New) schemas can be used to read old & new data | 
-| Breaking | None of those |
-  
-Target is type `Full compatibility`.  
+### 1.2. Supported programming languages 
+Below are the officially supported programming languages
+- C++
+- Java (including support for Android) 
+- Object-C (for iOS)
+- Python
+- Ruby
+- Go
+- C#
+- Node.js
+- PHP
+- Dart (beta)
 
-![Full compatibility](/images/2018-07-13-ConfluentKafkaSchemaRegistryPart1/full_compatibility.png)   
+### 1.3. Supported data formats.  
 
+By default gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer it is possible to replace it with other content types.
 
-Full compatibility means that message which is produced with Old-schema can be consumed with New-Schema 
-and opposite, message which is produced with New-schema can be consumed using Old-Schema. 
+From gRPC website:
 
-### 1.3. Avro serializer.  
+> gRPC is designed to be extensible to support multiple content types. The initial release contains support for Protobuf and with external support for other content types such as FlatBuffers and Thrift, at varying levels of maturity.
 
-[Apache Avro](https://github.com/apache/avro) is data serializer. This serializer is often used with
-Confluent Schema Registry for Kafka. 
-
-Avro key-features:
-* Compressed data
-* [Types support](https://avro.apache.org/docs/1.8.2/spec.html#schemas)
-* Embedded documentation support
-* Defined using json 
-* Avro object contains schema and data
-* Shema evolution 
+### 1.4. Typical applications that can be built with gRPC.
+The main usage scenario for gRPC are:
+- Efficiently connecting polyglot services in microservices style architecture
+- Low latency, highly scalable, distributed systems.
+- Connecting mobile devices, browser clients to backend services
+- Designing a new protocol that needs to be accurate, efficient and language independent.
+- Generating efficient client libraries
 
 ## 2. How to define schema?
 
