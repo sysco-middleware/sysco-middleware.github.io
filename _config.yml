@@ -81,6 +81,9 @@ authors:
   NikitaZhevnitskiy:
     name: Nikita Zhevnitskiy
     avatar: /images/avatars/NikitaZhevnitskiy.jpg
+  PrakharSrivastav:
+    name: Prakhar Srivastav
+    avatar: /images/avatars/prakhar.png
 
 # Build settings
 markdown:       kramdown
