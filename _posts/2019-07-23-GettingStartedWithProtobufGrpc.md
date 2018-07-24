@@ -142,7 +142,7 @@ Here, we have defined a method Pay in the InvoiceService. This method takes inpu
 Once we compile our protobuf in next steps, these operations will be available in the client and the server stubs with typed arguments and return types. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
 
 Before proceeding further, let us take a quick look at what behaviors can our operations possess:
-- **Unary** : This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behaviour for this request.
+- **Unary** : This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behavior for this request.
 - **Streaming** : This can be achieved in three different flavors. Client pushing messages to stream; Server pushing messages to a stream or bidirectional. In all these cases, the client will initiate the request, and the behavior will be determined by the presence of `stream` keyword in the method definition.
 
 
@@ -151,45 +151,31 @@ More references:
 - [gRPC Transport Anatomy](https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-HTTP2.md)
 
 ### 2.3. Generating client/server stubs in your favorite programming language.
+Now that we have the messages and the service contract defined in the .protoc files, its time to generate java classes. There are two major ways to accomplish this.
+
+- Install **protoc** compiler (download link below). To run the compiler, we need to provide the path to source, destination, and .proto files. To generate stubs in the specific programming language you need to provide flags like `--js_out`, `--go_out` etc. For eg `protoc -I=$SRC_DIR --java_out=$DST_DIR $SRC_DIR/Invoice.proto` will generate java classes for the definitions provided in Invoice.proto file.
+- Use **build** tools like Gradle or sbt to directly compile .protoc in your preferred language. Build tool like Gradle can also generate stubs for programming languages other than Java for eg python, kotlin etc
+
+A good practice is to create a make file with instruction for the specific language. We will cover this approach in one of the upcoming blogs. In this tutorial, we will generate java code using gradle. We will cover more details in section 3.3
+
+References and links
+- [protoc compiler download](https://developers.google.com/protocol-buffers/docs/downloads)
+- [protoc compiler reference](https://developers.google.com/protocol-buffers/docs/javatutorial)
+
+### 2.4. Implementing client/server logic.
+Next step in the sequence is to use the generated java stubs to implement client and server contracts. In the previous step, the protoc compiler (or Gradle task) creates a file `InvoiceServiceGrpc.java`. This class provides client stubs to communicate with gRPC server. We will make use of `InvoiceServiceBlockingStub` class to communicate implement out client. For the server implementation, we will extend `InvoiceServiceImplBase` class and override the method implementation (`Pay` method that we defined in InvoiceService)
+
+We will cover more details in section 3.4
 
 
-## 3. Schema evolution.
+## 3. Working example
+## 4. Whats next?
+The examples presented in this blog are extremely basic and the real world scenario would include a much more complicated setup. However, the motivation to write this post is to ease the learning curve for the beginners, acquaint them with basic terminologies in gRPC and present a basic workflow to play around and get started with.
 
-### Up kafka
-
-Kafka should be `UP`, before perform next steps. There are two options how to do it:  
-1. `Landoop` - kafka cluster using ladoop images: with UI on [http://localhost:3030](http://localhost:3030), Connectors and additional tools.  
-`docker-compose -f docker-compose.landoop.yml up -d`  
-2. `Confluent` - kafka cluster using confluent images  
-`docker-compose -f docker-compose.confluent.yml up -d`  
-
-### Evolution 
-
-Build project and generate classes from [business-v1.avsc](https://github.com/sysco-middleware/kafka-schema-registry-poc/blob/master/version1/src/main/resources/avro/business-v1.avsc) and [business-v2.avsc](https://github.com/sysco-middleware/kafka-schema-registry-poc/blob/master/version2/src/main/resources/avro/business-v2.avsc). 
-
-`./mvnw clean package`  
-
-Run producers in modules `version1` and `version2` in any sequential order to produce messages to one topic. 
-Run consumers in modules `version1` and `version2` in any sequential order to see consumption results.
-
-## 4. Important notes.
-
-These important notes help to achieve full compatibility
-1. Make your primary key required
-2. Give default values to all the fields that could be removed in the future
-3. Be very careful when using ENUM as the can not evolve over time
-4. Do not rename fields. You can add aliases instead
-5. When evolving schema, ALWAYS give default values
-6. When evolving schema, NEVER remove, rename of the required field or change the type
-
-## Refs & sources
-
-* [Schema Registry doc](https://docs.confluent.io/current/schema-registry/docs/index.html)
-* [Apache Avro doc 1.8.2](https://avro.apache.org/docs/1.8.2/index.html)
-* [Stephane Maarek](https://medium.com/@stephane.maarek/introduction-to-schemas-in-apache-kafka-with-the-confluent-schema-registry-3bf55e401321)
-
-## Next posts
-
-* More Complex examples
-* Confluent Schema Registry with Kafka Streams API
-* REST Proxy Schema registry
+Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
+## 5. Sources and References
+- Google protobuf documentation at [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
+- Grpc website [grpc](https://grpc.io/)
+- Gradle plugin to generate source code from protobuf [protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin)
+- Curated list of gRPC tools and plugins[grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
+- These interesting stackoverflow questions [how-is-grpc-different-from-rest](https://stackoverflow.com/questions/43682366/how-is-grpc-different-from-rest) , [grpc-and-zeromq-comparsion](https://stackoverflow.com/questions/39350681/grpc-and-zeromq-comparsion), [is-grpchttp-2-faster-than-rest-with-http-2](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2)
