@@ -21,8 +21,7 @@ From gRPC website:
 
 # Repository
 
-Repository contains examples of schema evolution - full compatibility.
-[poc-confluent-schema-registry-p1](https://github.com/sysco-middleware/poc-confluent-schema-registry-p1)
+The code example for this blog can be found in the github repository: [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc)
 
 ## Content: 
 
@@ -38,14 +37,14 @@ Repository contains examples of schema evolution - full compatibility.
 2.3. Generating client/server stubs in your favorite programming language.
 2.4. Implementing client/server logic.
 
-3. Working example. [] 
+3. Working example.
 3.1. Defining message structure (protobuf).  
 3.2. Defining service definitions (protobuf).  
 3.3. Compiling Grpc client/server stubs out of protobuf.
-3.4. More references?
+3.4. Implementing the client and the server
 
 4. Whats is next.
-5. Useful references.
+5. Sources and References.
 
 ## 1. What is gRPC and why would we use it? 
 
@@ -60,12 +59,12 @@ Apart from providing a robust framework for client-server communication, gRPC pr
 
 ### 1.1. Features
 Few noticeable features offered by gRPC are:
-- Simple and strongly typed message and service definition. Ensures that the contract between the client and server remains consistent.
-- API versioning and backward compatibility. If done right, the gRPC APIs can be changed transparently without breaking client contracts.
-- Supports unary and streaming communication. Also, supports bidirectional streaming.
+- Simple and strongly typed message and service definition. Ensures consistent contract between the client and server.
+- API versioning and backward compatibility. gRPC APIs can be changed transparently without breaking client contracts.
+- Supports unary and streaming communication with bidirectional streaming support.
 - Pluggable auth, tracing, load balancing and health checking.
-- Works across languages and platforms. Provides code generation in organizations preferred programming language of choice.
-- Better performance over the wire as the protocol is inherently binary in nature. It is smaller, faster and more efficient.
+- Provides code generation for multiple programming languages.
+- It is smaller, faster and more efficient over the wire as the protocol is inherently binary in nature.
 - Supports reliable gRPC clients as well as clients for web, Android, and iOS.
 - Cloud native and integrates well with cloud technologies.
 
@@ -84,7 +83,7 @@ Below are the officially supported programming languages
 
 ### 1.3. Supported data formats.  
 
-By default, gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer it is possible to replace it with other content types or provide your own implementations.
+By default, gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer, it is possible to replace it with other content types or provide your own implementations.
 
 From gRPC website:
 
@@ -92,7 +91,7 @@ From gRPC website:
 
 ### 1.4. Typical applications that can be built with gRPC.
 The main usage scenario for gRPC are:
-- Efficiently connecting polyglot services in microservices style architecture
+- Efficiently connecting polyglot services in microservices style architecture.
 - Low latency, highly scalable, distributed systems.
 - Connecting mobile devices, browser clients to backend services
 - Designing a new protocol that needs to be accurate, efficient and language independent.
@@ -100,15 +99,13 @@ The main usage scenario for gRPC are:
 
 ## 2. Fitting pieces together. 
 
-The best way to understand how protocol buffers, gRPC, and your favorite programming language fit together would be to break down the development workflow in simpler steps. The process defined here would be sufficient for most of the small to medium scale projects. The larger projects can utilize teams' experience, expertise, and resources to achieve more fine-grained control and automation.
+The best way to understand how protocol buffers, gRPC, and your favorite programming language fit together is be to break down the development workflow in simpler steps. The process defined here would be sufficient for small to medium scale projects. The larger projects can utilize teams' experience, expertise, and resources to achieve more fine-grained control and automation.
 
-Main steps involved in development workflow would involve:
-
+Main steps involved in development workflow involve:
 
 ### 2.1. Defining message structure.
 
-We start by defining the message structure for our domain models in protobuf format. At this point, we also define the message structure of the requests and the responses for various operations (methods) that our API will support. These definitions are stored in .proto files and will be compiled by gRPC compile to create client-server stubs in our favorite programming language. For eg:
-
+We start by defining the message structure for our domain models in protobuf format. At this point, we also define the message structure of the requests and the responses for various methods (operations) that our API will support. These definitions are stored in .proto files and will be compiled by gRPC compiler to create client-server stubs in our programming language of choice. A typical entity modelled in protobuf format looks like below
 ```
 message Invoice {
     string id = 1;
@@ -116,30 +113,26 @@ message Invoice {
     string customerId = 3;
 }
 ```
-Here, we have defined Invoice model with 3 fields id, amount and customerId. We have also provided types for each field. It is considered a good practice to strongly type the domain entities and request and response structure. Few considerations to be kept in mind while generating message structure are:
-- Define strongly typed domain models. Each field for a domain model should be defined with a name and datatype.
-- Extract the constants into Enums. Provide scopes to the Enums.
-- Split the domain models into multiple files, packages for better code organization.
-- Define strongly typed request and response structures.
+Here, we have defined Invoice model with 3 fields id, amount and customerId. Note that we have also provided types for each field. It is considered a good practice to strongly type the domain entities and request and response structure. Few considerations to be kept in mind while generating message structure are:
+- Define strongly typed domain models, request and response structures. Each field for a domain model should be defined with a name and datatype.
+- Extract the constants into Enums. Provide correct scopes to the Enums.
+- Split the domain models into multiple files and packages for better code organization.
 - Use protocol buffer syntax 3 as it is most recent and maintained version.
 
 Below resources provide a deep insight on protocol buffer format. We shall see a more relevant example to define a message in section 3.1.
 - [Protocol buffer language guide (syntax 3)](https://developers.google.com/protocol-buffers/docs/proto3)
 - [Data types](https://developers.google.com/protocol-buffers/docs/proto#scalar)
 - [Style guide](https://developers.google.com/protocol-buffers/docs/style)
-- [Api Versioning](https://www.beautifulcode.co/backward-and-forward-compatibility-protobuf-versioning-serialization)
 - [Few caveats](http://www.golangdevops.com/2017/08/16/why-not-to-use-protos-in-code/)
 
 ### 2.2. Defining service definition.  
-Next step in our workflow is to define the methods (operations) that our API provides. The arguments to these methods will either be domain entities (created in the previous step), custom request/response structures or simply scalar values. For example, for Invoice domain model created above, we create an InvoiceService and provide RPC method definition.
+Next step in our workflow is to define the methods (operations) that our API provides. The arguments and return types for these methods will either be domain entities (created in the previous step)or custom request/response structures. For example, for Invoice domain model created above, we create an InvoiceService and provide RPC method definition.
 ```
 service InvoiceService {
-    rpc Pay(Invoice) returns (bool);
+    rpc Pay(Invoice) returns (Invoice);
 }
 ```
-Here, we have defined a method Pay in the InvoiceService. This method takes input as Invoice type and provides a boolean response. As mentioned earlier, we can also create a custom type (like Invoice) for our request and response.
-
-Once we compile our protobuf in next steps, these operations will be available in the client and the server stubs with typed arguments and return types. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
+Here, we have defined a method Pay in the InvoiceService. This method takes input as Invoice type and provides a Invoice type response. Once we compile our protobuf in next steps, these operations will be available in the client and the server stubs with typed arguments and return types. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
 
 Before proceeding further, let us take a quick look at what behaviors can our operations possess:
 - **Unary** : This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behavior for this request.
@@ -167,15 +160,101 @@ Next step in the sequence is to use the generated java stubs to implement client
 
 We will cover more details in section 3.4
 
+## 3. Working example [Invoice Generation system]
 
-## 3. Working example
+Lets try to model a simple Invoice Processing system. The system exposes four CRUD operations namely Create, Get, Delete and Update as defined in the below sequence diagram. 
+
+![InvoiceService Sequence Diagram](/images/2019-07-23-GettingStartedWithProtobufGrpc/InvoiceService.png)
+
+We will start by defining the schema for Invoice and the corresponding requests and responses. Then we will generate the client and server gRPC codes out of it. Finally we will provide our client and server implementations.
+
+A working example for this use case is available on [github](https://github.com/sysco-middleware/workshop-grpc). You can download the repository and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) to setup and run the client and server.
+
+Lets start with defining our domain model and request/response structures.
+
+### 3.1. Defining message structure 
+Any data structure that we intend to transfer over wire should be strongly typed in our proto file.
+
+Open  [Invoice.proto](https://github.com/sysco-middleware/workshop-grpc/blob/master/src/main/proto/Invoice.proto) in the source repository under `src/main/proto`. Here, we define Invoice entity with 4 fields id, amount, customerId and state. Note that state is an enum. Using an enum ensures that client and server can only use one of the defined State type values.
+```
+message Invoice {
+    string id = 1;
+    float amount = 2;
+    string customerId = 3;
+    State state = 4;
+}
+enum State {
+    NEW = 0;
+    PAID = 1;
+    FAILED = 2;
+}
+```
+Next we define couple of message structures that define request and response structures between client and server. Note that we do not have request and response for each of the CRUD operation. This is because we can reuse some of the message structures in different requests.
+```
+message CreateRequest {
+    float amount = 1;
+    string customerId = 2;
+    State state = 3;
+}
+message InvoiceRequest {
+    string id = 1;
+}
+message DeleteResponse {
+    string id = 1;
+    bool ok = 2;
+}
+message UpdateRequest {
+    string id = 1;
+    float amount = 2;
+}
+```
+If you compare with the sequence diagram, we have tried to model all the request and responses for different operations in our protobuf definitions. 
+
+### 3.2. Providing service definition
+To define the services, we use `service` keyword and provide our method definitions. For our InvoiceService the service can be defined as below.
+
+```
+service InvoiceService {
+    rpc Create (CreateRequest) returns (Invoice);
+    rpc Get (InvoiceRequest) returns (Invoice);
+    rpc Delete (InvoiceRequest) returns (DeleteResponse);
+    rpc Update (UpdateRequest) returns (Invoice);
+}
+```
+Please note that it is completely fine to reuse messages for different operation. Here we use `InvoiceRequest` for Get and Delete operations.
+
+### 3.3. Compiling Grpc client/server stubs out of protobuf
+Next few steps will use gradle wrapper distributed with the repository to generate the java classes out of proto files.
+
+follow below steps in sequence to generate the java classes
+- Open a terminal and go to the project root.
+- run `./gradlew clean build` on linux/mac and `gradlew clean build` if you are on windows.
+- you will find the new generated classes under `no.sysco.middleware.workshops` package. These files are already checked in the source repository, so check the update timestamp for these files to confirm if the files were generated recently.
+- This process will generate 2 classes for us. `InvoiceOuterClass.java` and `InvoiceServiceGrpc.java`. 
+- `InvoiceOuterClass.java` contains message structure for Invoice entity and all the supported request and responses.
+- `InvoiceServiceGrpc.java` provides mechanism to create client stubs and server implementations
+
+### 3.4. Implementing client and server
+Open the java files under impl package. Few important points to note are 
+- InvoiceServiceImpl class extends `InvoiceServiceGrpc.InvoiceServiceImplBase` class and overrides our core business methods create, get ,delete and update. We implement the core business in our service class.
+- GrpcServer class bootstraps the netty server to run on port 8080 and adds InvoiceServiceImpl as one of the services. If we would have defined more services in our protobuf, their implementations should be added at this point.
+- GrpcClient bootstraps a channel on which to communicate with server. It calls different methods on the server for its operations over the created channel.
+
+Running the example.
+- First run the main class in GrpcServer.java. This will start a server on port 8080.
+- Then run the main class in GrpcClient.java. This will first send a Create request, followed by get and update request and finally deletes the generated invoice.
+- To check the sequence of steps, monitor the logs on the console for both client and server.
+
+
 ## 4. Whats next?
 The examples presented in this blog are extremely basic and the real world scenario would include a much more complicated setup. However, the motivation to write this post is to ease the learning curve for the beginners, acquaint them with basic terminologies in gRPC and present a basic workflow to play around and get started with.
 
 Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
+
 ## 5. Sources and References
-- Google protobuf documentation at [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
-- Grpc website [grpc](https://grpc.io/)
-- Gradle plugin to generate source code from protobuf [protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin)
-- Curated list of gRPC tools and plugins[grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
-- These interesting stackoverflow questions [how-is-grpc-different-from-rest](https://stackoverflow.com/questions/43682366/how-is-grpc-different-from-rest) , [grpc-and-zeromq-comparsion](https://stackoverflow.com/questions/39350681/grpc-and-zeromq-comparsion), [is-grpchttp-2-faster-than-rest-with-http-2](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2)
+- Google protobuf documentation : [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
+- Grpc website : [grpc](https://grpc.io/)
+- Gradle plugin to generate source code from protobuf : [protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin)
+- Curated list of gRPC tools and plugins : [grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
+- These interesting stackoverflow questions : [how-is-grpc-different-from-rest](https://stackoverflow.com/questions/43682366/how-is-grpc-different-from-rest) , [grpc-and-zeromq-comparsion](https://stackoverflow.com/questions/39350681/grpc-and-zeromq-comparsion), [is-grpchttp-2-faster-than-rest-with-http-2](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2)
+- Protobuf api versioning : [Api Versioning](https://www.beautifulcode.co/backward-and-forward-compatibility-protobuf-versioning-serialization)
