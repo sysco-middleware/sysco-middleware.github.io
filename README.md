@@ -1,5 +1,16 @@
 # Sysco blog
 
+## Include a new author
+
+All authors are stored in the `_config.yml` file.
+A author consists out of the following properties:
+
+```yml
+name: John Doe # Name of author
+avatar: /images/avatars/johndoe.jpg # Avatar of the author
+twitter: JohnDoe # Optional Twitter of author
+```
+
 ## Local development
 
 To build and serve your site, run:
