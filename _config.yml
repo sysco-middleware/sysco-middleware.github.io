@@ -81,6 +81,9 @@ authors:
   NikitaZhevnitskiy:
     name: Nikita Zhevnitskiy
     avatar: /images/avatars/NikitaZhevnitskiy.jpg
+  TimurSamkharadze:
+    name: Timur Samkharadze
+    avatar: /images/avatars/timsamkharadze.jpg
 
 # Build settings
 markdown:       kramdown
