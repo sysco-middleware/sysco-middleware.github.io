@@ -181,7 +181,11 @@ end
 In this article we covered only one little bit of functionality provided by Drools rule engine that is still enough  
 to make rules for data validation and conversion. More complicated rules can do everything that usual Java code can do  
 but with full separation from application logic. Rule files may be loaded from jar file as well as from file system. In  
-second case you don't need to redeploy your application every time when rules changed but simply reload them.  
+second case you don't need to redeploy your application every time when rules changed but simply reload them.
+
+# Sample application
+
+You may download complete test application from [here](https://github.com/sysco-middleware/poc-drools-rules-test-app)  
 
 # Further reading
 
