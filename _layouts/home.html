@@ -65,12 +65,14 @@ layout: default
 
 <div class="pagination">
   <ul class="inline-list">
-    {% if paginator.previous_page %}
-      <a href="{{ paginator.previous_page_path | prepend: site.baseurl }}"><li class="arrow"><i class="fas fa-angle-left"></i> Prev</li></a>
-    {% endif %}
-      <li>{{paginator.page}}</li>
-    {% if paginator.next_page %}
-      <a href="{{ paginator.next_page_path | prepend: site.baseurl }}"><li class="arrow">Next <i class="fas fa-angle-right"></i></li></a>
-    {% endif %}
+    {% for page in (1..paginator.total_pages) %}
+      {% if page == paginator.page %}
+        <li>{{ page }}</li>
+      {% elsif page == 1 %}
+        <a href="/"><li>{{ page }}</li></a>
+      {% else %}
+        <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}"><li>{{ page }}</li></a>
+      {% endif %}
+    {% endfor %}
   </ul>
 </div>
