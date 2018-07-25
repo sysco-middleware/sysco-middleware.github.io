@@ -69,7 +69,7 @@ layout: default
       {% if page == paginator.page %}
         <li>{{ page }}</li>
       {% elsif page == 1 %}
-        <a href="/"><li>{{ page }}</li></a>
+        <a href="{{ site.baseurl }}/"><li>{{ page }}</li></a>
       {% else %}
         <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}"><li>{{ page }}</li></a>
       {% endif %}
