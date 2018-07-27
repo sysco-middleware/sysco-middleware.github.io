@@ -27,7 +27,7 @@ The framework consists of two components:
 - **Protocol buffers** aka protobuf: a data serialization framework.
 - **gRPC Protcol** : an HTTP/2 based protocol to enable client-server communication. 
 
-![gRPC client-server communication](/images/2019-07-23-GettingStartedWithProtobufGrpc/gRPC.svg)
+![gRPC client-server communication](/images/2019-07-27-GettingStartedWithProtobufGrpc/gRPC.svg)
 [Source](https://grpc.io/)
 
 Using these two components, gRPC enables applications to communicate over HTTP/2 tcp connection while sending data in binary encoded format. This is a great way to create microservices and systems that scale very well horizontally. Moreover, the framework is highly performant, avoids the need to write boilerplate code and works seamlessly on the cloud without any hacks. One of the most promising features of gRPC is that it is programing language agnostic. You can start playing around with gRPC with any programming language of your choice.
@@ -58,11 +58,11 @@ From gRPC website:
 ## 1. What is gRPC and why would we use it? 
 
 If you have worked with REST APIs, what you are generally used to is:
-`REST API = HTTP1.1 + JSON + REST`,
+```REST API = HTTP1.1 + JSON + REST```,
 where `HTTP1.1` is the transport protocol, `JSON` is message format, and `REST` is the architectural style (resourceful endpoint).
 
 gRPC handles the same scenario as
-`gRPC API = HTTP/2 + Protobuf + RPC`
+```gRPC API = HTTP/2 + Protobuf + RPC```
 Here the transport protocol is based on `HTTP/2`, data format is defined using `Protobuf` and architectural style is `RPC`
 
 Few advantages with this approach are:
@@ -270,15 +270,15 @@ public class Client {
 Now that we have completed the implementation for our client and server, its time to run them and check out results. For the purpose of this blog, we will run the client and server from our IDE and have a look at the output produced by our server.
 
 Start the gRPC server by running the main method in Server.java
-![Start Server](/images/2019-07-23-GettingStartedWithProtobufGrpc/Server.png)
+![Start Server](/images/2019-07-27-GettingStartedWithProtobufGrpc/Server.png)
 
 Now run the client by running the main method in Client.java
-![Run Client](/images/2019-07-23-GettingStartedWithProtobufGrpc/Client.png)
+![Run Client](/images/2019-07-27-GettingStartedWithProtobufGrpc/Client.png)
 
 You can notice the difference in the value of the amount in the response. On the server, our business logic increments the amount by 1
 
 Lets check server logs that were generated while processing this request
-![Server Logs](/images/2019-07-23-GettingStartedWithProtobufGrpc/ServerResponse.png)
+![Server Logs](/images/2019-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
 
 ## 3. Where to go next?
 The example presented in this blog is extremely basic and was intended to ease the learning curve for the beginners. It is focussed towards acquainting the readers with basic terminologies in gRPC and presenting a basic workflow to play around and get started with.
