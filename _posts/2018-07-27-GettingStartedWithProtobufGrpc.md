@@ -71,7 +71,7 @@ Here the transport protocol is based on `HTTP/2`, the data format is defined usi
 
 Few advantages of this approach are:
 - 1. **Transport level optimization**: `HTTP/2` is more performant that standard `HTTP1.1`. One of the major advantages is that HTTP/2 creates a single connection between client and server and both parties can exchange data over a single connection, whereas with HTTP1.1 each data exchange needs a separate connection. Check the link at end of this section for more detailed explanation.
-- 2. **Efficient serialization**: `Protobuf` is a language-neutral way for serializing structured data. They are also very efficient and packed, while JSON, on the other hand, is textual inherently. If you have worked with JSON and XML, Protobuf lies in the same space with an added advantage that protobuf compiler can translate your data definitions to the language of your choice. Therefore, you create your structure once and use it across all supported languages.
+- 2. **Efficient serialization**: `Protobuf` is a language-neutral way for serializing structured data. They are also very efficient and packed, while JSON, on the other hand, is textual inherently. Protobuf enables us to write simple schema definitions with an added advantage that protobuf compiler can translate your data definitions to the language of your choice. Therefore, you create your structure once and use it across all supported languages.
 - 3. **RPC style communication**: `REST` encourages strict CRUD operations on a resource, however with `RPC` server can provide more general computation functions like `generateReport()`.
 
 
