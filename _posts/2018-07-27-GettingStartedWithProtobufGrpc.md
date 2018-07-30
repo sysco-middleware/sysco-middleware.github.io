@@ -9,7 +9,7 @@ author: PrakharSrivastav
 
 There are several blog posts on the internet touching one or several shiny features that gRPC framework boasts about. There is also the [official documentation](https://grpc.io/docs/) from gRPC. It is very easy to get lost in all the jargons, terminology and the code examples. This ends up making readers confused and frustrated with a very limited understanding of what gRPC offers.
 
-The motivation behind writing this blog post is to gently introduce the gRPC framework to interested developers and the architects, skipping the more advanced details. This blog starts with setting up an initial context about the gRPC framework, followed by discussing a few of its promising features. We then highlight typical applications that can be build using gRPC and introduce the readers to a simple workflow for a small to medium scale project. Wherever possible, we have provided references to more detailed sources.
+The motivation behind writing this blog post is to gently introduce the gRPC framework to interested developers and architects, skipping the more advanced details. This blog starts by setting up an initial context about the gRPC framework, followed by discussing a few of its promising features. We then highlight typical applications that can be build using gRPC and introduce the readers to a simple workflow for a small to medium scale project. Wherever possible, we have provided references to more detailed sources.
 
 This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. If you want to get more detailed instructions, the best place would be the [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file in the Github repository specified in the next section.
 
@@ -27,7 +27,7 @@ The framework consists of two components:
 - **Protocol buffers** aka protobuf: a data serialization framework.
 - **gRPC Protcol** : an HTTP/2 based protocol to enable client-server communication.
 
-![gRPC client-server communication](/images/2019-07-27-GettingStartedWithProtobufGrpc/gRPC.svg)
+![gRPC client-server communication](/images/2018-07-27-GettingStartedWithProtobufGrpc/gRPC.svg)
 [Source](https://grpc.io/)
 
 Using these two components, gRPC enables applications to communicate over HTTP/2 tcp connection while sending data in binary encoded format. This is a great way to create microservices and systems that scale very well horizontally. Moreover, the framework is highly performant, avoids the need to write boilerplate code and works seamlessly on the cloud without any hacks. One of the most promising features of gRPC is that it is programing language agnostic. You can start playing around with gRPC with any programming language of your choice.
@@ -284,15 +284,15 @@ public class Client {
 Now that we have completed the implementation for our client and server, its time to run them and check out results. For the purpose of this blog, we will run the client and server from our IDE and have a look at the output produced by our server.
 
 Start the gRPC server by running the main method in Server.java
-![Start Server](/images/2019-07-27-GettingStartedWithProtobufGrpc/Server.png)
+![Start Server](/images/2018-07-27-GettingStartedWithProtobufGrpc/Server.png)
 
 Now run the client by running the main method in Client.java
-![Run Client](/images/2019-07-27-GettingStartedWithProtobufGrpc/Client.png)
+![Run Client](/images/2018-07-27-GettingStartedWithProtobufGrpc/Client.png)
 
 You can notice the difference in the value of the amount in the response. On the server, our business logic increments the amount by 1
 
 Let's check server logs that were generated while processing this request
-![Server Logs](/images/2019-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
+![Server Logs](/images/2018-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
 
 ## 3. Where to go next?
 
