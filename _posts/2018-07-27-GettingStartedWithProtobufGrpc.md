@@ -94,6 +94,7 @@ Apart from providing a robust framework for client-server communication, gRPC pr
 - Cloud native and integrates well with cloud technologies.
 
 ### 1.2. Supported programming languages.
+
 Below are the officially supported programming languages:
 - C++
 - Java (including support for Android)
@@ -125,7 +126,9 @@ From gRPC website:
 
 References:
 - [gRPC-with-flatbuffers](https://grpc.io/blog/flatbuffers)
+
 ### 1.4. Typical applications that can be built with gRPC.
+
 The main usage scenario for gRPC are:
 - Efficiently connecting polyglot services in microservices style architecture.
 - Low latency, highly scalable, distributed systems.
@@ -177,7 +180,6 @@ References below will provide more details on how to use protocol buffers to str
 - [Protocol buffer language guide](https://developers.google.com/protocol-buffers/docs/proto3)
 - [Data types](https://developers.google.com/protocol-buffers/docs/proto#scalar)
 - [Style guide](https://developers.google.com/protocol-buffers/docs/style)
-
 
 ### 2.2. Generate gRPC code from protobuf.
 
@@ -240,6 +242,7 @@ public class Server {
 ```
 
 ### 2.4. Implementing gRPC Client.
+
 Implementing the gRPC client consists of 2 steps.
 - **Create gRPC channel**: This is to define the server address and the port we want to connect to.
 - **Creating stubs**: Use the channel to create stubs to communicate with the server. The stubs can again be of 2 types depending on whether the operation is defined as *Unary* or *Streaming* type.
@@ -277,6 +280,7 @@ public class Client {
 }
 ```
 ### 2.5. Run the server and call it using client.  
+
 Now that we have completed the implementation for our client and server, its time to run them and check out results. For the purpose of this blog, we will run the client and server from our IDE and have a look at the output produced by our server.
 
 Start the gRPC server by running the main method in Server.java
@@ -291,6 +295,7 @@ Let's check server logs that were generated while processing this request
 ![Server Logs](/images/2019-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
 
 ## 3. Where to go next?
+
 The example presented in this blog is extremely basic and was intended to ease the learning curve for the beginners. It is focussed towards acquainting the readers with basic terminologies in gRPC and presenting a basic workflow to play around and get started with.
 
 At this point we recommend you to clone the repository at [Github](https://github.com/sysco-middleware/workshop-grpc) and work through the instructions provided in README.md file. It prototypes a more advanced Invoice Generation system with step by step explanation on data-structure modeling for gRPC, setting up a java project for gRPC using Gradle and unit testing your gRPC code.
@@ -298,6 +303,7 @@ At this point we recommend you to clone the repository at [Github](https://githu
 Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation, and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
 
 ## 4. Sources and References.
+
 - Grpc website : [grpc](https://grpc.io/)
 - Google protobuf documentation : [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
 - Curated list of gRPC tools and plugins : [grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
