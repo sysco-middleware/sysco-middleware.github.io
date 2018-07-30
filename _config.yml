@@ -84,6 +84,9 @@ authors:
   PrakharSrivastav:
     name: Prakhar Srivastav
     avatar: /images/avatars/prakhar.png
+  TimurSamkharadze:
+    name: Timur Samkharadze
+    avatar: /images/avatars/timsamkharadze.jpg
 
 # Build settings
 markdown:       kramdown

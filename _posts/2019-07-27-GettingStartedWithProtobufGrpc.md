@@ -15,17 +15,17 @@ This blog focusses only on introducing gRPC as a concept and provide a convenien
 
 # Repository
 
-The examples provided in this blog are loosely based on Github repository [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc). Once you have completed section 2 of this blog , we encourage you to clone this repository to and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file to get more detailed explanation.
+The examples provided in this blog are loosely based on Github repository [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc). Once you have completed section 2 of this blog, we encourage you to clone this repository to and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file to get a more detailed explanation.
 
 You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post.
 
 # Introduction
 
-gRPC is an RPC platform developed by Google which was made open source (Apache 2.0 license) in early 2015. The first public version (1.0.0) was released in August 2016. 
+gRPC is an RPC platform developed by Google which was made open source (Apache 2.0 license) in early 2015. The first public version (1.0.0) was released in August 2016.
 
 The framework consists of two components:
 - **Protocol buffers** aka protobuf: a data serialization framework.
-- **gRPC Protcol** : an HTTP/2 based protocol to enable client-server communication. 
+- **gRPC Protcol** : an HTTP/2 based protocol to enable client-server communication.
 
 ![gRPC client-server communication](/images/2019-07-27-GettingStartedWithProtobufGrpc/gRPC.svg)
 [Source](https://grpc.io/)
@@ -34,14 +34,14 @@ Using these two components, gRPC enables applications to communicate over HTTP/2
 
 From gRPC website:
 
-> gRPC is a modern, open source remote procedure call (RPC) framework that can run anywhere. It enables client and server applications to communicate transparently, and makes it easier to build connected systems.
+> gRPC is a modern, open source remote procedure call (RPC) framework that can run anywhere. It enables client and server applications to communicate transparently and makes it easier to build connected systems.
 
 
-## Content: 
+## Content:
 
-1. What is gRPC and why would we use it?  
-1.1. Features.  
-1.2. Supported programming languages.  
+1. What is gRPC and why would we use it? 
+1.1. Features. 
+1.2. Supported programming languages. 
 1.3. Supported data formats.
 1.4. Typical applications that can be built with gRPC.
 
@@ -50,25 +50,29 @@ From gRPC website:
 2.2. Generate gRPC code from protobuf definition.
 2.3. Implement gRPC server.
 2.4. Implement gRPC client.
-2.5. Run the server and call it using client.
+2.5. Run the server and call it using a client.
 
 3. Where to go next.
 4. Sources and References.
 
-## 1. What is gRPC and why would we use it? 
+## 1. What is gRPC and why would we use it?
 
 If you have worked with REST APIs, what you are generally used to is:
-```REST API = HTTP1.1 + JSON + REST```,
+```
+REST API = HTTP1.1 + JSON + REST
+```
 where `HTTP1.1` is the transport protocol, `JSON` is message format, and `REST` is the architectural style (resourceful endpoint).
 
-gRPC handles the same scenario as
-```gRPC API = HTTP/2 + Protobuf + RPC```
-Here the transport protocol is based on `HTTP/2`, data format is defined using `Protobuf` and architectural style is `RPC`
+gRPC handles the same scenario as:
+```
+gRPC API = HTTP/2 + Protobuf + RPC
+```
+Here the transport protocol is based on `HTTP/2`, the data format is defined using `Protobuf` and architectural style is `RPC`.
 
-Few advantages with this approach are:
-- 1. **Transport level optimization**: `HTTP/2` is more performant that standard `HTTP1.1`. One of the major advantage is that HTTP/2 creates a single connection between client and server and both parties can exchange data over a single connection, where as with HTTP1.1 each data exchange needs a separate connection. Check the link at end of this section for more detailed explanation.
-- 2. **Efficient serialization**: `Protobuf` are language-neutral way for serializing structured data. They are also very efficient and packed, while JSON on the other hand is textual inherently. If you have worked with JSON and XML, Protobuf lies in the same space with an added advantage that protobuf compiler can translate your data definitions to language of your choice. Therefore, you create your structure once and use it across all supported languages.
-- 3. **RPC style communication**: `REST` encourages strict CRUD operations on a resource, however with `RPC` server can provide more general computation functions like `generateReport()`
+Few advantages of this approach are:
+- 1. **Transport level optimization**: `HTTP/2` is more performant that standard `HTTP1.1`. One of the major advantages is that HTTP/2 creates a single connection between client and server and both parties can exchange data over a single connection, whereas with HTTP1.1 each data exchange needs a separate connection. Check the link at end of this section for more detailed explanation.
+- 2. **Efficient serialization**: `Protobuf` is a language-neutral way for serializing structured data. They are also very efficient and packed, while JSON, on the other hand, is textual inherently. If you have worked with JSON and XML, Protobuf lies in the same space with an added advantage that protobuf compiler can translate your data definitions to the language of your choice. Therefore, you create your structure once and use it across all supported languages.
+- 3. **RPC style communication**: `REST` encourages strict CRUD operations on a resource, however with `RPC` server can provide more general computation functions like `generateReport()`.
 
 
 References:
@@ -76,12 +80,12 @@ References:
 - [comparing-serilization-formats](http://labs.criteo.com/2017/05/serialization/)
 - [rest-vs-rpc-style](https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/)
 
-### 1.1. Features
+### 1.1. Features.
 
-Apart from providing a robust framework for client-server communication, gRPC provides a few other features which make it an indispensable choice for modern application development. 
+Apart from providing a robust framework for client-server communication, gRPC provides a few other features which make it an indispensable choice for modern application development.
 
 - Strongly typed payload and service definition. Ensures consistent contract between the client and server.
-- API evolution, versioning and backward compatibility. gRPC APIs can be changed transparently without breaking client contracts.
+- API evolution, versioning, and backward compatibility. gRPC APIs can be changed transparently without breaking client contracts.
 - Supports unary and streaming communication with bidirectional streaming support.
 - Pluggable auth, tracing, load balancing and health checking.
 - Code generation for multiple programming languages.
@@ -89,10 +93,10 @@ Apart from providing a robust framework for client-server communication, gRPC pr
 - Supports reliable gRPC clients as well as clients for web, Android, and iOS.
 - Cloud native and integrates well with cloud technologies.
 
-### 1.2. Supported programming languages 
+### 1.2. Supported programming languages.
 Below are the officially supported programming languages:
 - C++
-- Java (including support for Android) 
+- Java (including support for Android)
 - Object-C (for iOS)
 - Python
 - Ruby
@@ -102,7 +106,7 @@ Below are the officially supported programming languages:
 - PHP
 - Dart (beta)
 
-Other third party supported languages:
+Other third-party supported languages:
 - Haskell
 - Erlang
 - Scala
@@ -111,7 +115,7 @@ Other third party supported languages:
 - Elm
 - TypeScript
 
-### 1.3. Supported data formats.  
+### 1.3. Supported data formats. 
 
 By default, gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer, it is possible to replace it with other content types or provide your own implementations.
 
@@ -125,25 +129,25 @@ References:
 The main usage scenario for gRPC are:
 - Efficiently connecting polyglot services in microservices style architecture.
 - Low latency, highly scalable, distributed systems.
-- Connecting mobile devices, browser clients to backend services
+- Connecting mobile devices, browser clients to backend services.
 - Designing a new protocol that needs to be accurate, efficient and language independent.
-- Generating efficient client libraries
+- Generating efficient client libraries.
 
-## 2. Fitting pieces together. 
+## 2. Fitting pieces together.
 
 A typical workflow for creating gRPC services is defined below. These steps show how protobuf, gRPC and your favorite programming language fit together.
 
-- Define payload (request/response structure) and service (operations exposed by service) definition in .proto file. This defines a contract between client and server.
+- Define payload (request/response structure) and service (operations exposed by service) definition in .proto file. This defines a contract between the client and the server.
 - Use a compiler to generate gRPC code from .proto files.
 - Implement the server in one of the supported languages.
-- Implement a client that talks to service through generated stub.
-- Run the server and call it using client.
+- Implement a client that talks to service through the generated stub.
+- Run the server and call it using the client.
 
-Lets discuss these steps in more detail in next few sections.
+Let us discuss these steps in more detail in the next few sections.
 
 ### 2.1. Define payload and service definition.
 
-In any typical gRPC project, we start with defining our payload in protobuf format. These payload will define our request and response structures and will be stored in .proto files (For eg invoice.proto ). An important thing to note here is that each field in our payload has a data-type, name and id. Doing this ensures that our payload is strongly typed and the protocol reports an error during compile time if client uses wrong datatype while invoking methods on server. Protobuf uses the term `message` to define a payload. Below we have defined a message called Invoice with fields id, amount and customerId. 
+In any typical gRPC project, we start with defining our payload in protobuf format. The payload will define our request and response structures and will be stored in .proto files (For eg invoice.proto ). An important thing to note here is that each field in our payload has a data-type, name, and id. Doing this ensures that our payload is strongly typed and the protocol reports an error during compile time if the client uses the wrong datatype while invoking methods on the server. Protobuf uses the term `message` to define a payload. Below we have defined a message called Invoice with fields id, amount and customerId.
 ```
 message Invoice {
     string id = 1;
@@ -152,7 +156,7 @@ message Invoice {
 }
 ```
 
-Next, we define our service and the method it exposes. The arguments and return types will always be a message that we have defined earlier. Below we have defined a service called InvoiceService and defined a method (or operation) called `Pay`. `Pay` method accepts and input of type `Invoice` and has a return type as `Invoice`.
+Next, we define our service and the method it exposes. The arguments and return types will always be a message that we have defined earlier. Below we have defined a service called InvoiceService and defined a method (or operation) called `Pay`. `Pay` method accepts an input of type `Invoice` and has a return type as `Invoice`.
 ```
 service InvoiceService {
     rpc Pay(Invoice) returns (Invoice);
@@ -161,23 +165,29 @@ service InvoiceService {
 Once we generate code from protobuf, these strongly typed methods will be available for our client and server for implementation. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
 
 Before proceeding further, let us take a quick look at what behaviors can our operations possess:
-- **Unary** : This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behavior for this request.
-- **Streaming** : This can be achieved in three different flavors. Client pushing messages to stream; Server pushing messages to a stream or bidirectional. In all these cases, the client will initiate the request, and the behavior will be determined by the presence of `stream` keyword in the method definition.
+- **Unary**: This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behavior for this request.
+- **Streaming**: This can be achieved in three different flavors. Client pushing messages to stream; Server pushing messages to a stream or bidirectional. In all these cases, the client will initiate the request, and the behavior will be determined by the presence of `stream` keyword in the method definition.
+
+One thing to keep in mind while creating APIs is ensuring their forward and backward compatibilities. It is important that any minor API changed should not break the existing clients. Protobuf provides a few guidelines to seamlessly evolve your APIs. Below mentioned reference will point you in the correct direction if you want to learn more about these concerns:
+- [Protobuf API versioning](https://www.beautifulcode.co/backward-and-forward-compatibility-protobuf-versioning-serialization)
+- [Google API design guide](https://cloud.google.com/apis/design/)
+- [Evolving Protobuf APIs](https://blog.envoyproxy.io/evolving-a-protocol-buffer-canonical-api-e1b2c2ca0dec)
 
 References below will provide more details on how to use protocol buffers to structure data.
 - [Protocol buffer language guide](https://developers.google.com/protocol-buffers/docs/proto3)
 - [Data types](https://developers.google.com/protocol-buffers/docs/proto#scalar)
 - [Style guide](https://developers.google.com/protocol-buffers/docs/style)
 
+
 ### 2.2. Generate gRPC code from protobuf.
 
-Now that we have written our payload and service definition, its time to generate code in our preferred programming language from protobuf. We will use java as a programming language through out this blog, but process to generate code in other language would just be just setting a flag away.
+Now that we have written our payload and service definition, its time to generate code in our preferred programming language from protobuf. We will use Java as a programming language throughout this blog, but the process to generate code in other languages would just be just setting a flag away.
 
 There are 2 major ways to generate code from protobuf:
-- Using **protoc compiler**: Install protoc compiler *(download link provided below). To generate code using the compiler, we need to provide the path to source, destination, and .proto files. To generate java classes from protobuf we will issue a command like `protoc -I=$SRC_DIR --java_out=$DST_DIR $SRC_DIR/invoice.proto`. This command will read the protobuf definition under `$SRC_DIR/invoice.proto` and generate java classes under `$DST_DIR`. To generate code in other languages we replace the --java_out flag with --go_out or --js_out flag.
-- Using **build tools** like gradle, sbt or maven. These tools provide tasks to directly generate source code in your preferred programming language.
+- Using **protoc compiler**: Install protoc compiler *(download link provided below). To generate code using the compiler, we need to provide the path to the source, destination, and .proto files. To generate java classes from protobuf we will issue a command like `protoc -I=$SRC_DIR --java_out=$DST_DIR $SRC_DIR/invoice.proto`. This command will read the protobuf definition under `$SRC_DIR/invoice.proto` and generate java classes under `$DST_DIR`. To generate code in other languages we replace the --java_out flag with --go_out or --js_out flag.
+- Using **build tools** like Gradle, sbt or maven. These tools provide tasks to directly generate source code in your preferred programming language.
 
-A good practice is to install protoc compiler and create shell/make scripts to generate the source code in your preferred language. We will cover that approach in one of the upcoming blogs in detail. In this blog, we will generate java code using gradle build system. 
+A good practice is to install protoc compiler and create shell/make scripts to generate the source code in your preferred language. We will cover that approach in one of the upcoming blogs in detail. In this blog, we will generate java code using gradle build system.
 
 References:
 - [protoc compiler download](https://developers.google.com/protocol-buffers/docs/downloads)
@@ -188,8 +198,8 @@ References:
 
 The code generated in the previous section will have two java files, `InvoiceServiceGrpc.java` and `InvoiceOuterClass.java`. The former will contain the service definition, while the latter will have payload definition. Implementing the gRPC server will consist of 2 basic steps:
 
-a. **Implementing the contract**. This means overriding the service base class generated from our service definition and doing the actual “work” of our service by providing business logic.
-b. **Bootstrapping the server** . This means adding the implementation done in previous step as service and running a gRPC server to listen for requests from clients and return the service responses.
+- **Implementing the contract**. This means overriding the service base class generated from our service definition and doing the actual "work" of our service by providing business logic.
+- **Bootstrapping the server**. This means adding the implementation done in the previous step as service and running a gRPC server to listen for requests from clients and return the service responses.
 
 Below snippets show a quick and dirty example of implementing gRPC server.
 ```
@@ -224,19 +234,19 @@ public class Server {
                 .addService(new InvoiceServiceImpl())           // add service implementation
                 .build();
         server.start();                                         // start server
-        server.awaitTermination();                              
+        server.awaitTermination();                             
     }
 }
 ```
 
 ### 2.4. Implementing gRPC Client.
 Implementing the gRPC client consists of 2 steps.
-- **Create gRPC channel** : This is to define the server address and the port we want to connect to.
-- **Creating stubs** : Use the channel to create stubs to communicate with server. The stubs can again be of 2 types depending on whether the operation is defined as *Unary* or *Streaming* type.
+- **Create gRPC channel**: This is to define the server address and the port we want to connect to.
+- **Creating stubs**: Use the channel to create stubs to communicate with the server. The stubs can again be of 2 types depending on whether the operation is defined as *Unary* or *Streaming* type.
     - a *blocking/synchronous* stub: this means that the RPC call waits for the server to respond, and will either return a response or raise an exception.
     - a *non-blocking/asynchronous* stub that makes non-blocking calls to the server, where the response is returned asynchronously. You can make certain types of streaming call only using the asynchronous stub.
 
-Lets have a look at the below snippet to understand the anatomy of the gRPC client
+Let's have a look at the below snippet to understand the anatomy of the gRPC client.
 ```
 /**Implementing a gRPC client**/
 public class Client {
@@ -266,7 +276,7 @@ public class Client {
     }
 }
 ```
-### 2.5. Run the server and call it using client.   
+### 2.5. Run the server and call it using client.  
 Now that we have completed the implementation for our client and server, its time to run them and check out results. For the purpose of this blog, we will run the client and server from our IDE and have a look at the output produced by our server.
 
 Start the gRPC server by running the main method in Server.java
@@ -277,20 +287,20 @@ Now run the client by running the main method in Client.java
 
 You can notice the difference in the value of the amount in the response. On the server, our business logic increments the amount by 1
 
-Lets check server logs that were generated while processing this request
+Let's check server logs that were generated while processing this request
 ![Server Logs](/images/2019-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
 
 ## 3. Where to go next?
 The example presented in this blog is extremely basic and was intended to ease the learning curve for the beginners. It is focussed towards acquainting the readers with basic terminologies in gRPC and presenting a basic workflow to play around and get started with.
 
-At this point we recommend you to clone the repository at [Github](https://github.com/sysco-middleware/workshop-grpc) and work through the instructions provided in README.md file. It prototypes a more advanced Invoice Generation system with step by step explanation on data-structure modelling for gRPC, setting up a java project for gRPC using gradle and unit testing your gRPC code.
+At this point we recommend you to clone the repository at [Github](https://github.com/sysco-middleware/workshop-grpc) and work through the instructions provided in README.md file. It prototypes a more advanced Invoice Generation system with step by step explanation on data-structure modeling for gRPC, setting up a java project for gRPC using Gradle and unit testing your gRPC code.
 
-Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
+Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation, and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
 
-## 4. Sources and References
+## 4. Sources and References.
 - Grpc website : [grpc](https://grpc.io/)
 - Google protobuf documentation : [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
 - Curated list of gRPC tools and plugins : [grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
-- Protobuf api versioning : [Api Versioning](https://www.beautifulcode.co/backward-and-forward-compatibility-protobuf-versioning-serialization)
+
 - This blog post on gRPC: [what-is-grpc](https://rms1000watt.github.io/post/what-is-grpc/)
 - These interesting stackoverflow questions : [how-is-grpc-different-from-rest](https://stackoverflow.com/questions/43682366/how-is-grpc-different-from-rest) , [grpc-and-zeromq-comparsion](https://stackoverflow.com/questions/39350681/grpc-and-zeromq-comparsion), [is-grpchttp-2-faster-than-rest-with-http-2](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2)
