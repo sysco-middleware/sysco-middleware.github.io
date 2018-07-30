@@ -15,7 +15,7 @@ This blog focusses only on introducing gRPC as a concept and provide a convenien
 
 # Repository
 
-The examples provided in this blog are loosely based on Github repository [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc). Once you have completed section 2 of this blog, we encourage you to clone this repository to and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file to get a more detailed explanation.
+The examples provided in this blog are loosely based on Github repository [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc). Once you have completed section 2 of this blog, we encourage you to clone this repository too and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file to get a more detailed explanation.
 
 You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post.
 
