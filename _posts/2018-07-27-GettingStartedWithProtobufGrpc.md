@@ -11,13 +11,14 @@ There are several blog posts on the internet touching one or several shiny featu
 
 The motivation behind writing this blog post is to gently introduce the gRPC framework to interested developers and architects, skipping the more advanced details. This blog starts by setting up an initial context about the gRPC framework, followed by discussing a few of its promising features. We then highlight typical applications that can be build using gRPC and introduce the readers to a simple workflow for a small to medium scale project. Wherever possible, we have provided references to more detailed sources.
 
-This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. If you want to get more detailed instructions, the best place would be the [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file in the Github repository specified in the next section.
+This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. The code discussed in this example can be found on [github]().
+
 
 # Repository
 
-The examples provided in this blog are loosely based on Github repository [workshop-grpc](https://github.com/sysco-middleware/workshop-grpc). Once you have completed section 2 of this blog, we encourage you to clone this repository too and follow the instructions in [README.md](https://github.com/sysco-middleware/workshop-grpc/blob/master/README.md) file to get a more detailed explanation.
+The examples provided in this blog are based on [this](https://github.com/PrakharSrivastav/grpc-protobuf-starter) Github repository. 
 
-You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post.
+You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post. The codebase contains the instructions on how to run the server and the client in [README](https://github.com/PrakharSrivastav/grpc-protobuf-starter/blob/master/README.md) and provides ample comments wherever possible.
 
 # Introduction
 
@@ -168,7 +169,7 @@ service InvoiceService {
 Once we generate code from protobuf, these strongly typed methods will be available for our client and server for implementation. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
 
 Before proceeding further, let us take a quick look at what behaviors can our operations possess:
-- **Unary**: This refers to a blocking synchronous call made by the client to the gRPC server. The Pay example above uses `rpc` keyword to determine the Unary behavior for this request.
+- **Unary**: This refers to a blocking synchronous call made by the client to the gRPC server. The Pay method above uses `rpc` keyword to determine the Unary behavior for this request. In simplified terms, this means that a client will make a request, and wait until the server responds.
 - **Streaming**: This can be achieved in three different flavors. Client pushing messages to stream; Server pushing messages to a stream or bidirectional. In all these cases, the client will initiate the request, and the behavior will be determined by the presence of `stream` keyword in the method definition.
 
 One thing to keep in mind while creating APIs is ensuring their forward and backward compatibilities. It is important that any minor API changed should not break the existing clients. Protobuf provides a few guidelines to seamlessly evolve your APIs. Below mentioned reference will point you in the correct direction if you want to learn more about these concerns:
@@ -257,7 +258,7 @@ public class Client {
         // 1. Creating a gRPC channel
         final ManagedChannel channel = ManagedChannelBuilder
                 .forAddress("localhost", 8080)      // Set host and port
-                .usePlaintext(true)                 // This setting should be used in dev. In prod, this should be replaced with TLS/Certificate
+                .usePlaintext()                     // This setting should be used in dev. In prod, this should be replaced with TLS/Certificate
                 .build();
 
         // 2. Create a synchronous stub
