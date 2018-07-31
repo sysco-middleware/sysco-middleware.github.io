@@ -11,14 +11,14 @@ There are several blog posts on the internet touching one or several shiny featu
 
 The motivation behind writing this blog post is to gently introduce the gRPC framework to interested developers and architects, skipping the more advanced details. This blog starts by setting up an initial context about the gRPC framework, followed by discussing a few of its promising features. We then highlight typical applications that can be build using gRPC and introduce the readers to a simple workflow for a small to medium scale project. Wherever possible, we have provided references to more detailed sources.
 
-This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. The code discussed in this example can be found on [github]().
+This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. The code discussed in this example can be found on [github](https://github.com/sysco-middleware/post-protobuf-grpc).
 
 
 # Repository
 
-The examples provided in this blog are based on [this](https://github.com/PrakharSrivastav/grpc-protobuf-starter) Github repository. 
+The examples provided in this blog are based on [this](https://github.com/sysco-middleware/post-protobuf-grpc) Github repository.
 
-You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post. The codebase contains the instructions on how to run the server and the client in [README](https://github.com/PrakharSrivastav/grpc-protobuf-starter/blob/master/README.md) and provides ample comments wherever possible.
+You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post. The code-base contains the instructions on how to run the server and the client in [README](https://github.com/sysco-middleware/post-protobuf-grpc/blob/master/README.md) and provides ample comments wherever possible.
 
 # Introduction
 
@@ -40,9 +40,9 @@ From gRPC website:
 
 ## Content:
 
-1. What is gRPC and why would we use it? 
-1.1. Features. 
-1.2. Supported programming languages. 
+1. What is gRPC and why would we use it?
+1.1. Features.
+1.2. Supported programming languages.
 1.3. Supported data formats.
 1.4. Typical applications that can be built with gRPC.
 
@@ -117,7 +117,7 @@ Other third-party supported languages:
 - Elm
 - TypeScript
 
-### 1.3. Supported data formats. 
+### 1.3. Supported data formats.
 
 By default, gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer, it is possible to replace it with other content types or provide your own implementations.
 
