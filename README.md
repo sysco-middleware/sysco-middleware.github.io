@@ -23,7 +23,8 @@ And you're all set! Head over to http://127.0.0.1:4000/ to see your site in acti
 
 ### Run with Docker
 
-Check <https://github.com/envygeeks/jekyll-docker/blob/master/README.md>
+Check
+<https://github.com/envygeeks/jekyll-docker/blob/master/README.md#packages>
 
 ## Contributing
 Found a bug or have a suggestion? Feel free to create an issue or make a pull request!
