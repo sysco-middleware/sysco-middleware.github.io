@@ -1,3 +1,7 @@
 **/_site/**
 *.retry
 .vagrant/
+.*
+._*
+delorphans.sh
+delorphansscript.sh
