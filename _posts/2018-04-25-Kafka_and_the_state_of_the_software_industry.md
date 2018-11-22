@@ -3,6 +3,7 @@ layout: post
 title: Kafka and the state of the software industry
 categories: OpenSource
 tags: [Kafka, Messaging, OpenSource]
+thumbnail: /images/2018-04-25-Kafka_and_the_state_of_the_software_industry/kafka_logo.jpeg
 author: dalibor
 ---
 

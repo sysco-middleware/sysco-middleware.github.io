@@ -1,0 +1,78 @@
+---
+layout: default
+---
+
+<div class="catalogue">
+  {% for post in paginator.posts %}
+    <a href="{{ post.url | prepend: site.baseurl }}" class="catalogue-item">
+      <div>
+        <div class="post-meta">
+          <span class="post-meta-avatar" style="background-image:url({{site.authors[post.author].avatar | prepend: site.baseurl}});"></span>
+          <div class="post-meta-info">
+            <div class="row">
+              <span class="post-meta-author">
+                {% assign authorCount = post.authors | size %}
+                {% if authorCount == 0 %}
+                {% assign author = site.authors[post.author] %}
+                      {{ author.name }}
+                {% elsif authorCount == 1 %}
+                      {% assign author = site.authors[post.author] %}
+                      {{ author.name }}
+                {% else %}
+                    {% for authorid in post.authors %}
+                        {% if forloop.first %}
+                {% assign author = site.authors[authorid] %}
+                      {{ author.name }}
+                        {% elsif forloop.last %}
+                            and {% assign author = site.authors[authorid] %}
+                       {{ author.name }}
+                        {% else %}
+                            {% assign author = site.authors[authorid] %}
+                      , {{ author.name }}
+                        {% endif %}
+                    {% endfor %}
+                {% endif %},
+              </span>
+            </div>
+            <div class="row">
+              <time datetime="{{ post.date }}" class="post-meta-time">{{ post.date | date: "%B %d, %Y" }}</time>
+              {% if site.reading_time %}
+                <span class="post-meta-devider">&#183;</span>
+                <span class="post-readingtime">
+                  {% assign readtime = post.content | number_of_words | divided_by:site.words_per_minute %}
+                  {% if readtime <= 1 %}1{% else %}{{ readtime }}{% endif %} min read
+                </span>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <h1 class="catalogue-title">{{ post.title }}</h1>
+        <div class="catalogue-line"></div>
+
+        <p>
+          {{ post.content | strip_html | truncatewords: 30 }}
+        </p>
+      </div>
+
+      {% if post.thumbnail %}
+        <div class="catalogue-thumbnail" style="background-image: url({{post.thumbnail | prepend: site.baseurl}});">
+        </div>
+      {% endif %}
+    </a>
+  {% endfor %}
+</div>
+
+<div class="pagination">
+  <ul class="inline-list">
+    {% for page in (1..paginator.total_pages) %}
+      {% if page == paginator.page %}
+        <li>{{ page }}</li>
+      {% elsif page == 1 %}
+        <a href="{{ site.baseurl }}/"><li>{{ page }}</li></a>
+      {% else %}
+        <a href="{{ site.paginate_path | prepend: site.baseurl | replace: '//', '/' | replace: ':num', page }}"><li>{{ page }}</li></a>
+      {% endif %}
+    {% endfor %}
+  </ul>
+</div>

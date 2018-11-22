@@ -1,7 +1,6 @@
-**/_site/**
-*.retry
-.vagrant/
-.*
-._*
-delorphans.sh
-delorphansscript.sh
+*.gem
+.bundle
+.sass-cache
+_site
+Gemfile.lock
+vendor/
