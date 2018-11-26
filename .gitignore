@@ -4,3 +4,7 @@
 _site
 Gemfile.lock
 vendor/
+
+# IntelliJ
+*.iml
+/.idea
