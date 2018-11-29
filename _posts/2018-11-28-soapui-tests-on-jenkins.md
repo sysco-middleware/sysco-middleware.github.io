@@ -64,7 +64,7 @@ To run successfully on [Jenkins](https://jenkins.io/), [IntelliJ](https://www.je
 │       ├── resources
 │       │   ├── UAT.jks
 │       │   ├── database.json
-│       │   └── qa_elhub.jks
+│       │   └── qa.jks
 │       └── soapui
 │           ├── EMIF-archive.xml
 │           ├── EMIF-compression.xml
@@ -82,7 +82,7 @@ To run successfully on [Jenkins](https://jenkins.io/), [IntelliJ](https://www.je
     └── test-classes
         ├── UAT.jks
         ├── database.json
-        └── qa_elhub.jks
+        └── qa.jks
 ```
 
 Where:
@@ -101,7 +101,7 @@ Normally [SoapUI](https://www.soapui.org/) is storing preferences file (soapui-s
 
 #### Setting absolute and relative paths
 
-When we are running our tests from within [SoapUI](https://www.soapui.org/) GUI environment we have to supply absolute paths but when we are running our tests from command line or from e.g. [Jenkins](https://jenkins.io/) server than we have to use relative paths. The same goes for specifying location of [Java Keystore](https://en.wikipedia.org/wiki/Keystore) used to sign and/or encrypt our messages. So in a project file (e.g. `EMIF-archive.xml`) we have to serch for the location of [Java Keystore](https://en.wikipedia.org/wiki/Keystore) database (e.g. `qa_elhub.jks`) and than assure that absolute path is used:
+When we are running our tests from within [SoapUI](https://www.soapui.org/) GUI environment we have to supply absolute paths but when we are running our tests from command line or from e.g. [Jenkins](https://jenkins.io/) server than we have to use relative paths. The same goes for specifying location of [Java Keystore](https://en.wikipedia.org/wiki/Keystore) used to sign and/or encrypt our messages. So in a project file (e.g. `EMIF-archive.xml`) we have to serch for the location of [Java Keystore](https://en.wikipedia.org/wiki/Keystore) database (e.g. `qa.jks`) and than assure that absolute path is used:
 
 ![Absolute Java Keystore path in project file](/images/2018-11-28-soapui-tests-on-jenkins/Absolute-path-xml.png) Fig. 4\. Absolute [Java Keystore](https://en.wikipedia.org/wiki/Keystore) path in project file
 
@@ -194,13 +194,7 @@ After we have enabled additional repository location for [SoapUI](https://www.so
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>no.elhub</groupId>
-        <artifactId>elbase</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
-
-    <artifactId>elemif</artifactId>
+    <artifactId>emif</artifactId>
     <version>1.0-SNAPSHOT</version>
 
 
@@ -286,7 +280,7 @@ git commit -m "first commit"
 Than we have to create repository on the version control server that will contain our project. For [GitHub](https://github.com) it is done by clicking on the "New" button under Repositories section. After we have given the name to repository we can upload our project to version control server. For [GitHub](https://github.com):
 
 ```shell
-git remote add origin https://github.com/<your user name>/elemif.git
+git remote add origin https://github.com/<your user name>/emif.git
 git push -u origin master
 ```
 

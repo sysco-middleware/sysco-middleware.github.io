@@ -41,7 +41,7 @@ class Credentials {
 
 
 //When running in SoapUI
-String fileName = "/Users/cube/Documents/elHub/elTor/elemif/src/test/resources/database.json"
+String fileName = "/Users/<username>/Documents/elemif/src/test/resources/database.json"
 
 //When running on Jenkins (DISABLE when needed)
 fileName = "src/test/resources/database.json"
@@ -84,7 +84,7 @@ class Credentials {
 
 
 //When running in SoapUI
-String fileName = "/Users/cube/Documents/elHub/elTor/elemif/src/test/resources/database.json"
+String fileName = "/Users/<username>/Documents/elemif/src/test/resources/database.json"
 
 //When running on Jenkins (DISABLE when needed)
 fileName = "src/test/resources/database.json"
@@ -96,7 +96,7 @@ Credentials credentials = new JsonSlurper().parseText(inputFile.text)
 
 com.eviware.soapui.support.GroovyUtils.registerJdbcDriver("oracle.jdbc.driver.OracleDriver")
 Sql sql = Sql.newInstance(
-    'jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=10.32.133.15)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=elhub_custom_qa)))',
+    'jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCP)(HOST=xx.xx.xx.xx)(PORT=1521)))(CONNECT_DATA=(SERVICE_NAME=custom_qa)))',
     credentials.userName, credentials.password, 'oracle.jdbc.driver.OracleDriver')
 
 context.setProperty("sql", sql)
