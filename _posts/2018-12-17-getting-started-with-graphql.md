@@ -7,39 +7,32 @@ author: PrakharSrivastav
 ---
 # Motivation and target audience
 
-This post is targetted towards backend developers and architects who want to model a backend API to be consumed by a frontend UI. This frontend could be any UI including web, iOS or Android. There are also some inputs for frontend developers on how can they interact with the graphql compatible backends.
+This blog post is targeted towards the architects and the back-end developers who want to model a backend API to be consumed by a frontend UI (web, iOS or android). Although, the focus of this blog post would be on creating graphql APIs, there would be few pointers for the frontend developers on how to interact with the graphql powered backends.
 
+The motivation behind writing this blog post is to gently introduce the Graphql concepts to the target audience and discuss advantages and disadvantages of graphql over traditional REST APIs. We will then highlight a typical workflow that can be used to model graphql powered APIs and end the post with a simple example to create graphql APIs using Java. Wherever possible, we will provide adequate references to more detailed resources.
 
-There are several blog posts on the internet touching one or several shiny features that gRPC framework boasts about. There is also the [official documentation](https://grpc.io/docs/) from gRPC. It is very easy to get lost in all the jargons, terminology and the code examples. This ends up making readers confused and frustrated with a very limited understanding of what gRPC offers.
-
-The motivation behind writing this blog post is to gently introduce the gRPC framework to interested developers and architects, skipping the more advanced details. This blog starts by setting up an initial context about the gRPC framework, followed by discussing a few of its promising features. We then highlight typical applications that can be build using gRPC and introduce the readers to a simple workflow for a small to medium scale project. Wherever possible, we have provided references to more detailed sources.
-
-This blog focusses only on introducing gRPC as a concept and provide a convenient starting point. The code discussed in this example can be found on [github](https://github.com/sysco-middleware/post-protobuf-grpc).
-
+The code discussed in this blog post can be found on [github](https://github.com/PrakharSrivastav/blog-graphql)
 
 # Repository
 
-The examples provided in this blog are based on [this](https://github.com/sysco-middleware/post-protobuf-grpc) Github repository.
+The examples provided in this blog are based on [this](https://github.com/PrakharSrivastav/blog-graphql) Github repository.
 
-You should use this blog post to grab the gRPC concepts and the Github repository to validate the concepts you have learned in this blog post. The code-base contains the instructions on how to run the server and the client in [README](https://github.com/sysco-middleware/post-protobuf-grpc/blob/master/README.md) and provides ample comments wherever possible.
+You should use this blog post to grab the Graphql concepts and the Github repository to validate the concepts you have learned in this blog post. The code-base contains the instructions on how to run the server and the client in [README](https://github.com/PrakharSrivastav/blog-graphql/README.md) and provides ample comments wherever possible.
 
 # Introduction
 
-gRPC is an RPC platform developed by Google which was made open source (Apache 2.0 license) in early 2015. The first public version (1.0.0) was released in August 2016.
+1. Provide simple explanation
+2. Provide simple comparison with rest
+![graphql-arch](/images/2018-12-17-getting-started-with-graphql/graphql-arch.png)
+[Image source](https://blog.apollographql.com/how-do-i-graphql-2fcabfc94a01)
+3. Provide more details
 
-The framework consists of two components:
-- **Protocol buffers** aka protobuf: a data serialization framework.
-- **gRPC Protcol** : an HTTP/2 based protocol to enable client-server communication.
 
-![gRPC client-server communication](/images/2018-07-27-GettingStartedWithProtobufGrpc/gRPC.svg)
-[Source](https://grpc.io/)
+![graphql](/images/2018-12-17-getting-started-with-graphql/graphql.png)
+[Image source](https://graphql.org/)
 
-Using these two components, gRPC enables applications to communicate over HTTP/2 tcp connection while sending data in binary encoded format. This is a great way to create microservices and systems that scale very well horizontally. Moreover, the framework is highly performant, avoids the need to write boilerplate code and works seamlessly on the cloud without any hacks. One of the most promising features of gRPC is that it is programing language agnostic. You can start playing around with gRPC with any programming language of your choice.
-
-From gRPC website:
-
-> gRPC is a modern, open source remote procedure call (RPC) framework that can run anywhere. It enables client and server applications to communicate transparently and makes it easier to build connected systems.
-
+From Graphql website:
+> GraphQL is a query language for your API, and a server-side runtime for executing queries by using a type system you define for your data. GraphQL isn't tied to any specific database or storage engine and is instead backed by your existing code and data.
 
 ## Content:
 
