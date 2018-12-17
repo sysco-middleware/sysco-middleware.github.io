@@ -37,17 +37,17 @@ From Graphql website:
 ## Content:
 
 1. What is gRPC and why would we use it?
-1.1. Features.
-1.2. Supported programming languages.
-1.3. Supported data formats.
-1.4. Typical applications that can be built with gRPC.
+    1.1. Features.
+    1.2. Supported programming languages.
+    1.3. Supported data formats.
+    1.4. Typical applications that can be built with gRPC.
 
 2. Fitting pieces together. [General workflow for a simple project]
-2.1. Defining payload and service definition.
-2.2. Generate gRPC code from protobuf definition.
-2.3. Implement gRPC server.
-2.4. Implement gRPC client.
-2.5. Run the server and call it using a client.
+    2.1. Defining payload and service definition.
+    2.2. Generate gRPC code from protobuf definition.
+    2.3. Implement gRPC server.
+    2.4. Implement gRPC client.
+    2.5. Run the server and call it using a client.
 
 3. Where to go next.
 4. Sources and References.
