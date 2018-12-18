@@ -19,6 +19,24 @@ The examples provided in this blog are based on [this](https://github.com/Prakha
 
 You should use this blog post to grab the Graphql concepts and the Github repository to validate the concepts you have learned in this blog post. The code-base contains the instructions on how to run the server and the client in [README](https://github.com/PrakharSrivastav/blog-graphql/README.md) and provides ample comments wherever possible.
 
+All of the examples in this blog post serve mock data. This is to make things simpler to demonstrate and also emphasize that mock data can be replaced with any other arbitrary data source.
+
+# Content:
+- Introduction to Graphql
+- What is Graphql and why would we use it?
+    - Features / Terminologies
+    - Comparison with traditional REST apis
+    - Pros / Advantages
+    - Cons / Disadvantages
+    - Ecosystem, Supported Platform and languages
+- Fitting pieces together. (Workflow for a simple project)
+    - Defining schema
+    - Writing resolvers
+    - Queries and Mutations
+- Some best practices
+- Where to go next
+- Sources and references
+
 # Introduction
 
 1. Provide simple explanation
@@ -34,23 +52,7 @@ You should use this blog post to grab the Graphql concepts and the Github reposi
 From Graphql website:
 > GraphQL is a query language for your API, and a server-side runtime for executing queries by using a type system you define for your data. GraphQL isn't tied to any specific database or storage engine and is instead backed by your existing code and data.
 
-## Content:
 
-1. What is gRPC and why would we use it?
-    1.1. Features.
-    1.2. Supported programming languages.
-    1.3. Supported data formats.
-    1.4. Typical applications that can be built with gRPC.
-
-2. Fitting pieces together. [General workflow for a simple project]
-    2.1. Defining payload and service definition.
-    2.2. Generate gRPC code from protobuf definition.
-    2.3. Implement gRPC server.
-    2.4. Implement gRPC client.
-    2.5. Run the server and call it using a client.
-
-3. Where to go next.
-4. Sources and References.
 
 ## 1. What is gRPC and why would we use it?
 
