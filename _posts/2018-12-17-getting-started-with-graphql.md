@@ -24,7 +24,7 @@ All of the examples in this blog post serve mock data. This is to make things si
 # Content:
 - Introduction to Graphql
 - What is Graphql and why would we use it?
-    - Features / Terminologies
+    - Building blocks of graphql.
     - Comparison with traditional REST apis
     - Pros / Advantages
     - Cons / Disadvantages
@@ -38,6 +38,22 @@ All of the examples in this blog post serve mock data. This is to make things si
 - Sources and references
 
 # Introduction
+
+In a typical REST world, we expect our requests to operate on a resource. We usually define CRUD (POST/ , GET/, PUT/ , DELETE/) api interfaces for our resources and use them in sequence to perform intended operations. Lets consider a simple REST api consisting of resources "customer" and "address". For sake of simplicity lets also assume that we have 100 customers with their addresses in our backend. Our task is to get the customer name, id and zip code (pin code)for all these customers. Our general approach to solve this problem in rest world would be 
+
+- Get the list of all the customers. 
+- Get addresses for all these customers.
+
+If you look carefully, there are a couple of problems with this approach.
+
+1. Classical **N+1 problem**: To get limited data for N items, we end up making N+1 requests to the server. This usually accounts on making one huge request to get all items (100 customers in our case) and then N individual requests to fetch the related resource (100 individual address requests). This approach to query data is inefficient because each request creates a new Http connection, waits for the response leading to increase in latency. No matter how fast and responsive your backend services are, the N+1 requests always add new network hops thereby affecting the performance.
+
+2. Maintaining route list / endpoints: Quite often, the REST api development starts with a set of lightweight, slim resources modelled in traditional CRUD way, but sooner or later start getting bulky and multi-versioned. Its common to see simple api like `GET /customer` evolving to `GET /v1/customer`, `GET v1/customer/status/{status}`, `GET /v1/customer/status/{status}/location/{location}` and so on. As a backend developer we need to maintain list of multiple version of these APIs and also be aware of the breaking changes between them.
+
+3. Over-fetching / Under-fetching: This scenario is pretty common in the projects where our apis gradually start serving more and more clients. Each client wants a specific dataset and ends up either over-fetching, meaning receives a payload with extra data or under-fetching data in which case it needs to make additional api calls to compensate for the missing data. This is a known problem since ages and we usually workaround this by creating a new version of the api, or creating a new endpoint explicitly for the client, leading to the scenario  I talked about in point 2.
+
+4. API documentation: Multiple versions of the apis are hard to document and maintain. Also most of the time the apis are not self documenting unless we use tools like open API/swagger.
+
 
 1. Provide simple explanation
 2. Provide simple comparison with rest
