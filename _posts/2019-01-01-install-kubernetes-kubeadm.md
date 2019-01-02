@@ -20,58 +20,106 @@ The installation steps provided in this blog are based on [this](https://github.
 
 Kubernetes (K8s) is a container orchestration platform that helps users to build, deploy, scale and manage containerized applications and their dynamic life cycle. It was first developed at Google, but later on offered as a seed technology to Cloud Native Computing Foundation (CNCF). 
 
-
 From Kubernetes  website:
 
 > Kubernetes (k8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery. Kubernetes builds upon 15 years of experience of running production workloads at Google, combined with best-of-breed ideas and practices from the community.
 
 Some of the distinguished kubernetes features are:
-- **Service discovery and load balancing**. You can run multiple instances of a container with their own IP addresses. Each of these IP addresses will be mapped to one DNS name. Kubernetes takes care of distributing the load over these container instances.
-- **Automatic binpacking**. Based on different metrics and resource availability, Kubernetes will automate the container placement to provide efficient resource utilization. 
-- **Storage orchestration**. Kubernetes works with variety of storage solutions from local storage, network storage to public cloud.
-- **Self-healing**. Ability to kill and restart the failed containers.
-- **Automated rollouts and rollbacks** Kubernetes rolls out updates to updates to the applications in stages, rather than all at once, and monitors for health issues, and if found, will automatically rollback to a more stable version to preserve uptime.
-- **Secret and configuration management** Deploy and update secrets and application configuration without rebuilding your image and without exposing secrets in your stack configuration. 
-- **Batch execution**  Kubernetes can manage your batch and CI workloads, replacing containers that fail, if desired. 
-- **Horizontal scaling** Scale your application up and down with a simple command, with a UI, or automatically based on CPU usage. 
+- **Service discovery and load balancing**. 
+- **Automatic binpacking**.
+- **Storage orchestration**. 
+- **Self-healing**. 
+- **Automated rollouts and rollbacks**.
+- **Secret and configuration management**.
+- **Batch execution**.
+- **Horizontal scaling**.
 
 You can read more about Kubernetes features [here](https://kubernetes.io/). If you are interested in some case studies you can find them [here](https://kubernetes.io/case-studies/). In the next section we will start with installing the kubernetes cluster on linux.
 
 ## Content:
 
-1. Pre-requisites?
-1.1. Required Hardware.
-1.2. Required software/packages.
-1.3. Master setup.
-1.4. Slave setup.
+- Prerequisites.
+    - Verify hardware
+    - Configure hostname
+    - Configure host files
+    - Verify MAC and product_uuid
+    - Disable SELinux and Swap
+- Install kubernetes and other dependencies.
+- Configure kubernetes master.
+- Initialize cluster.
+- Add nodes to the cluster.
+- Create and test pods.
+- Where to go next.
+- Sources and References.
 
-2. Where to go next.
-3. Sources and References.
+## 1. Prerequisites
 
-## 1. What is gRPC and why would we use it?
+In this example we will set up a kubernetes cluster with one master and 2 nodes. We will use the below configurations to setup our cluster
 
-If you have worked with REST APIs, what you are generally used to is:
+### Verify server hardware
+We will use 3 CentOS 7 servers with minimum 2 CPU and 2 GB RAM. You should have root privileges on the servers to install the required software packages.
+
+For this example we have provisioned 3 server with below IPs
+- 192.168.37.48
+- 192.168.37.49
+- 192.168.37.50 
+
+In the next step we will provide them a unique hostname.
+
+### Configure hostname on each of the server
+Login to each of the server and change the hostname by following below 2 steps. For example on server 192.168.37.48 we have setup hostname kubernetes1.oslo.sysco.no
+- `hostnamectl set-hostname kubernetes1.oslo.sysco.no`
+- update host name in the file /etc/hostname to `kubernetes1.oslo.sysco.no`
+
+
+### Configure host files
+
+We are using the below configurations so that each of the hosts in the cluster can communicate with each other. We have copied the below configurations in our /etc/hosts file on **each server**.
 ```
-REST API = HTTP1.1 + JSON + REST
+192.168.37.48 kubernetes1.oslo.sysco.no
+192.168.37.49 kubernetes2.oslo.sysco.no
+192.168.37.50 kubernetes3.oslo.sysco.no
 ```
-where `HTTP1.1` is the transport protocol, `JSON` is message format, and `REST` is the architectural style (resourceful endpoint).
-
-gRPC handles the same scenario as:
+After applying above settings, you should be able to ping other servers from each host. For example, I can ping kubernetes2.oslo.sysco.no from the host kubernetes1.oslo.sysco.no
 ```
-gRPC API = HTTP/2 + Protobuf + RPC
+[root@kubernetes1 ~]# ping kubernetes2.oslo.sysco.no
+PING kubernetes2.oslo.sysco.no (192.168.37.49) 56(84) bytes of data.
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=1 ttl=64 time=0.460 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=2 ttl=64 time=0.229 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=3 ttl=64 time=0.205 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=4 ttl=64 time=0.199 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=5 ttl=64 time=0.262 ms
+
+--- kubernetes2.oslo.sysco.no ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4000ms
+rtt min/avg/max/mdev = 0.199/0.271/0.460/0.097 ms
+
 ```
-Here the transport protocol is based on `HTTP/2`, the data format is defined using `Protobuf` and architectural style is `RPC`.
 
-Few advantages of this approach are:
-- 1. **Transport level optimization**: `HTTP/2` is more performant that standard `HTTP1.1`. One of the major advantages is that HTTP/2 creates a single connection between client and server and both parties can exchange data over a single connection, whereas with HTTP1.1 each data exchange needs a separate connection. Check the link at end of this section for more detailed explanation.
-- 2. **Efficient serialization**: `Protobuf` is a language-neutral way for serializing structured data. They are also very efficient and packed, while JSON, on the other hand, is textual inherently. Protobuf enables us to write simple schema definitions with an added advantage that protobuf compiler can translate your data definitions to the language of your choice. Therefore, you create your structure once and use it across all supported languages.
-- 3. **RPC style communication**: `REST` encourages strict CRUD operations on a resource, however with `RPC` server can provide more general computation functions like `generateReport()`.
-
+**Note 1** : Its important that you replace above settings with your IP and server alias.
+**Note 2** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to this documentation for more details.
 
 References:
-- [http2-vs-http1](https://imagekit.io/blog/http2-vs-http1-performance/)
-- [comparing-serilization-formats](http://labs.criteo.com/2017/05/serialization/)
-- [rest-vs-rpc-style](https://apihandyman.io/do-you-really-know-why-you-prefer-rest-over-rpc/)
+- [Hardware and OS requirements](https://kubernetes.io/docs/setup/independent/install-kubeadm/#before-you-begin)
+### Verify that MAC address and product_uuid are unique for each host
+ Kubernetes uses these values to uniquely identify the nodes in the cluster. If these values are not unique to each node, the installation process may [fail](https://github.com/kubernetes/kubeadm/issues/31).
+
+- You can get the MAC address of the network interfaces using the command `ip link` or `ifconfig -a`. For me the MAC address are 
+    - `kubernetes1.oslo.sysco.no` - `00:21:f6:8d:df:0b`
+    - `kubernetes2.oslo.sysco.no` - `00:21:f6:6a:26:77`
+    - `kubernetes3.oslo.sysco.no` - `00:21:f6:07:83:83`
+
+- The product_uuid can be checked by using the command `sudo cat /sys/class/dmi/id/product_uuid`. For example the unique product ids in my case are 
+    - `kubernetes1.oslo.sysco.no` - `1234EEE2-0002-1000-9481-2C9B3620A4FF`
+    - `kubernetes2.oslo.sysco.no` - `1234EEE2-0002-1000-A7D1-ACE30E89E55F`
+    - `kubernetes3.oslo.sysco.no` - `1234EEE2-0002-1000-0ED0-F6750310F8CC`
+
+**Note** : The product ids are changed in the above example. You should see the similar pattern for your setup. Its important that these UUIDs are unique for each node that forms a cluster.
+
+References:
+- [MAC and UUID Spec](https://kubernetes.io/docs/setup/independent/install-kubeadm/#verify-the-mac-address-and-product-uuid-are-unique-for-every-node)
+
+### Disable SELinux and swap
 
 ### 1.1. Features.
 
