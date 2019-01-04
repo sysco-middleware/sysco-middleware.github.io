@@ -66,6 +66,8 @@ For this example we have provisioned 3 server with below IPs
 
 In the next step we will provide them a unique hostname.
 
+**Note** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to this documentation for more details.
+
 ### Configure hostname on each of the server
 Login to each of the server and change the hostname by following below 2 steps. For example on server 192.168.37.48 we have setup hostname kubernetes1.oslo.sysco.no
 - `hostnamectl set-hostname kubernetes1.oslo.sysco.no`
@@ -89,15 +91,12 @@ PING kubernetes2.oslo.sysco.no (192.168.37.49) 56(84) bytes of data.
 64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=3 ttl=64 time=0.205 ms
 64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=4 ttl=64 time=0.199 ms
 64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=5 ttl=64 time=0.262 ms
-
 --- kubernetes2.oslo.sysco.no ping statistics ---
 5 packets transmitted, 5 received, 0% packet loss, time 4000ms
 rtt min/avg/max/mdev = 0.199/0.271/0.460/0.097 ms
-
 ```
 
-**Note 1** : Its important that you replace above settings with your IP and server alias.
-**Note 2** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to this documentation for more details.
+**Note** : Its important that you replace above settings with your IP and server alias.
 
 References:
 - [Hardware and OS requirements](https://kubernetes.io/docs/setup/independent/install-kubeadm/#before-you-begin)
@@ -119,8 +118,33 @@ References:
 References:
 - [MAC and UUID Spec](https://kubernetes.io/docs/setup/independent/install-kubeadm/#verify-the-mac-address-and-product-uuid-are-unique-for-every-node)
 
-### Disable SELinux and swap
+### Configure OS level settings
+- Enable br_netfilter Kernel Module: The br_netfilter module is required for kubernetes installation. Enable this kernel module so that the packets traversing the bridge are processed by iptables for filtering and for port forwarding, and the kubernetes pods across the cluster can communicate with each other.
 
+Run the command below to enable the br_netfilter kernel module.
+```
+modprobe br_netfilter
+echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+```
+- Disable SWAP : 
+    - Disable SWAP for kubernetes installation by running the following commands.```swapoff -a```
+    - And then edit the '/etc/fstab' file. Run ```vim /etc/fstab``` and comment the swap line UUID
+    ```
+    # /etc/fstab: static file system information.
+    #
+    # Use 'blkid' to print the universally unique identifier for a
+    # device; this may be used with UUID= as a more robust way to name devices
+    # that works even if disks are added and removed. See fstab(5).
+    #
+    # <file system> <mount point>   <type>  <options>       <dump>  <pass>
+    # / was on /dev/nvme0n1p2 during installation
+    UUID=47371a4c-3cdf-4ecc-b573-f09a029c74f4 /               ext4    errors=remount-ro 0       1
+    # /boot/efi was on /dev/nvme0n1p1 during installation
+    UUID=C176-4947  /boot/efi       vfat    umask=0077      0       1
+    # swap was on /dev/nvme0n1p3 during installation
+    # COMMENT BELOW LINE
+    # UUID=78aeec44-b1af-4720-9316-6af68385b23f none            swap    sw              0       0
+    ```
 ### 1.1. Features.
 
 Apart from providing a robust framework for client-server communication, gRPC provides a few other features which make it an indispensable choice for modern application development.
