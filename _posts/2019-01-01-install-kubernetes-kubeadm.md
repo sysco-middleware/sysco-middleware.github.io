@@ -51,12 +51,12 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
 
 ## 1. Prerequisites
 
-In this example we will set up a kubernetes cluster with one master and 2 nodes. We will use the below setup for our kubernetes cluster.
+In this example we will set up a kubernetes cluster with one master and 2 nodes. 
 
 ### Hardware and OS specifications.
 We will use 3 CentOS 7 servers with minimum 2 CPU and 2 GB RAM. You should have root privileges on the servers to install the required software packages.
 
-**Note** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to this documentation for more details.
+**Note** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to [this](https://kubernetes.io/docs/concepts/overview/components/) documentation for more details.
 For this example we have provisioned 3 server with below IPs
 - 192.168.37.48 - This will act as our Master
 - 192.168.37.49 - This will be first node of our cluster
