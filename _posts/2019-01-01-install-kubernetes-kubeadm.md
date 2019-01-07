@@ -7,18 +7,13 @@ author: PrakharSrivastav
 ---
 # Motivation and target audience
 
-This blog post is geared towards developers and administrators who want to setup an on-premise Kubernetes cluster. This post will guide you towards setting up a multi-node kubernetes cluster on linux servers and will address some of the key concerns during the setup.
+This blog post is geared towards developers and administrators who want to setup an on-premise Kubernetes cluster. This post will guide you towards the basics of setting up a multi-node kubernetes cluster on linux servers and will address some of the key concerns during the setup.
 
-Since Kubernetes is a huge topic in itself and therefore this post will not cover all the nitty-gritty details in setting up the kuberneters clusters. This blog post is aimed to provide a convenient starting point. The installation steps discussed in this example can be found on [github](https://github.com/PrakharSrivastav/kubernetes-setup).
-
-
-# Repository
-
-The installation steps provided in this blog are based on [this](https://github.com/PrakharSrivastav/kubernetes-setup) Github repository.
+Kubernetes is a huge area in itself and this post does not intend to cover all the nitty-gritty setup details. Instead, this blog post aims to provide a convenient starting point. 
 
 # Introduction
 
-Kubernetes (K8s) is a container orchestration platform that helps users to build, deploy, scale and manage containerized applications and their dynamic life cycle. It was first developed at Google, but later on offered as a seed technology to Cloud Native Computing Foundation (CNCF). 
+Kubernetes (K8s) is a container orchestration technology that focuses on easing the efforts required to build, deploy, scale and manage containerized applications. It also provides means to manage complicated and dynamic life cycle of containerized applications. It was first developed at Google, but later on open sourced as a seed technology to Cloud Native Computing Foundation (CNCF). 
 
 From Kubernetes  website:
 
@@ -39,50 +34,54 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
 ## Content:
 
 - Prerequisites.
-    - Verify hardware
-    - Configure hostname
+    - Hardware and OS specifications
+    - Hostname configurations
     - Configure host files
     - Verify MAC and product_uuid
     - Disable SELinux and Swap
-- Install kubernetes and other dependencies.
-- Configure kubernetes master.
-- Initialize cluster.
+- Install software and other dependencies.
+    - Install docker
+    - Install Kubernetes components
+- Configure kubernetes master and initialize cluster.
+    - Initialize master
+    - Create kube configuration in home directory
+    - Install flannel network
 - Add nodes to the cluster.
-- Create and test pods.
-- Where to go next.
 - Sources and References.
 
 ## 1. Prerequisites
 
-In this example we will set up a kubernetes cluster with one master and 2 nodes. We will use the below configurations to setup our cluster
+In this example we will set up a kubernetes cluster with one master and 2 nodes. We will use the below setup for our kubernetes cluster.
 
-### Verify server hardware
+### Hardware and OS specifications.
 We will use 3 CentOS 7 servers with minimum 2 CPU and 2 GB RAM. You should have root privileges on the servers to install the required software packages.
 
-For this example we have provisioned 3 server with below IPs
-- 192.168.37.48
-- 192.168.37.49
-- 192.168.37.50 
-
-In the next step we will provide them a unique hostname.
-
 **Note** : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to this documentation for more details.
+For this example we have provisioned 3 server with below IPs
+- 192.168.37.48 - This will act as our Master
+- 192.168.37.49 - This will be first node of our cluster
+- 192.168.37.50 - This will be the second node of the cluster
 
-### Configure hostname on each of the server
-Login to each of the server and change the hostname by following below 2 steps. For example on server 192.168.37.48 we have setup hostname kubernetes1.oslo.sysco.no
-- `hostnamectl set-hostname kubernetes1.oslo.sysco.no`
+It is important to mention here that kubernetes works in accordance with master slave architecture. The pods will never be scheduled on the master, instead master will act as a coordinator to manage different kubernetes services, manage traffic between the pods and manage workload scheduling on the nodes.
+
+### Hostname configurations
+Login to each of the server via terminal and change the hostname by following below 2 steps. For example on server 192.168.37.48 we have setup the corresponding host name as `kubernetes1.oslo.sysco.no`
+- run `hostnamectl set-hostname kubernetes1.oslo.sysco.no`
 - update host name in the file /etc/hostname to `kubernetes1.oslo.sysco.no`
 
+Follow same steps for other two servers as well. 
 
 ### Configure host files
 
-We are using the below configurations so that each of the hosts in the cluster can communicate with each other. We have copied the below configurations in our /etc/hosts file on **each server**.
+In order for each of our hosts to communicate with others hosts by hostname, we should modify the host file configurations. We will add the below content to `/etc/host` file on **each server**. 
 ```
 192.168.37.48 kubernetes1.oslo.sysco.no
 192.168.37.49 kubernetes2.oslo.sysco.no
 192.168.37.50 kubernetes3.oslo.sysco.no
 ```
-After applying above settings, you should be able to ping other servers from each host. For example, I can ping kubernetes2.oslo.sysco.no from the host kubernetes1.oslo.sysco.no
+**Note** : Its important that you replace above settings with your IP and server alias.
+
+After applying above settings, you should be able to ping other servers from each host. For example, in our case, we can ping `kubernetes2.oslo.sysco.no` from the host `kubernetes1.oslo.sysco.no`
 ```
 [root@kubernetes1 ~]# ping kubernetes2.oslo.sysco.no
 PING kubernetes2.oslo.sysco.no (192.168.37.49) 56(84) bytes of data.
@@ -96,39 +95,41 @@ PING kubernetes2.oslo.sysco.no (192.168.37.49) 56(84) bytes of data.
 rtt min/avg/max/mdev = 0.199/0.271/0.460/0.097 ms
 ```
 
-**Note** : Its important that you replace above settings with your IP and server alias.
-
 References:
 - [Hardware and OS requirements](https://kubernetes.io/docs/setup/independent/install-kubeadm/#before-you-begin)
-### Verify that MAC address and product_uuid are unique for each host
- Kubernetes uses these values to uniquely identify the nodes in the cluster. If these values are not unique to each node, the installation process may [fail](https://github.com/kubernetes/kubeadm/issues/31).
 
-- You can get the MAC address of the network interfaces using the command `ip link` or `ifconfig -a`. For me the MAC address are 
+### Verify MAC and product_uuid
+ We need to verifiy that each host in the cluster has unique MAC and product_uuid. Kubernetes uses these values to uniquely identify the nodes in the cluster. If these values are not unique to each node, the installation process may [fail](https://github.com/kubernetes/kubeadm/issues/31).
+
+- You can get the MAC address of the network interfaces using the command `ip link` or `ifconfig -a`. For example the MAC address in our example are: 
     - `kubernetes1.oslo.sysco.no` - `00:21:f6:8d:df:0b`
     - `kubernetes2.oslo.sysco.no` - `00:21:f6:6a:26:77`
     - `kubernetes3.oslo.sysco.no` - `00:21:f6:07:83:83`
 
-- The product_uuid can be checked by using the command `sudo cat /sys/class/dmi/id/product_uuid`. For example the unique product ids in my case are 
+- The product_uuid can be checked by using the command `sudo cat /sys/class/dmi/id/product_uuid`. For example the unique product ids in our example are 
     - `kubernetes1.oslo.sysco.no` - `1234EEE2-0002-1000-9481-2C9B3620A4FF`
     - `kubernetes2.oslo.sysco.no` - `1234EEE2-0002-1000-A7D1-ACE30E89E55F`
     - `kubernetes3.oslo.sysco.no` - `1234EEE2-0002-1000-0ED0-F6750310F8CC`
 
-**Note** : The product ids are changed in the above example. You should see the similar pattern for your setup. Its important that these UUIDs are unique for each node that forms a cluster.
+**Note** : The product ids are changed in the above example. You should see the similar pattern for your setup. Its important that these value are unique for each node that forms a cluster.
 
 References:
 - [MAC and UUID Spec](https://kubernetes.io/docs/setup/independent/install-kubeadm/#verify-the-mac-address-and-product-uuid-are-unique-for-every-node)
 
 ### Configure OS level settings
-- Enable br_netfilter Kernel Module: The br_netfilter module is required for kubernetes installation. Enable this kernel module so that the packets traversing the bridge are processed by iptables for filtering and for port forwarding, and the kubernetes pods across the cluster can communicate with each other.
+So far we have verified our hardware, now its time to optimize some OS level settings in order to install kubernetes successfully.
 
-Run the command below to enable the br_netfilter kernel module.
-```
-modprobe br_netfilter
-echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
-```
-- Disable SWAP : 
-    - Disable SWAP for kubernetes installation by running the following commands.```swapoff -a```
-    - And then edit the '/etc/fstab' file. Run ```vim /etc/fstab``` and comment the swap line UUID
+- **Enable br_netfilter Kernel Module**: The br_netfilter module is required for kubernetes installation. This module is required to enable transparent masquerading and to facilitate VxLAN traffic for communication between Kubernetes pods across the cluster. Run the command below to enable the br_netfilter kernel module.
+    ```
+    modprobe br_netfilter
+    echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
+    ```
+    If you are interested in why it is required, checkout [this](https://github.com/kubernetes/kubernetes/issues/12459) kubernetes issue.
+
+
+- **Disable SWAP** : We need to disable swap on the servers in order for kubernetes installation to work properly. One of the important kubernetes component that we will install in the next few steps is `kubelet`. In order for kubelet to work properly, the swap should be disabled. Disable the swap on each of the servers by using the following steps.
+    - Login via ssh and run ```swapoff -a``` on each host.
+    - Edit the `/etc/fstab` file. Run ```vim /etc/fstab``` and comment the swap line UUID
     ```
     # /etc/fstab: static file system information.
     #
@@ -145,233 +146,176 @@ echo '1' > /proc/sys/net/bridge/bridge-nf-call-iptables
     # COMMENT BELOW LINE
     # UUID=78aeec44-b1af-4720-9316-6af68385b23f none            swap    sw              0       0
     ```
-### 1.1. Features.
+    References
+    - [why-disable-swap-on-kubernetes](https://serverfault.com/questions/881517/why-disable-swap-on-kubernetes)
+    - [kubernetes-issue-7294](https://github.com/kubernetes/kubernetes/issues/7294)
 
-Apart from providing a robust framework for client-server communication, gRPC provides a few other features which make it an indispensable choice for modern application development.
 
-- Strongly typed payload and service definition. Ensures consistent contract between the client and server.
-- API evolution, versioning, and backward compatibility. gRPC APIs can be changed transparently without breaking client contracts.
-- Supports unary and streaming communication with bidirectional streaming support.
-- Pluggable auth, tracing, load balancing and health checking.
-- Code generation for multiple programming languages.
-- More performant than traditional REST+JSON.
-- Supports reliable gRPC clients as well as clients for web, Android, and iOS.
-- Cloud native and integrates well with cloud technologies.
+## 2. Install docker, kubernetes and other dependencies.
+Now that we have successfully completed Hardware and OS level checks. Its time now to install the required software on our servers. Please go through the instructions below in order to complete software installation.
 
-### 1.2. Supported programming languages.
+### Install Docker
+We will install docker-ce (community version) for this example. You can check for the various available versions of docker [here](https://docs.docker.com/install/overview/). Also the steps to install docker on different operations systems are described in details [here](https://docs.docker.com/install/linux/docker-ce/centos/). You need to run the below scripts on each of the servers participating in the kubernetes cluster.
 
-Below are the officially supported programming languages:
-- C++
-- Java (including support for Android)
-- Object-C (for iOS)
-- Python
-- Ruby
-- Go
-- C#
-- Node.js
-- PHP
-- Dart (beta)
+- **Uninstall old version**: Older versions of Docker were called docker or docker-engine. If these are installed, uninstall them, along with associated dependencies.
+    ```
+    sudo yum remove docker \
+            docker-client \
+            docker-client-latest \
+            docker-common \
+            docker-latest \
+            docker-latest-logrotate \
+            docker-logrotate \
+            docker-selinux \
+            docker-engine-selinux \
+            docker-engine
+    ```
+- **Install docker-ce**: Run the below commands in sequence to install the docker-ce
+    ```
+    sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+    sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    sudo yum install docker-ce
+    ```
+- **Start docker daemon**: This command will start the docker daemon if it is stopped.
+    ```
+    sudo systemctl start docker
+    ```
 
-Other third-party supported languages:
-- Haskell
-- Erlang
-- Scala
-- Elixir
-- Rust
-- Elm
-- TypeScript
+### Install Kubernetes components
+We will use [kubeadm](https://kubernetes.io/docs/setup/independent/install-kubeadm/) to bootstrap kubernetes cluster for our example. We will start with installing basic kubernetes components namely kubectl, kubeadm and kubelet. We need to run the below scripts on each of our servers.
 
-### 1.3. Supported data formats.
+- **Add PPA repository for kubernetes**: We will first add the ppa repository on each of our servers by running below command
+    ```
+    cat <<EOF > /etc/yum.repos.d/kubernetes.repo
+    [kubernetes]
+    name=Kubernetes
+    baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+    enabled=1
+    gpgcheck=1
+    repo_gpgcheck=1
+    gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+        https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+    EOF
+    ```
+- **Install kubernetes components** : Install the kubernetes binaries kubeadm, kubectl and kubelet using the yum command.
+    ```
+    yum update -y
+    yum install -y kubelet kubeadm kubectl
+    ```
 
-By default, gRPC uses protocol buffers, Google’s mature open source mechanism for serializing structured data. However, since protocol buffers act as serialization layer, it is possible to replace it with other content types or provide your own implementations.
+- **Restart servers** : Reboot the servers by issuing the below command. This is required to apply and persist all the settings we have done so far.
+    ```
+    reboot
+    ```
+- **Restart services**: Login to each of the server and start docker and kubelet services by running the below commands.
+    ```
+    systemctl start docker && systemctl enable docker
+    systemctl start kubelet && systemctl enable kubelet
+    ```
+- **Change cgroup drivers**: It is important that docker-ce and kubernetes belong to the same cgroup. We can check the docker c-group by issuing the  command `docker info | grep -i cgroup`.
 
-From gRPC website:
-
-> gRPC is designed to be extensible to support multiple content types. The initial release contains support for Protobuf and with external support for other content types such as FlatBuffers and Thrift, at varying levels of maturity.
-
-References:
-- [gRPC-with-flatbuffers](https://grpc.io/blog/flatbuffers)
-
-### 1.4. Typical applications that can be built with gRPC.
-
-The main usage scenario for gRPC are:
-- Efficiently connecting polyglot services in microservices style architecture.
-- Low latency, highly scalable, distributed systems.
-- Connecting mobile devices, browser clients to backend services.
-- Designing a new protocol that needs to be accurate, efficient and language independent.
-- Generating efficient client libraries.
-
-## 2. Fitting pieces together.
-
-A typical workflow for creating gRPC services is defined below. These steps show how protobuf, gRPC and your favorite programming language fit together.
-
-- Define payload (request/response structure) and service (operations exposed by service) definition in .proto file. This defines a contract between the client and the server.
-- Use a compiler to generate gRPC code from .proto files.
-- Implement the server in one of the supported languages.
-- Implement a client that talks to service through the generated stub.
-- Run the server and call it using the client.
-
-Let us discuss these steps in more detail in the next few sections.
-
-### 2.1. Define payload and service definition.
-
-In any typical gRPC project, we start with defining our payload in protobuf format. The payload will define our request and response structures and will be stored in .proto files (For eg invoice.proto ). An important thing to note here is that each field in our payload has a data-type, name, and id. Doing this ensures that our payload is strongly typed and the protocol reports an error during compile time if the client uses the wrong datatype while invoking methods on the server. Protobuf uses the term `message` to define a payload. Below we have defined a message called Invoice with fields id, amount and customerId.
+    ```
+    kubernetes1 ~]# docker info | grep -i cgroup
+    Cgroup Driver: cgroupfs
+    ```
+    And change the kubernetes cgroup to cgroupfs by issuing the command below
+    ```
+    sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+    ```
+Once these steps are complete, reload the systemd service and restart the kubelet service by using the command below. After these services restarted, we are ready to initialize our cluster.
 ```
-message Invoice {
-    string id = 1;
-    float amount = 2;
-    string customerId = 3;
-}
+systemctl daemon-reload
+systemctl restart kubelet
 ```
+## 3. Configure kubernetes master and initialize cluster.
 
-Next, we define our service and the method it exposes. The arguments and return types will always be a message that we have defined earlier. Below we have defined a service called InvoiceService and defined a method (or operation) called `Pay`. `Pay` method accepts an input of type `Invoice` and has a return type as `Invoice`.
+### Initialize master
+Login to the server which you have decided to make the master. In our case we want kubernetes1.oslo.sysco.no to act as master so we do an ssh login and run the below command.
 ```
-service InvoiceService {
-    rpc Pay(Invoice) returns (Invoice);
-}
+kubeadm init --apiserver-advertise-address=<server_ip> --pod-network-cidr=10.244.0.0/16
 ```
-Once we generate code from protobuf, these strongly typed methods will be available for our client and server for implementation. This will ensure that both the client and the server stubs adhere to the contract defined in protobuf.
-
-Before proceeding further, let us take a quick look at what behaviors can our operations possess:
-- **Unary**: This refers to a blocking synchronous call made by the client to the gRPC server. The Pay method above uses `rpc` keyword to determine the Unary behavior for this request. In simplified terms, this means that a client will make a request, and wait until the server responds.
-- **Streaming**: This can be achieved in three different flavors. Client pushing messages to stream; Server pushing messages to a stream or bidirectional. In all these cases, the client will initiate the request, and the behavior will be determined by the presence of `stream` keyword in the method definition.
-
-One thing to keep in mind while creating APIs is ensuring their forward and backward compatibilities. It is important that any minor API changed should not break the existing clients. Protobuf provides a few guidelines to seamlessly evolve your APIs. Below mentioned reference will point you in the correct direction if you want to learn more about these concerns:
-- [Protobuf API versioning](https://www.beautifulcode.co/backward-and-forward-compatibility-protobuf-versioning-serialization)
-- [Google API design guide](https://cloud.google.com/apis/design/)
-- [Evolving Protobuf APIs](https://blog.envoyproxy.io/evolving-a-protocol-buffer-canonical-api-e1b2c2ca0dec)
-
-References below will provide more details on how to use protocol buffers to structure data.
-- [Protocol buffer language guide](https://developers.google.com/protocol-buffers/docs/proto3)
-- [Data types](https://developers.google.com/protocol-buffers/docs/proto#scalar)
-- [Style guide](https://developers.google.com/protocol-buffers/docs/style)
-
-### 2.2. Generate gRPC code from protobuf.
-
-Now that we have written our payload and service definition, its time to generate code in our preferred programming language from protobuf. We will use Java as a programming language throughout this blog, but the process to generate code in other languages would just be just setting a flag away.
-
-There are 2 major ways to generate code from protobuf:
-- Using **protoc compiler**: Install protoc compiler *(download link provided below). To generate code using the compiler, we need to provide the path to the source, destination, and .proto files. To generate java classes from protobuf we will issue a command like `protoc -I=$SRC_DIR --java_out=$DST_DIR $SRC_DIR/invoice.proto`. This command will read the protobuf definition under `$SRC_DIR/invoice.proto` and generate java classes under `$DST_DIR`. To generate code in other languages we replace the --java_out flag with --go_out or --js_out flag.
-- Using **build tools** like Gradle, sbt or maven. These tools provide tasks to directly generate source code in your preferred programming language.
-
-A good practice is to install protoc compiler and create shell/make scripts to generate the source code in your preferred language. We will cover that approach in one of the upcoming blogs in detail. In this blog, we will generate java code using gradle build system.
-
-References:
-- [protoc compiler download](https://developers.google.com/protocol-buffers/docs/downloads)
-- [protoc compiler reference](https://developers.google.com/protocol-buffers/docs/javatutorial)
-- [protobuf-gradle-plugin](https://github.com/google/protobuf-gradle-plugin)
-
-### 2.3. Implementing gRPC Server.
-
-The code generated in the previous section will have two java files, `InvoiceServiceGrpc.java` and `InvoiceOuterClass.java`. The former will contain the service definition, while the latter will have payload definition. Implementing the gRPC server will consist of 2 basic steps:
-
-- **Implementing the contract**. This means overriding the service base class generated from our service definition and doing the actual "work" of our service by providing business logic.
-- **Bootstrapping the server**. This means adding the implementation done in the previous step as service and running a gRPC server to listen for requests from clients and return the service responses.
-
-Below snippets show a quick and dirty example of implementing gRPC server.
+Replace the **server_ip** above with the IP of your master. The other supporting cluster services/nodes will connect to this IP while forming the cluster. For example in our case the it looks like 
 ```
-/**Implementing contract**/
-public class InvoiceServiceImpl extends InvoiceServiceGrpc.InvoiceServiceImplBase {
-    public InvoiceServiceImpl() {}
-    @Override
-    public void pay(InvoiceOuterClass.Invoice request, StreamObserver<InvoiceOuterClass.Invoice> responseObserver) {
-        // request argument represents typed client request
-        // responseObserver is a means to control streaming behavior in gRPC
-
-        // Use a builder to construct a new Protobuf object. Here we provide a custom business logic to increase amount by 1
-        InvoiceOuterClass.Invoice response = InvoiceOuterClass.Invoice.newBuilder()
-                .setAmount(request.getAmount() + 1)
-                .setCustomerId(request.getCustomerId())
-                .setId(request.getId())
-                .build();
-
-        // Use responseObserver to send a single response back
-        responseObserver.onNext(response);
-
-        // When you are done, you must call onCompleted.
-        responseObserver.onCompleted();
-    }
-}
-```
-```
-/**Bootstrapping the server and added the service implementation**/
-public class Server {
-    public static void main(String[] args) throws IOException, InterruptedException {
-        io.grpc.Server server = ServerBuilder.forPort(8080)     // listen on port 8080
-                .addService(new InvoiceServiceImpl())           // add service implementation
-                .build();
-        server.start();                                         // start server
-        server.awaitTermination();                             
-    }
-}
+[root@kubernetes1 ~]# kubeadm init --apiserver-advertise-address=192.168.37.48 --pod-network-cidr=10.244.0.0/16
 ```
 
-### 2.4. Implementing gRPC Client.
-
-Implementing the gRPC client consists of 2 steps.
-- **Create gRPC channel**: This is to define the server address and the port we want to connect to.
-- **Creating stubs**: Use the channel to create stubs to communicate with the server. The stubs can again be of 2 types depending on whether the operation is defined as *Unary* or *Streaming* type.
-    - a *blocking/synchronous* stub: this means that the RPC call waits for the server to respond, and will either return a response or raise an exception.
-    - a *non-blocking/asynchronous* stub that makes non-blocking calls to the server, where the response is returned asynchronously. You can make certain types of streaming call only using the asynchronous stub.
-
-Let's have a look at the below snippet to understand the anatomy of the gRPC client.
+Once the command is successful, you will get a token which other nodes will use to join to the cluster. This will be displayed on your terminal and will look something like
 ```
-/**Implementing a gRPC client**/
-public class Client {
-    public static void main(String[] args) throws InterruptedException {
-        // 1. Creating a gRPC channel
-        final ManagedChannel channel = ManagedChannelBuilder
-                .forAddress("localhost", 8080)      // Set host and port
-                .usePlaintext()                     // This setting should be used in dev. In prod, this should be replaced with TLS/Certificate
-                .build();
-
-        // 2. Create a synchronous stub
-        final InvoiceServiceGrpc.InvoiceServiceBlockingStub stub = InvoiceServiceGrpc.newBlockingStub(channel);
-
-        // 3. Prepare request
-        final InvoiceOuterClass.Invoice request = InvoiceOuterClass.Invoice.newBuilder()
-                .setAmount(100.00f)
-                .setId("123")
-                .setCustomerId("XYZ123")
-                .build();
-
-        // 4. Call the pay method on the stub
-        final InvoiceOuterClass.Invoice response = stub.pay(request);
-        System.out.println(response);
-
-        // Finally close the channel
-        channel.shutdown();
-    }
-}
+kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
 ```
-### 2.5. Run the server and call it using client.  
+You should carefully save this token. Your Kubernetes master should be initialized successfully by now. 
 
-Now that we have completed the implementation for our client and server, its time to run them and check out results. For the purpose of this blog, we will run the client and server from our IDE and have a look at the output produced by our server.
+### Create kube configuration in home directory
+To start using your cluster, you need to run the following as a regular user.
+```
+mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+```
 
-Start the gRPC server by running the main method in Server.java
-![Start Server](/images/2018-07-27-GettingStartedWithProtobufGrpc/Server.png)
+### Install flannel network
+You must deploy a pod network before anything will actually function properly. We will next, deploy the flannel network to the kubernetes cluster using the kubectl command. To check other networking options that can be used with kubernetes, please have a look [here](https://kubernetes.io/docs/concepts/cluster-administration/networking/).
+```
+kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+```
+Check if all the components are deployed properly
+```
+[root@kubernetes1 ~]# kubectl get nodes
+NAME                        STATUS     ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready      master   7m18s   v1.13.1
+```
+Also check if all required pods are running properly.
+```
+[root@kubernetes1 ~]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-86c58d9df4-kjmxn                            1/1     Running   0          63m
+kube-system   coredns-86c58d9df4-lfx4p                            1/1     Running   0          63m
+kube-system   etcd-kubernetes1.oslo.sysco.no                      1/1     Running   0          62m
+kube-system   kube-apiserver-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+kube-system   kube-controller-manager-kubernetes1.oslo.sysco.no   1/1     Running   0          63m
+kube-system   kube-flannel-ds-amd64-mjn4j                         1/1     Running   0          55m
+kube-system   kube-proxy-w8rfz                                    1/1     Running   0          55m
+kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+```
+## 4. Add nodes to the cluster
+We have successfully initialized our cluster and in the previous section we have verified that the master node is up and running. It time now to add the nodes `kubernetes2.oslo.sysco.no` and `kubernetes3.oslo.sysco.no` to our cluster. In order to do that, ssh to each of the nodes and run the `kubeadm join` command that we copied earlier.
+```
+[root@kubernetes2 ~]#  kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
+[root@kubernetes3 ~]#  kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
+```
+Wait for some minutes and login to the master node. Run the below command again to verify if the nodes have joined the cluster.
+```
+kubectl get nodes
+kubectl get pods --all-namespaces
 
-Now run the client by running the main method in Client.java
-![Run Client](/images/2018-07-27-GettingStartedWithProtobufGrpc/Client.png)
+[root@kubernetes1 ~]# kubectl get nodes
+NAME                        STATUS   ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready    master   12m     v1.13.1
+kubernetes2.oslo.sysco.no   Ready    <none>   5m37s   v1.13.1
+kubernetes3.oslo.sysco.no   Ready    <none>   4m4s    v1.13.1
 
-You can notice the difference in the value of the amount in the response. On the server, our business logic increments the amount by 1
+[root@kubernetes1 ~]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-86c58d9df4-kjmxn                            1/1     Running   0          63m
+kube-system   coredns-86c58d9df4-lfx4p                            1/1     Running   0          63m
+kube-system   etcd-kubernetes1.oslo.sysco.no                      1/1     Running   0          62m
+kube-system   kube-apiserver-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+kube-system   kube-controller-manager-kubernetes1.oslo.sysco.no   1/1     Running   0          63m
+kube-system   kube-flannel-ds-amd64-gm72r                         1/1     Running   0          56m
+kube-system   kube-flannel-ds-amd64-mjn4j                         1/1     Running   0          55m
+kube-system   kube-flannel-ds-amd64-nhz9b                         1/1     Running   0          58m
+kube-system   kube-proxy-2qqjc                                    1/1     Running   0          56m
+kube-system   kube-proxy-l69ld                                    1/1     Running   0          63m
+kube-system   kube-proxy-w8rfz                                    1/1     Running   0          55m
+kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
 
-Let's check server logs that were generated while processing this request
-![Server Logs](/images/2018-07-27-GettingStartedWithProtobufGrpc/ServerResponse.png)
+```
+kubernetes2 and kubernetes3 have been added to the kubernetes cluster.
 
-## 3. Where to go next?
+## 5. Sources and References.
 
-The example presented in this blog is extremely basic and was intended to ease the learning curve for the beginners. It is focussed towards acquainting the readers with basic terminologies in gRPC and presenting a basic workflow to play around and get started with.
-
-At this point we recommend you to clone the repository at [Github](https://github.com/sysco-middleware/workshop-grpc) and work through the instructions provided in README.md file. It prototypes a more advanced Invoice Generation system with step by step explanation on data-structure modeling for gRPC, setting up a java project for gRPC using Gradle and unit testing your gRPC code.
-
-Now that we have a basic understanding of what gRPC is. We will provide more blog posts and examples covering different aspects like message modeling, validation, and error handling in gRPC,  protoc compilation techniques, performance optimization etc.
-
-## 4. Sources and References.
-
-- Grpc website : [grpc](https://grpc.io/)
-- Google protobuf documentation : [google-protocol-buffers](https://developers.google.com/protocol-buffers/)
-- Curated list of gRPC tools and plugins : [grpc-ecosystem](https://github.com/grpc-ecosystem/awesome-grpc)
-
-- This blog post on gRPC: [what-is-grpc](https://rms1000watt.github.io/post/what-is-grpc/)
-- These interesting stackoverflow questions : [how-is-grpc-different-from-rest](https://stackoverflow.com/questions/43682366/how-is-grpc-different-from-rest) , [grpc-and-zeromq-comparsion](https://stackoverflow.com/questions/39350681/grpc-and-zeromq-comparsion), [is-grpchttp-2-faster-than-rest-with-http-2](https://stackoverflow.com/questions/44877606/is-grpchttp-2-faster-than-rest-with-http-2)
+- kubernetes website : [kubernetes.io](https://kubernetes.io/)
+- kubernetes with ansible : [k8s-ansible](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-1-10-cluster-using-kubeadm-on-centos-7)
+- kubernetes configuration best practices : [best-practices](https://kubernetes.io/docs/concepts/configuration/overview/)
+- using flannel with kubernetes: [k8s-flannel](https://coreos.com/flannel/docs/latest/kubernetes.html)
+- this blog post : [centos-k8s](https://www.howtoforge.com/tutorial/centos-kubernetes-docker-cluster/#step-kubernetes-cluster-initialization)
