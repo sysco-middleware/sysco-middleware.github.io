@@ -406,6 +406,8 @@ prakhar@tardis:~|⇒  curl 192.168.37.49:32701
 prakhar@tardis:~|⇒  curl 192.168.37.50:32701
 ```
 In both the cases, we will get an output similar to above. On accessing the urls via browser, you should see an output like below 
+
+
 ![nginx-on-k8s](/images/2019-01-01-install-kubernetes-kubeadm/nginx.png)
 
 Our kubernetes setup is ready to be used.
