@@ -47,6 +47,10 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
     - Create kube configuration in home directory
     - Install flannel network
 - Add nodes to the cluster.
+- Deploying services and Testing.
+    - Create deployment
+    - Expose deployment as service
+    - Testing service
 - Sources and References.
 
 ## 1. Prerequisites
@@ -310,9 +314,108 @@ kube-system   kube-proxy-w8rfz                                    1/1     Runnin
 kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
 
 ```
-kubernetes2 and kubernetes3 have been added to the kubernetes cluster.
+kubernetes2 and kubernetes3 have been added to the kubernetes cluster. 
 
-## 5. Sources and References.
+**Note** : Please note again that no application will be deployed onto master node `kubernetes1.oslo.sysco.no`. The master will only be utilized for coordination between nodes.
+
+## 5. Deploying and Testing services.
+Now we have successfully setup our kubernetes cluster, its time to deploy some application and test them.
+
+**Note** : 
+- Before we proceed, its important to understand that for on-premise kubernetes cluster, service-type = "LoadBalancer" will not assign a static IP address. That option is only available for Cloud providers like AWS and GCP which can easily hook on the events generated and create a LoadBalancer to provide an external IP. For more details check out the details provided [here](https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#external-load-balancer-providers).
+- All the kubernetes command would be run on master node. The pods, deployments and services can only be created via `kubectl` on the master node.
+
+In this example, we will create a simple nginx deployment, expose the deployments as service of type="NodePort". This will schedule our pods on kubernetes nodes and give them a random port, we will be able to access the services scheduled on the different nodes.
+
+Before starting login to the master node via ssh. We will operate from the master node to deploy and test.
+
+### Create deployments
+From the master node, run below command to create a standalone nginx deployment on kubernetes:
+```
+kubectl create deployment nginx --image=nginx
+```
+This will create a single deployment on the cluster. What we want is to have atleast 2 replicas for this deployment so that we can test the deployment on both nodes. In order to do this, we need to change the existing deployment configuration and change replica from 1 to 2. Run the command below and change "spec.replicas" property to 2.
+```
+kubectl edit deployment nginx
+```
+
+kubectl will give you a confirmation that deployment configuration is edited. You can also confirm the number of running pods as 2.
+```
+[root@kubernetes1 ~]# kubectl edit deployment nginx
+deployment.extensions/nginx edited
+
+[root@kubernetes1 ~]# kubectl get pods
+NAME                   READY   STATUS    RESTARTS   AGE
+nginx-5c7588df-bhgvl   1/1     Running   0          22m
+nginx-5c7588df-vvs55   1/1     Running   0          23m
+```
+
+### Expose deployement as service
+In order to access the nginx pods, we need to expose them as a service. Use the following command to expose nginx deployment as service.
+```
+kubectl create service nodeport nginx --tcp=80:80
+```
+This will expose our deployments as service available on the 2 nodes. The port will be a random port (default: 30000-32767), and each Node will proxy that port (the same port number on every Node) into your Service.
+
+You can check the status of your service as below.
+```
+[root@kubernetes1 ~]# kubectl get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1      <none>        443/TCP        3d22h
+nginx        NodePort    10.98.240.53   <none>        80:32701/TCP   21m
+```
+
+### Testing the services
+The service nginx is now available on both the nodes. From the master node run the below commands to send http request on port 32701.
+```
+curl kubernetes2.oslo.sysco.no:32701
+curl kubernetes3.oslo.sysco.no:32701
+```
+In both the cases you will get a response like below:
+```
+<!DOCTYPE html>
+<html>
+<head>
+<title>Welcome to nginx!</title>
+<style>
+    body {
+        width: 35em;
+        margin: 0 auto;
+        font-family: Tahoma, Verdana, Arial, sans-serif;
+    }
+</style>
+</head>
+<body>
+<h1>Welcome to nginx!</h1>
+<p>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.</p>
+
+<p>For online documentation and support please refer to
+<a href="http://nginx.org/">nginx.org</a>.<br/>
+Commercial support is available at
+<a href="http://nginx.com/">nginx.com</a>.</p>
+
+<p><em>Thank you for using nginx.</em></p>
+</body>
+</html>
+```
+
+These service can also be accessed from outside using browser or terminal. To quickly test, we can use the terminal on our local machine and run below command.
+```
+prakhar@tardis:~|⇒  curl 192.168.37.49:32701
+prakhar@tardis:~|⇒  curl 192.168.37.50:32701
+```
+In both the cases, we will get an output similar to above. On accessing the urls via browser, you should see an output like below 
+![nginx-on-k8s](/images/2019-01-01-install-kubernetes-kubeadm/nginx.png)
+
+Our kubernetes setup is ready to be used.
+
+## 6. Where to go from here
+In this blog post we have only touched the surface of setting up kubernetes. As mentioned before, kubernetes provides varities of services which we have not focussed on here. Some of good to have features include load balancing an on-permise kubernetes cluster, security considerations, optimizing cluster for DevOps and many more.
+
+We will cover these concepts in upcoming blogs.
+
+## 7. Sources and References.
 
 - kubernetes website : [kubernetes.io](https://kubernetes.io/)
 - kubernetes with ansible : [k8s-ansible](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-1-10-cluster-using-kubeadm-on-centos-7)
