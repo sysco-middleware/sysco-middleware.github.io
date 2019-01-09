@@ -54,7 +54,8 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
     - Testing service
 - Accessing kubernetes cluster from local machine.
     - Install kubectl on local machine
-    - Copy kubernetes configuration from the master
+    - Proxy connections to master using `kubectl proxy`
+    - Connect to master using admin.conf
 - Where to go from here
 - Sources and References.
 
