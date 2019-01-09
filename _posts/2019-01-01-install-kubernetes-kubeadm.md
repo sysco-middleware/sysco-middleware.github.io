@@ -46,11 +46,16 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
     - Initialize master
     - Create kube configuration in home directory
     - Install flannel network
+    - Disable existing firewall service
 - Add nodes to the cluster.
 - Deploying services and Testing.
     - Create deployment
     - Expose deployment as service
     - Testing service
+- Accessing kubernetes cluster from local machine.
+    - Install kubectl on local machine
+    - Copy kubernetes configuration from the master
+- Where to go from here
 - Sources and References.
 
 ## 1. Prerequisites
@@ -281,6 +286,22 @@ kube-system   kube-flannel-ds-amd64-mjn4j                         1/1     Runnin
 kube-system   kube-proxy-w8rfz                                    1/1     Running   0          55m
 kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
 ```
+
+### Disable existing firewall service
+The final step in our configuration is to disable already existing firewall. To do this login to each server and run below commands in sequence
+```
+systemctl stop firewalld
+systemctl disable firewalld
+```
+
+You should see and output similar to below on each of the node
+```
+[root@kubernetes1 ~]# systemctl stop firewalld
+[root@kubernetes1 ~]# systemctl disable firewalld
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
+```
+
 ## 4. Add nodes to the cluster
 We have successfully initialized our cluster and in the previous section we have verified that the master node is up and running. It time now to add the nodes `kubernetes2.oslo.sysco.no` and `kubernetes3.oslo.sysco.no` to our cluster. In order to do that, ssh to each of the nodes and run the `kubeadm join` command that we copied earlier.
 ```
@@ -412,12 +433,64 @@ In both the cases, we will get an output similar to above. On accessing the urls
 
 Our kubernetes setup is ready to be used.
 
-## 6. Where to go from here
+## 6. Accessing kubernetes cluster from local machine
+So far we have configured our cluster and we can make deployements via kubectl. But to do that we need to login to our master node. It is actually possible to proxy connections to master from local machine run administer master from localhost. We need to perform below steps in order to enable that configuration.
+
+### Install kubectl on local machine
+If you are using a debian based local machine like me, you can use the below steps to install kubectl on your local machine.
+```
+sudo apt-get update && sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+```
+If you are using other operating system, the steps to install kubectl for your OS are defined [here](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
+### Copy kubernetes configuration from the master
+You can manually copy the config file `$HOME/.kube/config` on your master node and save it locally. If you are using linux based system, you could run the below command to copy the file from master locally.
+```
+scp root@192.168.37.48:/etc/kubernetes/admin.conf .
+```
+This will copy the admin.conf file from remote master to your current directory. Make sure to replace the IP above with IP of your master node. You would be prompted to enter the password. 
+
+### Proxy connections to master using `kubectl proxy`
+
+Now that we have the config file, we can connect to the master by following below steps.
+
+Open a terminal and proxy the kubectl connections to master. Remember to point to the admin.conf file that we have downloded in previous step.
+```
+kubectl --kubeconfig ./admin.conf proxy
+```
+You should get an output like below
+```
+prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf proxy
+Starting to serve on 127.0.0.1:8001
+```
+
+### Connect to master using admin.conf
+Now you can connect to the master node using kubectl like below.
+```
+prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf  get pods                           
+NAME                   READY   STATUS    RESTARTS   AGE
+nginx-5c7588df-bhgvl   1/1     Running   0          45h
+nginx-5c7588df-vvs55   1/1     Running   0          46h
+
+prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf  get nodes
+NAME                        STATUS   ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready    master   4d20h   v1.13.1
+kubernetes2.oslo.sysco.no   Ready    <none>   4d20h   v1.13.1
+kubernetes3.oslo.sysco.no   Ready    <none>   4d20h   v1.13.1
+```
+
+Now you will be able to connect and deploy applications from localhost.
+
+## 7. Where to go from here
 In this blog post we have only touched the surface of setting up kubernetes. As mentioned before, kubernetes provides varities of services which we have not focussed on here. Some of good to have features include load balancing an on-permise kubernetes cluster, security considerations, optimizing cluster for DevOps and many more.
 
 We will cover these concepts in upcoming blogs.
 
-## 7. Sources and References.
+## 8. Sources and References.
 
 - kubernetes website : [kubernetes.io](https://kubernetes.io/)
 - kubernetes with ansible : [k8s-ansible](https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-1-10-cluster-using-kubeadm-on-centos-7)
