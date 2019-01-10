@@ -46,7 +46,7 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
     - Initialize master
     - Create kube configuration in home directory
     - Install flannel network
-    - Disable existing firewall service
+    - Configure correct firewall rules
 - Add nodes to the cluster.
 - Deploying services and Testing.
     - Create deployment
@@ -56,7 +56,7 @@ You can read more about Kubernetes features [here](https://kubernetes.io/). If y
     - Install kubectl on local machine
     - Proxy connections to master using `kubectl proxy`
     - Connect to master using admin.conf
-- Where to go from here
+- Where to go from here.
 - Sources and References.
 
 ## 1. Prerequisites
@@ -288,8 +288,65 @@ kube-system   kube-proxy-w8rfz                                    1/1     Runnin
 kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
 ```
 
-### Disable existing firewall service
-The final step in our configuration is to disable already existing firewall. To do this login to each server and run below commands in sequence
+### Configure correct firewall rules
+In order to enable efficient communication between the nodes, we need to configure a few firewall rules on each node. 
+
+Run below commands to bridge IP traffic to iptables
+```
+cat <<EOF >  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+```
+And apply these settings by running the below command 
+```
+sysctl --system
+```
+
+You should see your latest k8s.conf being applied in the output
+```
+[root@kubernetes1 ~]# sysctl --system
+* Applying /usr/lib/sysctl.d/00-system.conf ...
+net.bridge.bridge-nf-call-ip6tables = 0
+net.bridge.bridge-nf-call-iptables = 0
+net.bridge.bridge-nf-call-arptables = 0
+* Applying /usr/lib/sysctl.d/10-default-yama-scope.conf ...
+* Applying /usr/lib/sysctl.d/50-default.conf ...
+kernel.sysrq = 16
+kernel.core_uses_pid = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.promote_secondaries = 1
+net.ipv4.conf.all.promote_secondaries = 1
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+* Applying /etc/sysctl.conf ...
+```
+
+Once these settings are applied, create rules to allow traffic on few ports that are used by kubernetes.
+```
+firewall-cmd --zone=public --add-port=6443/tcp --permanent
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=18080/tcp --permanent
+firewall-cmd --zone=public --add-port=10254/tcp --permanent
+firewall-cmd --reload
+```
+Run above commands on each of the nodes. To get a better understanding of how networking works in kubernetes, please refer to the below links:
+- [cluster-networking](https://kubernetes.io/docs/concepts/cluster-administration/networking/)
+- [kubernetes-networking-behind-the-scenes](https://itnext.io/kubernetes-networking-behind-the-scenes-39a1ab1792bb)
+- [gcp-kubernets-networking-overview](https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview)
+- [k8s-troubleshooting-systemd-issues](https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/getting_started_with_kubernetes/troubleshooting_kubernetes#troubleshooting_kubernetes_systemd_services)
+
+**Alternate work around** : Use the below steps only if you are setting up a demo cluster OR using the cluster in the controlled lab environment. Do not use below alternative in production settings.
+
+In a controlled lab environment, you can skip the above steps by simply disabling the firewalls on each node. To do this login to each server and run below commands in sequence
 ```
 systemctl stop firewalld
 systemctl disable firewalld
@@ -302,6 +359,7 @@ You should see and output similar to below on each of the node
 Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
 Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
 ```
+Once again, please note that firewalls should never be disabled on production clusters.
 
 ## 4. Add nodes to the cluster
 We have successfully initialized our cluster and in the previous section we have verified that the master node is up and running. It time now to add the nodes `kubernetes2.oslo.sysco.no` and `kubernetes3.oslo.sysco.no` to our cluster. In order to do that, ssh to each of the nodes and run the `kubeadm join` command that we copied earlier.
@@ -489,7 +547,11 @@ Now you will be able to connect and deploy applications from localhost.
 ## 7. Where to go from here
 In this blog post we have only touched the surface of setting up kubernetes. As mentioned before, kubernetes provides varities of services which we have not focussed on here. Some of good to have features include load balancing an on-permise kubernetes cluster, security considerations, optimizing cluster for DevOps and many more.
 
-We will cover these concepts in upcoming blogs.
+We will cover these concepts in upcoming blogs. For those of you who are interested to read further here are some quick links from [kubernetes](https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#whats-next) website that might help:
+- Verify that your cluster is running properly with [Sonobuoy](https://github.com/heptio/sonobuoy).
+- Learn about kubeadm’s advanced usage in the [kubeadm reference documentation](https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/).
+- Learn more about Kubernetes concepts and [kubectl](https://kubernetes.io/docs/reference/kubectl/overview/).
+- Configure log rotation. You can use logrotate for that. When using Docker, you can specify log rotation options for Docker daemon, for example `--log-driver=json-file --log-opt=max-size=10m --log-opt=max-file=5`. See [Configure and troubleshoot the Docker daemon](https://docs.docker.com/config/daemon/) for more details.
 
 ## 8. Sources and References.
 
