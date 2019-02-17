@@ -82,7 +82,7 @@ In the Response Stage, in a replace action we will create a simple mapping for a
 And now we are set to deploy our integration and do a first test. 
 In the Service Bus Test console select Media Type: application/json and paste the JSON payload as in picture below.
 
-![](/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/08_TestingPayload.jpg)
+![](/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/08_TestingPayload.png)
 
 This should be a result of our test:
 
