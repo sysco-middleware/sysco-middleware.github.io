@@ -21,10 +21,12 @@ source systems, transforming data, and providing data for target systems.
 
 # Let's begin
 First of all we need to create Sesam user account [here](https://portal.sesam.io) and join "Open Sesam" subscription which is free of charge.  
+
 ![](/images/2019-02-21-Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/02_sesam_studio.png)  
 
 So we need a second one account, this time for [Oslo City Bike service](https://developer.oslobysykkel.no) and we need to   
 create new API client. This procedure is very easy and we will get API key needed for making API requests.   
+
 ![](/images/2019-02-21-Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/01_osb_client.png)  
 
 After we completed two preparation steps we can start to do something useful.
@@ -95,7 +97,7 @@ Our first pipe will fetch data from "/stations" Oslo City Bike API endpoint that
   }
 }
 ```
-Here we use our previously created system as source of data, schedule pipe to run monthly (stations are quite static and  
+Here we use our previously created system as source of data, schedule pipe to run monthly (stations are quite static and
 we don't expect many changes here) and apply some cryptic transformation that is needed to be explained.  
 Sesam pipe expect to get an array of data entities on its input while Oslo City Bike API returns a JSON object. So we need
 to use built in [Data Transformation Language](https://docs.sesam.io/DTLReferenceGuide.html) (or simply DTL) to transform input object into array of stations and emit every station object as own entity. Second thing we do here is "id" assign.  
@@ -103,7 +105,9 @@ Every entity in Sesam must have an string attribute named "\_id" - entity key. I
 That's all, press "Save" and then "Start" buttons. After a second a new data set will be populated with stations data.  
 
 Now let's create a second pipe which will fetch information about station availability at current time. Pipe setup is almost the same and we can simply duplicate our first pipe by clicking respective link in pipe options.  
+
 ![](/images/2019-02-21-Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/04_sesam_studio.png)  
+
 
 Now, let's do some changes.
 * Change pipe id to desired
