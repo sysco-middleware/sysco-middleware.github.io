@@ -8,15 +8,15 @@ author: TimurSamkharadze
 
 # Introduction
 
-In this very short post we are going to create a simple pipeline for getting data from Oslo City Bike public API service  
-using Sesam.io integration platform with 5-10 minutes of our time. We don't need so much time here because it's easy  
+In this very short post we are going to create a simple pipeline for getting data from Oslo City Bike public API service
+using Sesam.io integration platform with 5-10 minutes of our time.   We don't need so much time here because it's easy
 to make integrations with Sesam. You don't need to write programs or deal with infrastructure to deploy them.  
 Data we are going to collect will provide us bike availability at different stations over time.  
 
-Oslo city bike is a simplest way to explore Oslo by using public bicycle. There are more than 200 bike stations in Oslo  
+Oslo city bike is a simplest way to explore Oslo by using public bicycle. There are more than 200 bike stations in Oslo
 and more than 50 000 users of this service.  
 
-Sesam.io is a integration platform delivered as PAAS. It is optimised for collecting or receiving data from   
+Sesam.io is a integration platform delivered as PAAS. It is optimised for collecting or receiving data from 
 source systems, transforming data, and providing data for target systems.
 
 # Let's begin
