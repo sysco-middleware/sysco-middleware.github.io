@@ -98,7 +98,7 @@ we don't expect many changes here) and apply some cryptic transformation that is
 Sesam pipe expect to get an array of data entities on its input while Oslo City Bike API returns a JSON object. So we need  
 to use built in [Data Transformation Language](https://docs.sesam.io/DTLReferenceGuide.html) (or simply DTL) to transform  
 input object into array of stations and emit every station object as own entity. Second thing we do here is "id" assign.  
-Every entity in Sesam must have an string attribute named "_id" - entity key. It's used for entity identification, compaction, etc.
+Every entity in Sesam must have an string attribute named "\_id" - entity key. It's used for entity identification, compaction, etc.
 That's all, press "Save" and then "Start" buttons. After a second a new data set will be populated with stations data.  
 
 Now let's create a second pipe which will fetch information about station availability at current time. Pipe setup is   
@@ -108,13 +108,13 @@ almost the same and we can simply duplicate our first pipe by clicking respectiv
 Now, let's do some changes.
 * Change pipe id to desired
 * Change source URL to "/stations/availability" endpoint
-* In transformation section add "updated_at" timestamp from input data root to every entity
+* In transformation section add "updated\_at" timestamp from input data root to every entity
 * Add timestamp to entity id to unique identify every station and time point we collect.
 * Add station name from our first data set by performing join operation (DTL function "hops")
 * Change pipe pump schedule to fixed interval (900 seconds or 15 minutes in our example)
-* Add explicit sink section with attribute "deletion_tracking" equal to false  
+* Add explicit sink section with attribute "deletion\_tracking" equal to false  
 
-We need deletion_tracking disabled because by default full data set synchronization will delete previous entities.
+We need deletion\_tracking disabled because by default full data set synchronization will delete previous entities.
 Sesam, however, has functionality for incremental data sync as well as for full sync.  
 ```json
 {
