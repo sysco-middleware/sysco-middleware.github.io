@@ -29,8 +29,8 @@ create new API client. This procedure is very easy and we will get API key neede
 
 After we completed two preparation steps we can start to do something useful.
 
-Sesam operates with definitions "Systems" and "Pipes" where System may be any data source or data sink such as databases,  
-REST API's, cloud services, files on network shares, etc. A pipe represents a data flow from source to sink and specifies   
+Sesam operates with definitions "Systems" and "Pipes" where System may be any data source or data sink such as databases, REST API's, cloud services, files on network shares, etc. 
+A pipe represents a data flow from source to sink and specifies 
 how data entities transformed, enriched or filtered on their way.  
 
 Let's create our first system that will represent Oslo City Bike API.  
@@ -48,15 +48,17 @@ which will be sent with every request and assign URL pattern for API. That's all
   "verify_ssl": true
 }
 ```
-Press save to store new system. You may see that Client-Identifier header which obviously used to send Oslo City Bike API key  
-contains strange value starting with '$SECRET'. It means Sesam will try to find 'access-token' attribute in Sesam vault.
-Sesam vault is write only encrypted storage for sensitive data like application credentials. We are going now to add our  
+Press save to store new system. You may see that Client-Identifier header which obviously used to send Oslo City Bike API key
+contains strange value starting with '$SECRET'. 
+It means Sesam will try to find 'access-token' attribute in Sesam vault.
+Sesam vault is write only encrypted storage for sensitive data like application credentials. We are going now to add our
 API key for Oslo City Bike API to this vault. Simply click on "Secrets" tab and "Add secret" button after that.  
 ![](/images/2019-02-21-Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/03_sesam_studio.png)  
-Assign name "access-token" and paste your Oslo City Bike API key into value field. Press "Add". That's all, now your key  
-is securely stored in Sesam vault. After creating data source system we need to create some pipes which will fetch data  
-from that system. In Sesam dashboard click on "Pipes" menu and then "New Pipe" button. Pipe configuration is also simple   
-JSON object which has 4 main components:
+Assign name "access-token" and paste your Oslo City Bike API key into value field. Press "Add". That's all, now your key
+is securely stored in Sesam vault. 
+After creating data source system we need to create some pipes which will fetch data from that system. In Sesam dashboard click on "Pipes" menu and then "New Pipe" button.  
+ 
+Pipe configuration is also simple JSON object which has 4 main components:
 * Source - which system is our data source
 * Transform - which transformations will be applied to every data entity flowing through this pipe
 * Sink - target system, if omitted then pipe will produce a data set with the same name as pipe id
@@ -95,14 +97,12 @@ Our first pipe will fetch data from "/stations" Oslo City Bike API endpoint that
 ```
 Here we use our previously created system as source of data, schedule pipe to run monthly (stations are quite static and  
 we don't expect many changes here) and apply some cryptic transformation that is needed to be explained.  
-Sesam pipe expect to get an array of data entities on its input while Oslo City Bike API returns a JSON object. So we need  
-to use built in [Data Transformation Language](https://docs.sesam.io/DTLReferenceGuide.html) (or simply DTL) to transform  
-input object into array of stations and emit every station object as own entity. Second thing we do here is "id" assign.  
+Sesam pipe expect to get an array of data entities on its input while Oslo City Bike API returns a JSON object. So we need
+to use built in [Data Transformation Language](https://docs.sesam.io/DTLReferenceGuide.html) (or simply DTL) to transform input object into array of stations and emit every station object as own entity. Second thing we do here is "id" assign.  
 Every entity in Sesam must have an string attribute named "\_id" - entity key. It's used for entity identification, compaction, etc.
 That's all, press "Save" and then "Start" buttons. After a second a new data set will be populated with stations data.  
 
-Now let's create a second pipe which will fetch information about station availability at current time. Pipe setup is   
-almost the same and we can simply duplicate our first pipe by clicking respective link in pipe options.  
+Now let's create a second pipe which will fetch information about station availability at current time. Pipe setup is almost the same and we can simply duplicate our first pipe by clicking respective link in pipe options.  
 ![](/images/2019-02-21-Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/04_sesam_studio.png)  
 
 Now, let's do some changes.
