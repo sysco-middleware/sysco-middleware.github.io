@@ -14,12 +14,12 @@ Today we are going to write a simple connector to push data from Sesam datahub t
 If you want to test it for youself, you will need to do 3 things:
 * Obtain Sesam account. We explained in [this post](http://blog.sysco.no/data/analysis/Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/) how to do that
 * Obtain Azure account [here](https://azure.microsoft.com/en-us/free/)
-* Install Docker
+* [Install Docker](https://docs.docker.com/install/)
 
 We are going to use Python in this post, but you may use programming language of your choice.
 
 ## Let's start
-We are going to run Azure Service bus sink service in isolated environment, so we don't need to deal with things such as authentication. In such a case, all required information needed for service configuration must be provided through environmental variables. You can also use [Sesam Environment Variables](https://docs.sesam.io/configuration.html#environment-variables) or [Sesam vault](https://docs.sesam.io/security.html#secrets-manager) known as _Sesam secret manager_ to provide for example credentials without exposing them.
+We are going to run Azure Service Bus sink service in isolated environment, so we don't need to deal with things such as authentication. In such a case, all required information needed for service configuration must be provided through environmental variables. You can also use [Sesam Environment Variables](https://docs.sesam.io/configuration.html#environment-variables) or [Sesam vault](https://docs.sesam.io/security.html#secrets-manager) known as _Sesam secret manager_ to provide for example credentials without exposing them.
 
 To connect to Azure Service Bus using SAS authentication schema we will need:  
 ```python
@@ -139,7 +139,7 @@ Press "Systems" and create new system using following system definition.
 }
 
 ```
-Press "Save" - you system is stored. Then open "Secrets" tab and add following items to Sesam vault:
+Press "Save" - your system is stored. Then open "Secrets" tab and add following items to Sesam vault:
 * service_namespace - with your Azure Service Bus namespace
 * service_sas_token_name - with SAS token name
 * service_sas_token_value - with content of SAS token
