@@ -19,7 +19,7 @@ If you want to test it for youself, you will need to do 3 things:
 We are going to use Python in this post, but you may use programming language of your choice.
 
 ## Let's start
-We are going to run Azure Service bus sink service in isolated environment, so we don't need to deal with such things as authentication. In such case all required information needed for service configuration must be provided through environmental variables. You may also use [Sesam vault](https://docs.sesam.io/security.html#secrets-manager) known as _Sesam secret manager_ to provide for example credentials without exposing them.
+We are going to run Azure Service bus sink service in isolated environment, so we don't need to deal with things such as authentication. In such a case, all required information needed for service configuration must be provided through environmental variables. You can also use [Sesam Environment Variables](https://docs.sesam.io/configuration.html#environment-variables) or [Sesam vault](https://docs.sesam.io/security.html#secrets-manager) known as _Sesam secret manager_ to provide for example credentials without exposing them.
 
 To connect to Azure Service Bus using SAS authentication schema we will need:  
 ```python
