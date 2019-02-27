@@ -146,7 +146,7 @@ Press "Save" - you system is stored. Then open "Secrets" tab and add following i
 
 Now your system will be able to use them without exposing as plain text to everyone including yourself.
 
-We have now a data sink system and next step is to send some data to it. Open "Pipes" menu and create new pipe using following pipe definition: 
+We have now a data sink system ready to receive data, and next step is to send some data to it. Open "Pipes" menu and create new pipe using following pipe definition: 
 ```json
 {
   "_id": "azure-sb-sink-pipe",
