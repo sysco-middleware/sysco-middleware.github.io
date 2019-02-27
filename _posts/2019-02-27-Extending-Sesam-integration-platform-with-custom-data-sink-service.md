@@ -173,4 +173,10 @@ We have now a data sink system ready to receive data, and next step is to send s
 ```
 We will use embedded data set with 2 simple entities.  
 That's all! Now this pipe will send its embedded data to Azure Service Bus every 60 seconds.  
-In this post we described how to extend functionality of Sesam integration platform by adding a custom data sink connector with about 50 lines of code. In the same manner as a data sink service new data sources ordata transformation services may be added. All of them could run on Sesam node using Docker or be deployed somewhere else. Sesam supports basic and digest authentication schemas for such purpose. All communcation with Sesam extensions is carried out via HTTP and all data transfered in JSON format.
+In this post we described how to extend functionality of Sesam integration platform by adding a custom data sink connector with about 50 lines of code. We have achieved this by 
+
+1. implementing the connector microservice to post data Azure Service Bus, and making it available in DockerHub
+2. adding a system in Sesam - which pulls the connecter image 
+3. adding a pipe to send data - which simply sends data
+
+In the same manner as a data sink service new data sources or data transformation services may be added. All of them could run on Sesam node using Docker, or be deployed somewhere else. Sesam supports basic and digest authentication schemas for such purposes. All communication with Sesam extensions is carried out via HTTP, and all data is transferred in JSON format.
