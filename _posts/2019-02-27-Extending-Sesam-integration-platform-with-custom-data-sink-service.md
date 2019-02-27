@@ -97,13 +97,7 @@ if __name__ == "__main__":
     logging.info("starting service on port %d", port)
     serve(APP, host='0.0.0.0', port=port)
 ```
-
-    INFO:root:starting service on port 5000
     
-
-    Serving on http://LAPTOP-DL951UEU:5000
-    
-
 This service has one endpoint that serves POST requests and takes queue name as path parameter. Payload must be an array of JSON objects. You may also assign and use environmental variable _PAYLOAD\_KEY_ if you don't need to send a whole Sesam entity with its metadata but only a part of it.
 
 Next thing we need to do complete our service is to create Docker image of it and push it to a Docker repository where Sesam will be able to pull it. I'm going to use public Dockerhub repository, but images may be placed in any docker repository including private repositories.  
