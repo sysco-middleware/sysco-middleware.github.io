@@ -100,7 +100,7 @@ if __name__ == "__main__":
     
 This service has one endpoint that serves POST requests and takes queue name as path parameter. Payload must be an array of JSON objects. You may also assign and use environmental variable _PAYLOAD\_KEY_ if you don't need to send a whole Sesam entity with its metadata but only a part of it.
 
-Next thing we need to do complete our service is to create Docker image of it and push it to a Docker repository where Sesam will be able to pull it. I'm going to use public Dockerhub repository, but images may be placed in any docker repository including private repositories.  
+Next thing we need to do to complete our service is to create Docker image of it and push it to a Docker repository where Sesam will be able to pull it. I'm going to use public Dockerhub repository, but images may be placed in any docker repository including private repositories.  
 
 Add Dockerfile to your project and build & push image.
 
