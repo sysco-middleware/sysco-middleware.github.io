@@ -8,7 +8,7 @@ author: TimurSamkharadze
 
 ## Introduction
 
-Sesam is an integration platform. As each other integration platform Sesam has a lot of connectors to read data from different sources which could be databases, API's, streaming platforms such as Apache Kafka or send data to them. However, in many cases you need to deal with services which are not supported out of the box yet. In such cases you need to extend Sesam functionality by writing a custom connector.  
+Sesam is an integration platform. As any other integration platform, Sesam has a lot of connectors to read data from different sources which could be databases, API's, streaming platforms such as Apache Kafka, or to send data to them.  
 Today we are going to write a simple connector to push data from Sesam datahub to Azure Service Bus. Sesam platform uses Docker to run extensions and every extension is actually a REST service which takes array of JSON objects as input (data sink service) or returns array of JSON objects (data source service) or do both in case of data transformation service. 
 
 If you want to test it for youself, you will need to do 3 things:
