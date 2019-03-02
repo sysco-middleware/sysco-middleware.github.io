@@ -10,7 +10,7 @@ author: MarijanaJuric
 
 #### The role of Stakeholders ####
 
-Generally speaking, a stakeholder is a person, groups of persons or a whole organisation that has a vested interest in an outcome of some initiative, activities or changes. Stakeholders can be both internal and external to a certain organisation and information on that is usually gathered through the process of stakeholder analysis. Stakeholders can directly or indirectly impact or be impacted by the success of a project.
+Generally speaking, a stakeholder is a person, group of persons or a whole organisation that has a vested interest in an outcome of some initiative, activities or changes. Stakeholders can be both internal and external to a certain organisation and information on that is usually gathered through the process of stakeholder analysis. Stakeholders can directly or indirectly impact or be impacted by the success of a project.
 
 ![Stakeholders](/images/2019-03-03-Dealing-with-challenging-stakeholders-in-workshops/Picture1.png)
 
@@ -41,7 +41,7 @@ Here are mentioned some of the challenging types of stakeholders that can be pre
 •	the late one; to whom running late for the workshop is a rule and not an exception, or the one who is a regular “no-show” person
 •	“disruptor” and “distractor”; participant having “side meetings” along with the workshop, distracting the workshop flow. Disruptive stakeholder sees the workshop environment as inconvenient for him, thus, or he refuses to contribute anything unless specifically called on, or constantly expresses complaints and questions why he is invited and needed in the workshop. They can manifest very moody and emotional behaviour throughout the workshop session which amplifies the whole impact.
 
-### How to make sure that requirement workshop runs smoothly ###
+### How to make sure that requirements workshop runs smoothly ###
 
 To enable that requirements workshop runs as smooth as possible, different approaches can be taken by the business analyst. Since the business analyst acts as a liaison among multiple groups, facilitating the sharing of information and ideas is of crucial importance.
 Business analyst needs to be cautious about scope creep that can occur during the workshop. Adding the scope can arise through the workshop and there is where good assessment and resolution skills of the business analyst come to shine. In any workshop, many different questions open up, various answers and opinions are expressed or imposed, thus it is vital for the business analyst to not allow the workshop going “off the rails”.
