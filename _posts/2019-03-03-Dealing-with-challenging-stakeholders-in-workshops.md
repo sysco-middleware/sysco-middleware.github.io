@@ -33,13 +33,22 @@ Requirements workshops typically last between one and a few days, depending on t
 During a workshop, communication or relationship between a business analyst and the stakeholders can transform from harmony into a number of disagreements, arguments and conflicts. Difficult stakeholder can be characterised as one who is hard to reach an agreement or compromise with, is not collaborative and has unrealistic or unreasonable expectations.
 
 Here are mentioned some of the challenging types of stakeholders that can be present in a workshop:
-•	“pushy” stakeholder with the loudest voice in the room, who monopolises discussion and imposes his opinion as the only right    way to proceed with. He has the need to “prove” his power and only requests to be listened but never listens
-•	the one who finds it difficult to concur with anything that is said or decided
-•	the one who does not want to commit to any proposal, task or a decision
-•	the one who only communicates completely unrelated topics or concerns
-•	introverted one who avoids any interaction and feedback
-•	the late one; to whom running late for the workshop is a rule and not an exception, or the one who is a regular “no-show” person
-•	“disruptor” and “distractor”; participant having “side meetings” along with the workshop, distracting the workshop flow. Disruptive stakeholder sees the workshop environment as inconvenient for him, thus, or he refuses to contribute anything unless specifically called on, or constantly expresses complaints and questions why he is invited and needed in the workshop. They can manifest very moody and emotional behaviour throughout the workshop session which amplifies the whole impact.
+
+1.	“pushy” stakeholder with the loudest voice in the room, who monopolises discussion and imposes his opinion as the only right    way to proceed with. He has the need to “prove” his power and only requests to be listened but never listens
+
+2.	the one who finds it difficult to concur with anything that is said or decided
+
+3.	the one who does not want to commit to any proposal, task or a decision
+
+4.	the one who only communicates completely unrelated topics or concerns
+
+5.	introverted one who avoids any interaction and feedback
+
+6.	the late one; to whom running late for the workshop is a rule and not an exception, or the one who is a regular “no-show” person
+
+7.	“disruptor” and “distractor”; participant having “side meetings” along with the workshop, distracting the workshop flow.
+
+Disruptive stakeholder sees the workshop environment as inconvenient for him, thus, or he refuses to contribute anything unless specifically called on, or constantly expresses complaints and questions why he is invited and needed in the workshop. They can manifest very moody and emotional behaviour throughout the workshop session which amplifies the whole impact.
 
 ### How to make sure that requirements workshop runs smoothly ###
 
