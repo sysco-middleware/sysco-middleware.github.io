@@ -87,6 +87,9 @@ authors:
   TimurSamkharadze:
     name: Timur Samkharadze
     avatar: /images/avatars/timsamkharadze.jpg
+  MarijanaJuric:
+    name: Marijana Juric Fraculj
+    avatar: 
 
 # Build settings
 markdown:       kramdown
