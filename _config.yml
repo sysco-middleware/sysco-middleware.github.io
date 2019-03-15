@@ -90,6 +90,9 @@ authors:
   MarijanaJuric:
     name: Marijana Juric Fraculj
     avatar: /images/avatars/marijanajuricfraculj.png
+  IvanStevanovic:
+    name: Ivan Stevanovic
+    avatar: /images/avatars/IvanStevanovic.jpg
 
 # Build settings
 markdown:       kramdown
