@@ -71,8 +71,11 @@ public class SendToRPADelegate implements JavaDelegate {
     }
 }
 ```
-[DelegateExecution](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.11/org/camunda/bpm/engine/delegate/DelegateExecution.html) is a way to get the context of the running business process (from now on **process instance**). This context contains information about process instance and process definition, but most interesting are process variables which are suitable for storing all sort of data necessary during the instance execution.
-#### Checking te result from RPA system
+[DelegateExecution](https://docs.camunda.org/javadoc/camunda-bpm-platform/7.11/org/camunda/bpm/engine/delegate/DelegateExecution.html) 
+is a way to get the context of the running business process (from now on **process instance**). This context contains 
+information about process instance and process definition, but most interesting are process variables which are suitable 
+for storing all sort of data necessary during the instance execution.
+#### Checking the result from RPA system
 A RPA process can last for some time, so one way to model the fetching of the data from an external system is to 
 pause the execution of running process instance for some time and check the result afterwards. This is accomplished by using an 
 ```intermediateCatchEvent``` element with specified waiting time. After waiting for specified time, service task is used 
