@@ -10,7 +10,7 @@ author: MarijanaJuric
 
 #### What is requirements documenting? ####
 
-Requirements documenting is a process of writing requirements which are officially adopted by corresponding stakeholders. It is used as the formalization and confirmation for entering realization phase and their operating in the real-world environment. Requirements documentation describes a need for a new business initiative, activity, change or project for go live stage where the requested outcome in form of a product, process, service or event must be accomplished.
+Requirements documenting is a process of writing requirements which are officially adopted by corresponding stakeholders. It is used as the formalisation and confirmation for entering realisation phase and their operating in the real-world environment. Requirements documentation describes a need for a new business initiative, activity, change or project for go live stage where the requested outcome in form of a product, process, service or event must be accomplished.
 There are documented different types of requirements such as business requirements, system requirements, product requirements, etc. In this article, we will focus on documenting business requirements in projects.
 
 ![Requirements](/images/2019-04-07-How-To-Document-Business-Requirements/Picture1.png)
@@ -64,6 +64,7 @@ In this article, we will focus on high-level requirements (business requirements
 1.	Business requirements (high-level) - usually respond to the question “What is required?”  They deal mainly with the business and quality goals and expectations from the stakeholders and represent the support for functional requirements.
 
 2.	Functional requirements (low-level) need to respond the question “How exactly the requirement implementation must be done?”  They outline technical perspective of the business requirements describing the systems and functionalities to be developed or changed and need to correspond the expectancy described in the BRD. They are stated either in a stand-alone document called Functional Requirement Document (FRD) or can be embedded into the BRD as a separate section or an addendum.
+
 Requirements may begin at a high-level and become more low-level when more information is known. BRD is usually created by  Business Analyst but can also be created by Project Manager.
 
 ### The key structure of the Business Requirement Document ###
