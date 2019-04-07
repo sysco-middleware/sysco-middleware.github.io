@@ -17,7 +17,7 @@ There are documented different types of requirements such as business requiremen
 
 ### Spoken vs. written requirements  ###
 
-New requirements occur in everyday business. Requirements can start off informally, as only verbally expressed desires or needs, becoming a part of discussion in various business occasions as in the meetings or the workshops. Oral requirements are not the ones that should be formally relied on in the business since they neither represent a true commitment for the business or responsible persons, nor contribute to the structure and traceability of the actions taken. Requirements need to be put in a proper written form, however, not in a form of a sticky note or remark in a notepad, but in an appropriate document with all necessary sections within.
+New requirements occur in everyday business. Requirements can start off informally, as only verbally expressed desires or needs, becoming a part of discussion in various business occasions as in the meetings or the workshops. Oral requirements are not the ones that should be formally relied on in the business since they neither represent a true commitment for the business or responsible persons, nor contribute to the structure and traceability of the actions taken. Requirements need to be put in a proper written form, however, not in a form of a sticky note or remark in a notepad, but into an appropriate document with all necessary sections within.
 In the beginning, stakeholders may not be yet clear about what exactly they need. There can also happen that there is no applicable ground for requirements implementation, or the requirements are inadequately formulated. Some requirements can always stay in a “wishful thinking” stage. To reduce such situations, it is necessary to structure and document them properly, and to give them a formal note through the approval by the responsible parties. In this article we will describe why is necessary to properly document high-level requirements, what business requirement specification consists of and will give some guidelines on what to pay attention in requirements documenting.
 
 
@@ -46,10 +46,10 @@ Documenting requirements begins from the requirements initiation phase, where th
 
 ### Types of Requirement Documents ###
 
-For requirements documenting, there are usually used templates which contain the sections that must be covered within. Generally, business requirements are documented into a document widely-known as Business Requirement Document (BRD).  If requirements are already known and agreed before beginning with the project, they can be already stated in the project statement document.
+For requirements documenting, there are usually used templates which contain the sections that must be covered within. Generally, business requirements are documented into a document widely-known as Business Requirements Document (BRD).  If requirements are already known and agreed before beginning with the project, they can be already stated in the project statement document.
 Here are listed some of requirements documents which are created within a project:
-1.	Business Requirement Document (BRD)
-2.	Functional Requirement Document (FRD) as a stand-alone document, or a part of the BRD
+1.	Business Requirements Document (BRD)
+2.	Functional Requirements Document (FRD) as a stand-alone document, or a part of the BRD
 3.	Use Case Document
 4.	Stakeholder Analysis Document
 5.	Gap Analysis Document
@@ -61,9 +61,9 @@ Here are listed some of requirements documents which are created within a projec
 
 In this article, we will focus on high-level requirements (business requirements). Let us now give a short comparison between business requirements and functional requirements (low-level requirements). We can say that:
 
-1.	Business requirements (high-level) - usually respond to the question “What is required?”  They deal mainly with the business and quality goals and expectations from the stakeholders and represent the support for functional requirements.
+1.	Business requirements (high-level) - which are described in the BRD usually respond to the question “What is required?”  They deal mainly with the business and quality goals and expectations from the stakeholders and represent the support for functional requirements.
 
-2.	Functional requirements (low-level) need to respond the question “How exactly the requirement implementation must be done?”  They outline technical perspective of the business requirements describing the systems and functionalities to be developed or changed and need to correspond the expectancy described in the BRD. They are stated either in a stand-alone document called Functional Requirement Document (FRD) or can be embedded into the BRD as a separate section or an addendum.
+2.	Functional requirements (low-level) need to respond the question “How exactly the requirement implementation must be done?”  They outline technical perspective of the business requirements describing the systems and functionalities to be developed or changed and need to correspond the expectancy described in the BRD. They are stated either in a stand-alone document called Functional Requirements Document (FRD) or can be embedded into the BRD as a separate section or an addendum.
 
 Requirements may begin at a high-level and become more low-level when more information is known. BRD is usually created by  Business Analyst but can also be created by Project Manager.
 
@@ -118,7 +118,7 @@ Here are listed some inappropriate practices that can happen in requirements doc
 
 There is no doubt that creating, maintaining and handover of requirements documentation is a very comprehensive and time-consuming task involving different parties.
 
-However, properly written requirement documents:
+However, properly written requirements documents:
 1.	Bring the overall formality to the requirements
 2.	Claim the agreement between the stakeholders
 3.	Can be used for success metrics and they help with documentation traceability
