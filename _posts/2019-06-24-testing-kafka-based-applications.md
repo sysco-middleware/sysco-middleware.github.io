@@ -362,6 +362,5 @@ Additionally, I would recommend to check Confluent blog that can be helpful in l
 
 [Github repository](https://github.com/sysco-middleware/kafka-testing)
 
-Thanks to: 
-Thanks to [Jorge Quilcate](https://github.com/jeqo), [Sergei Egorov](https://github.com/bsideup), [Timur Samkharadze](https://github.com/timurgen), [Dasha Kormacheva]().
+Thanks to [Jorge Quilcate](https://github.com/jeqo), [Sergei Egorov](https://github.com/bsideup), [Timur Samkharadze](https://github.com/timurgen), [Dasha Kormacheva](https://github.com/daria-taria).
 
