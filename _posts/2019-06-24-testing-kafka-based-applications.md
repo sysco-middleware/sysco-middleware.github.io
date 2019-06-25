@@ -25,24 +25,24 @@ Examples are built using java and docker. For detailed information, check this r
 
 ## Agenda
 1. Intro
-2. Unit tests of Kafka Streams application with [kafka-streams-test-utils](https://kafka.apache.org/20/documentation/streams/developer-guide/testing.html)
+2. Unit tests of Kafka Streams application with [kafka-streams-test-utils](https://kafka.apache.org/documentation/streams/developer-guide/testing.html)
 3. Integration tests with [EmbeddedKafkaCluster](https://github.com/apache/kafka/tree/trunk/streams/src/test/java/org/apache/kafka/streams/integration/utils)
 4. End-to-end tests with [Testcontainers](https://www.testcontainers.org)
 
 ### 1. Intro
 Many have faced a challenge to test applications that communicate with Kafka cluster. The common issues are how to write unit tests, how to automate tests for Kafka application in isolation and how to handle end-to-end and system tests for whole data pipeline.
 
-When I write this article, there are several approaches, some of them not resolved yet:
-1. [KIP-139: Kafka TestKit library](https://cwiki.apache.org/confluence/display/KAFKA/KIP-139%3A+Kafka+TestKit+library) is still open. Once it will be ready, kafka dev community will have a proper test-kit.
-2. [#26 Encapsulate EmbeddedSingleNodeKafkaCluster in a seperately-available maven/gradle/sbt](https://github.com/confluentinc/kafka-streams-examples/issues/26) dep. Kafka cluster in memory. When this post is published, there is an open issue for having release of embedded kafka cluster. [Yeva Byzek](https://www.confluent.io/blog/author/yeva-byzek/) offers 
-to use [KafkaEmbeddedCluster](https://github.com/apache/kafka/tree/trunk/streams/src/test/java/org/apache/kafka/streams/integration/utils) in this [blog-post](https://www.confluent.io/blog/stream-processing-part-2-testing-your-streaming-application). There is no existing release for these utils. I decided to duplicate this part of code base and to build an [internal module](https://github.com/sysco-middleware/kafka-testing/tree/master/embedded-cluster) as an example.
+When this article was written, there were several approaches, some of them still not resolved:
+1. [KIP-139: Kafka TestKit library](https://cwiki.apache.org/confluence/display/KAFKA/KIP-139%3A+Kafka+TestKit+library) is still open. Once it will be ready, the Kafka community will have a proper test-kit.
+2. [#26 Encapsulate EmbeddedSingleNodeKafkaCluster in a seperately-available maven/gradle/sbt](https://github.com/confluentinc/kafka-streams-examples/issues/26) dep. Kafka cluster in memory. When this post was published, there is an open issue for having release of embedded Kafka cluster. [Yeva Byzek](https://www.confluent.io/blog/author/yeva-byzek/) offers 
+to use [KafkaEmbeddedCluster](https://github.com/apache/kafka/tree/trunk/streams/src/test/java/org/apache/kafka/streams/integration/utils) in this [blog-post](https://www.confluent.io/blog/stream-processing-part-2-testing-your-streaming-application). There is no existing release for these libraries. I decided to duplicate this part of code base and to build an [internal module](https://github.com/sysco-middleware/kafka-testing/tree/master/embedded-cluster) as an example.
 3. [KIP-247 Add public test utils for Kafka Streams](https://cwiki.apache.org/confluence/display/KAFKA/KIP-247%3A+Add+public+test+utils+for+Kafka+Streams). This KIP is ready and has release for unit testing kafka streams topologies - [kafka-streams-test-utils](https://kafka.apache.org/20/documentation/streams/developer-guide/testing.html).
 4. [Testcontainers](https://www.testcontainers.org) - testing with docker containers.
 
 ### 2. Unit tests of Kafka Streams application with kafka-streams-test-utils
-[Kafka-streams-test-utils](https://kafka.apache.org/21/documentation/streams/developer-guide/testing.html) is a test-kit for testing stream topologies in memory without need to run Kafka cluster. Test-kit supports stateful operations and avro serialisation/deserialisation via mocking of schema registry.
+[Kafka-streams-test-utils](https://kafka.apache.org/21/documentation/streams/developer-guide/testing.html) is a test-kit for testing stream topologies in memory without needing a Kafka cluster. Test-kit supports stateful operations and Avro serialization/deserialization via mocking of schema registry.
 
-All that you need is TopologyTestDriver, which you can init for each test with topology under test.
+All that you need is `TopologyTestDriver`, which can be initialize on each test case where a topology is under test.
 
 ```java
 private TopologyTestDriver testDriver;
@@ -61,7 +61,7 @@ public void tearDown() {
 }
 ```
 
-I choose for testing topology with stateful operations and avro.
+I choose for testing topology with stateful operations and Avro.
 
 ```java
 // stateful
@@ -148,7 +148,7 @@ Pay attention to issue [#877 - Passing Schema Registry URL twice to instanti
 ### 3. Integration tests with [EmbeddedKafkaCluster](https://github.com/apache/kafka/tree/trunk/streams/src/test/java/org/apache/kafka/streams/integration/utils)
 Integration test is a way of how to test services in isolation but with required dependencies. 
 Embedded Kafka cluster combines broker, zookeeper and schema-registry in one. 
-To test asynchronous system I choose [awaitility library](http://www.awaitility.org). 
+To test asynchronous system I have chosen [awaitility library](http://www.awaitility.org). 
 It is a useful tool for handling timeouts and asynchronous  asserts.
 
 ```java
@@ -210,14 +210,14 @@ Testing requires all integrated components of application to be up and running�
 ![data pipeline](/images/2019-06-24-testing-kafka-based-applications/data_pipeline.png)
 
 Requirements:
-* zookeeper 
-* kafka broker 
-* confluent schema registry 
-* http-producer: REST producer 
-* http-materializer: streams application, that downstreams topic data and RPC to another REST service
-* db-mock: REST service and db in memory (use .json file as persistent storage), all-in-one
+* Zookeeper 
+* Kafka broker 
+* Confluent schema registry 
+* Http-producer: REST producer 
+* Http-materializer: streams application, that downstreams topic data and RPC to another REST service
+* Db-mock: REST service and db in memory (use .json file as persistent storage), all-in-one
 
-I describe two approaches of how to prepare container environment for testing. Both of them require a certain start-up sequence, namely: start kafka cluster first, wait until it is ready to serve data, create required topics, register schemas and then start application services.
+I describe two approaches on how to prepare a container environment for testing. Both of them require a certain start-up sequence, namely: start a Kafka cluster first, wait until it is ready to receive requests, create required topics, register schemas and then run application services.
 
 #### Approach 1: Declare each container separately
 Each container is defined in the same test class under its own method and is run either `@BeforeClass` or in a `static` block. 
@@ -252,7 +252,7 @@ If one container depends on another container, you might need network alias to s
 You can provide your own network alias for container or use an already existing one. 
 Aliases can be injected as environmental variable.
 
-Container ports can be mapped to localhost while testing, if container's port is exposed. 
+Container ports can be mapped to `localhost` while testing, if container's port is exposed. 
 Files and directories can be also mapped as volumes on the classpath in container.
 
 ```java
@@ -303,7 +303,7 @@ private static void createTopic(String topicName) {
 
 #### Approach 2: Define containers in docker-compose file
 Another approach is to prepare containers environment for testing is to define all the environment information in a docker-compose.yml. In this case Testcontainers manage composition of containers. All services share common network. Name of service uses as a network alias. This approach also supports waiting strategies. 
-Example of how to create topic in a docker-compose file can be found in [confluent examples](https://github.com/confluentinc/examples/blob/f854ac008952346ceaba0d1f1a352788f0572c74/microservices-orders/docker-compose.yml#L182-L215).
+Example of how to create topic in a `docker-compose` file can be found in [Confluent examples](https://github.com/confluentinc/examples/blob/f854ac008952346ceaba0d1f1a352788f0572c74/microservices-orders/docker-compose.yml#L182-L215).
 
 ```java
 /**
@@ -357,8 +357,8 @@ public void test_data_pipeline_flow_successful() {
 ```
 
 ### Conclusion
-Hopefully, the described approaches and code examples will help make it easier to test kafka clients application. If you would like to contribute, just open a ticket on Github for ideas. 
-Additionally, I would recommend to check Confluent blog that can be helpful in learning more about Kafka.
+Hopefully, the described approaches and code examples will help to make testing Kafka client application easier. If you would like to contribute, just open a ticket on GitHub for ideas. 
+Additionally, I would recommend to check [Confluent's blog](https://www.confluent.io/blog/) that can be helpful to learn more about Apache Kafka.
 
 [Github repository](https://github.com/sysco-middleware/kafka-testing)
 
