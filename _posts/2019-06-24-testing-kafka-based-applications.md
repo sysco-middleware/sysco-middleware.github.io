@@ -1,12 +1,12 @@
 ---
 layout: post
-title: Testing Kafka based applications
+title: Testing Kafka-based applications
 categories: automatic tests
 tags: [kafka, RestAssured, WireMock, test, Testcontainers, docker, junit, end-to-end]
 author: NikitaZhevnitskiy
 ---
 
-# Testing Kafka based applications
+# Testing Kafka-based applications
 ![streams](/images/2019-06-24-testing-kafka-based-applications/streams.jpg)
 
 > Github: [https://github.com/sysco-middleware/kafka-testing](https://github.com/sysco-middleware/kafka-testing)
@@ -15,11 +15,11 @@ This blog is of continuation of discussion in these posts:
 1. [Getting Your Feet Wet with Stream Processing - Part 2: Testing Your Streaming Application](https://www.confluent.io/blog/stream-processing-part-2-testing-your-streaming-application)
 2. [Testing Event-Driven Systems](https://www.confluent.io/blog/testing-event-driven-systems)
 
-Main purpose of this article is to share experience of testing Apache Kafka based applications and data pipelines, using two different approaches.
+Main purpose of this article is to share experience of testing Apache Kafka-based applications and data pipelines, using two different approaches.
 
 Keywords in use:
-* **Kafka based application** - by kafka based application I understand any application that uses `Kafka API` and communicates with kafka cluster.
-* **Data pipeline** - is a set of Kafka based applications that are connected into a single context.
+* **Kafka-based application** - by kafka-based application I understand any application that uses `Kafka API` and communicates with kafka cluster.
+* **Data pipeline** - is a set of Kafka-based applications that are connected into a single context.
 
 Examples are built using java and docker. For detailed information, check this repository on [github](https://github.com/sysco-middleware/kafka-testing).
 
@@ -205,7 +205,7 @@ public class ApplicationIT {
 ```
 
 ### 4. End-to-end tests with [Testcontainers](https://www.testcontainers.org)
-In context of Kafka based applications, end-to-end testing will be applied to  data pipelines to ensure that, first, the data integrity is maintained between applications and, second, data pipelines behave as expected. 
+In context of Kafka-based applications, end-to-end testing will be applied to  data pipelines to ensure that, first, the data integrity is maintained between applications and, second, data pipelines behave as expected. 
 Testing requires all integrated components of application to be up and running - in order to be able to test them with different scenarios.
 ![data pipeline](/images/2019-06-24-testing-kafka-based-applications/data_pipeline.png)
 
