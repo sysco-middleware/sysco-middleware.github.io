@@ -18,7 +18,7 @@ This blog is of continuation of discussion in these posts:
 Main purpose of this article is to share experience of testing Apache Kafka based applications and data pipelines, using two different approaches.
 
 Keywords in use:
-* **Kafka based application** - by Kafka based application I understand any application that uses Kafka API and communicates with Kafka cluster.
+* **Kafka based application** - by kafka based application I understand any application that uses `Kafka API` and communicates with kafka cluster.
 * **Data pipeline** - is a set of Kafka based applications that are connected into a single context.
 
 Examples are built using java and docker. For detailed information, check this repository on [github](https://github.com/sysco-middleware/kafka-testing).
@@ -30,7 +30,7 @@ Examples are built using java and docker. For detailed information, check this r
 4. End-to-end tests with [Testcontainers](https://www.testcontainers.org)
 
 ### 1. Intro
-Many have faced a challenge to test applications that communicate with Kafka cluster. The common issues are how to write unit test, how to automate test for Kafka application in isolation and how to handle end-to-end and system test for whole data pipeline.
+Many have faced a challenge to test applications that communicate with Kafka cluster. The common issues are how to write unit tests, how to automate tests for Kafka application in isolation and how to handle end-to-end and system tests for whole data pipeline.
 
 When I write this article, there are several approaches, some of them not resolved yet:
 1. [KIP-139: Kafka TestKit library](https://cwiki.apache.org/confluence/display/KAFKA/KIP-139%3A+Kafka+TestKit+library) is still open. Once it will be ready, kafka dev community will have a proper test-kit.
