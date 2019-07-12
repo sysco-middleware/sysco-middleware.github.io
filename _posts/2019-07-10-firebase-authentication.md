@@ -10,13 +10,11 @@ author: PrakharSrivastav
 
 This blog is geared towards the architects and developers who want to familiarize themselves with the workings of the firebase-authentication. The concepts discussed here would be very relevant to the other IDaaS providers as well. In this blog post, we also provide a comprehensive example to setup a firebase project, create simple front-end and backend services and protect the services using firebase-authentication.
 
-The code repository for the examples discussed in this post can be found [here](gg).
+The code repository for the examples discussed in this post can be found [here](https://github.com/sysco-middleware/post-firebase-authentication). Interested readers can clone the repository to play around with the working version, or follow this post for a more detailed understanding.
 
 # Introduction
 
 Google's [firebase](https://firebase.google.com) is a suite of tools, geared towards creating secure and scalable modern applications. In this post will focus on [firebase-authentication](https://firebase.google.com/docs/auth). Firebase Authentication supports Email/Password, Federated ID provider integration (github, facebook, google), phone number authentication, anonymous logins out of the box. You can also hook in your custom authentication backend (if you want), and let firebase take care of only the authentication mechanism. You will be amazed to see how quickly you can secure your applications using firebase by leveraging industry standards like OAuth, OpenID Connect etc. Firebase-authentication also simplifies the process of email verification, password resets, access revokation and a lot more with just a few lines of code.
-
-Interested readers can clone the [repository](gg) and follow the instructions in README.md, or follow this post here for a more detailed understanding.
 
 We will kick off this blog post by understanding authentication in more traditional settings and then compare its architecture with a firebase authenticated application.
 
@@ -64,7 +62,7 @@ Before getting into the dirty details, lets quickly understand 2 important sdk t
 - **The client-sdk**, which is strictly used to perform client centric operations like signin and signout, retrieving the id-token for the logged-in user, changing/resetting the password, emailing etc. The purpose of the client-sdk is to ease the common client-side features. Client sdk always operates in the context of the current logged-in user. It is available for popular client side platforms like web (javascript), android, ios, unity etc.
 - **The admin-sdk**, which operates on the information sent by the client. For example token minting and verification, user management, access control via claims, user import etc. Admin sdk always runs in the context of the firebase administrator. It is used at the server-side and is available in most programming language like Java, Golang, C#, Python, nodejs.
 
-In our example, we will create a firebase project and use client-sdk to login, from a web client. We will then, write backend services (A and B) and use admin-sdk to protect these services. If you want to try out the examples yourself, you can head over to [this](gg) github repository and follow the readme instructions.
+In our example, we will create a firebase project and use client-sdk to login, from a web client. We will then, write backend services (A and B) and use admin-sdk to protect these services. If you want to try out the examples yourself, you can head over to [this](https://github.com/sysco-middleware/post-firebase-authentication) github repository and follow the readme instructions.
 
 ### Creating a firebase project
 
@@ -96,7 +94,7 @@ For more details checkout [this](https://firebase.google.com/docs/web/setup) doc
 
 ### Writing backend services
 
-Clone [the](gg) github project on your machine. The backend services are written in go. Make sure you have Go (version > 1.11) installed. To write backend services, which can work with firebase, we need the service-account credentials file. Copy the private key that you have downloaded earlier and save it as "fb.json" under the root of your project directory.
+Clone the github [repository](https://github.com/sysco-middleware/post-firebase-authentication) on your machine. The backend services are written in go. Make sure you have Go (version > 1.11) installed. To write backend services, which can work with firebase, we need the service-account credentials file. Copy the private key that you have downloaded earlier and save it as "fb.json" under the root of your project directory.
 
 Navigate to the main.go file in the project, you have cloned. You can see below that
 
@@ -113,6 +111,7 @@ import (
 
 
 // initialize firebase app
+// you should use your service account file here.
 opt := option.WithCredentialsFile("fb.json")
 if app, err = firebase.NewApp(context.Background(), nil, opt); err != nil {
 	e.Logger.Fatalf("error initializing app: %v", err)
@@ -150,7 +149,7 @@ The project is now set up with our client and admin SDKs. We are ready to run th
 
 ### Running the project
 
-To run the project, follow the instructions on the [README.md](https://github.com/PrakharSrivastav/firebase-authentication/blob/master/README.md) file in the github repository. Once the application is running, you should be able to navigate to the application on <http://localhost:1313.> If everything is fine, you will be presented with the following screen.
+To run the project, follow the instructions on the [README.md](https://github.com/sysco-middleware/post-firebase-authentication/blob/master/README.md) file in the github repository. Once the application is running, you should be able to navigate to the application on <http://localhost:1313.> If everything is fine, you will be presented with the following screen.
 ![fb-login](/images/2019-07-10-firebase-authentication/fb-auth-login.png)
 
 At this point, you are all set. You can experiment with different options and settings. Few notable feature that you could try are
@@ -162,8 +161,7 @@ At this point, you are all set. You can experiment with different options and se
 
 # Conclusion
 
-Firebase auth offers a lot more than what can be covered in a single blog post. It covers a vast number of authentication scenarios. It comes with sane defaults that can be customized easily for advanced usage.
-Also, the spark-pricing plan is amazing to try out for proof of concepts and hobby projects. But as with any managed service, always read the terms and conditions and thoroughly check out their pricing plan.
+Firebase auth offers a lot more than what can be covered in a single blog post. It covers a vast number of authentication scenarios. It comes with sane defaults that can be customized easily for advanced usage. Also, the spark-pricing plan is amazing to try out for proof of concepts and hobby projects. But as with any managed service, always read the terms and conditions and thoroughly check out their pricing plan.
 
 In this post we have barely scratched the surface of what firebase-auth offers. There are a lot various scenarios it can cover. At [Sysco AS](https://sysco.no/), we use firebase along with Google Cloud Platform to create a multitenant authentication platform and so far we are really impressed with its offerings. We will keep sharing our experience on firebase. Watch this space for more content.
 
@@ -179,4 +177,4 @@ In this post we have barely scratched the surface of what firebase-auth offers. 
 - [Installing Go](https://golang.org/doc/install)
 - [Firebase-Auth godoc](https://godoc.org/firebase.google.com/go/auth)
 
-Note: This content originally appeared [here](https://www.prakharsrivastav.com/posts/firebase-authentication/)
+Note: This content originally appeared [here](https://www.prakharsrivastav.com/posts/firebase-authentication/). It has been altered at places to suite guidelines of this forum.
