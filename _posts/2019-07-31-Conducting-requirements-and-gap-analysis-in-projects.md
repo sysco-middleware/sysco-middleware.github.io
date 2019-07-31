@@ -16,7 +16,7 @@ Business analysis process is a group of activities that elucidates business need
 
 Requirement describes a need for new business initiative, activity, change or project with the goal of achieving a desired outcome. Generally, requirements can be business requirements or non-functional, also known as high-level requirements and functional as the low-level requirements.
 
-Gap denotes lack of compliance, quality, standard or other which significantly affects the organisation adversely and need to be remediated. It represents disparity between unmet and met demand.
+Gap denotes lack of compliance, lack of quality, standards or some other element that significantly affects the organisation adversely and needs to be remediated. It represents disparity between unmet and met requirement.
 
 ![Requirements](/images/2019-07-31-Conducting-requirements-and-gap-analysis-in-projects/Picture1.png)
 
@@ -49,6 +49,7 @@ First versions of requirements are still work in progress; therefore, requiremen
 3.	Assessing whether they suit company´s strategical or operational goals,
 4.	Assessing whether they are agreed among all stakeholders.
 5.	Evaluating whether they respond defined standards related to contents, format and quality.
+
 Requirements analysis serves as a basis for decision making and it is an interphase among elicitation and approved requirements, used as a control point for requirements implementation.
 
 After being analysed and finalised in documentation, requirements are sent for approval and implementation. The approval is usually given by the project sponsor, in some cases by the project manager, as stated in official project and requirements documentation.
@@ -91,7 +92,7 @@ Gap management process begins with gap identification and its recording into an 
 2.	Information about the gap – gap number, gap name, gap description, gap priority level, etc.
 3.	Gap deliverables
 4.	Gap acceptance criteria, its constraints and assumptions
-5.	Sign-off details
+5.	Sign-off details (name of document approver, approval date, etc.)
 
 Gap closing process can vary from organisation to organisation, depending on e.g., size of organisation, its activities and organisation structure, gap type, etc. Once all gaps have been approved for closing and eventually closed, the project is in process of closing as well.
 
@@ -101,7 +102,7 @@ Gap closing process can vary from organisation to organisation, depending on e.g
 1.	Appropriate level of requirements analysis needs to be applied, with avoidance of over-analysing, under-analysing or misanalysing of requirements.
 2.	Relevant metrics, parameters, frameworks and standards need to be identified and evaluated for gap remediation
 3.	All stakeholders need to be properly identified and managed, including maintaining good relationship with them.
-4.	Requirements and gap documentation need to be kept and maintained in appropriate repository accessible to all involved parties.
+4.	Requirements and gap documentation need to be kept and maintained in appropriate repository, accessible to all involved parties.
 5.	Critical thinking, good judgement and consultation are necessary when assessing whether the gap satisfies all conditions for closing or additional clarification is needed.
 6.	Some stakeholders may continuously avoid agreeing to gap closure, it is important to be ready for such situations and make certain that all relevant evidences and arguments to resolve the disagreement are available.
 7.	It is necessary to pay attention to lessons learned for latter subject-related tasks or projects.
