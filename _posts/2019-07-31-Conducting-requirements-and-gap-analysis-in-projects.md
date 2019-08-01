@@ -61,12 +61,15 @@ There can often happen that requirements are under under-analysed, misanalysed o
 
 
 1.	Under-analysed requirements
+
 Under-analysed requirements have not been verified, controlled and compared to identified requirement. They lack evaluation and increase the possibility of latter deviance from requested outcome and steps planned for their realisation. For example, after requirements have been elicited, they have not been confirmed and agreed among all stakeholders, yet they have been put into execution phase right away. Under-analysis can occur due to inadequate communication among stakeholders, business analyst´s inadvertence, lack of resources, budget or time.
 
 2.	Misanalysed requirements
+
 Misanalysed requirements, as their name suggest, miss the purpose of their analysis and misinterpret the requirement. They are misleading and contribute to misunderstanding of what actually needs to be done, which can have severe consequences on business performance and success.
 
 3.	Overanalysed requirements
+
 Overanalysed requirements have unnecessary high level of analysis and do not serve the intended purpose. For example, business analyst or project manager focuses too much on quantity of requirements documentation and details having no significant impact on fulfilment of requirements purpose. Overanalysing can lead up to postponing of requirement implementation, bringing to scope creep and significant deadline breach.
 
 
