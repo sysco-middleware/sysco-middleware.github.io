@@ -236,3 +236,5 @@ I encourage the readers of this post to give it a try.
 - [gcp: kms-object-hierarchy](https://cloud.google.com/kms/docs/object-hierarchy)
 - [github repository](https://github.com/sysco-middleware/post-gcp-kms)
 - [gcp: kms roles](https://cloud.google.com/kms/docs/reference/permissions-and-roles#custom_roles)
+
+<small>Note: This content originally appeared [here](https://www.prakharsrivastav.com/posts/gcp-using-kms-to-manage-secrets/). It has been altered at places to suite guidelines of this forum.</small>
