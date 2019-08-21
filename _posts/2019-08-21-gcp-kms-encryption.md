@@ -69,17 +69,17 @@ If the users are following the code in the [github](https://github.com/PrakharSr
 #### KMS - Admin service account
 
 Create a service account with role Cloud KMS Admin. Download the service account json file. Save it as `kms-admin.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/kms-admin-2.png" alt="Cloud KMS Admin - add role" position="left" style="border-radius: 2px;" >
+<img src="/images/2019-08-21-gcp-kms-encryption/kms-admin-2.png" alt="Cloud KMS Admin - add role" style="border-radius: 2px;" >
 
 #### KMS - Encrpyt/Decrypt service account
 
 Create a service account with role Cloud KMS CryptoKey Encrypter/Decrypter. Download the service account json file. Save it as `kms-enc-dec.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/kms-encdec-2.png" alt="Cloud KMS Enc/Dec - add role" position="left" style="border-radius: 2px;" >
+<img src="/images/2019-08-21-gcp-kms-encryption/kms-encdec-2.png" alt="Cloud KMS Enc/Dec - add role"  style="border-radius: 2px;" >
 
 #### Cloud Datastore User service account
 
 Create a service account with role Cloud Datastore User. Download the service account json file. Save it as `datastore-user.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/datastore-user.png" alt="Datastore USer - add role" position="left" style="border-radius: 2px;" >
+<img src="/images/2019-08-21-gcp-kms-encryption/datastore-user.png" alt="Datastore USer - add role" style="border-radius: 2px;" >
 
 # Creating key and key-ring
 
@@ -171,7 +171,7 @@ if _, err = ds.Put(ctx, key, &u); err != nil {
 }
 ```
 You could see the saved password in datastore as
-<img src="/images/2019-08-21-gcp-kms-encryption/datastore-enc.png" alt="Datastore User - add role" position="left" style="border-radius: 2px;" >
+<img src="/images/2019-08-21-gcp-kms-encryption/datastore-enc.png" alt="Datastore User - add role" style="border-radius: 2px;" >
 
 # Reading datastore and decrypting password before using
 
