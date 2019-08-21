@@ -21,7 +21,8 @@ In this post, I will explain, how Google Cloud [Key Management Service](https://
 
 The figure below provides an extremely simplified version of our application.
 
-<img src="/images/2019-08-21-gcp-kms-encryption/KMS-secret.png" alt="kms secret" position="center" style="border-radius: 2px;" >
+
+<img src="/images/2019-08-21-gcp-kms-encryption/KMS-secret.png" alt="kms secret" position="center" style="border-radius: 2px;margin-top:5px;" >
 
 1. We have a write application, that saves user credentials in the datastore. It does below operations.
     1. Accepts user input.
@@ -69,17 +70,20 @@ If the users are following the code in the [github](https://github.com/PrakharSr
 #### KMS - Admin service account
 
 Create a service account with role Cloud KMS Admin. Download the service account json file. Save it as `kms-admin.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/kms-admin-2.png" alt="Cloud KMS Admin - add role" style="border-radius: 2px;" >
+
+<img src="/images/2019-08-21-gcp-kms-encryption/kms-admin-2.png" alt="Cloud KMS Admin - add role" style="border-radius: 2px;margin-top:5px;" >
 
 #### KMS - Encrpyt/Decrypt service account
 
 Create a service account with role Cloud KMS CryptoKey Encrypter/Decrypter. Download the service account json file. Save it as `kms-enc-dec.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/kms-encdec-2.png" alt="Cloud KMS Enc/Dec - add role"  style="border-radius: 2px;" >
+
+<img src="/images/2019-08-21-gcp-kms-encryption/kms-encdec-2.png" alt="Cloud KMS Enc/Dec - add role"  style="border-radius: 2px;margin-top:5px;" >
 
 #### Cloud Datastore User service account
 
 Create a service account with role Cloud Datastore User. Download the service account json file. Save it as `datastore-user.json` under the project root.
-<img src="/images/2019-08-21-gcp-kms-encryption/datastore-user.png" alt="Datastore USer - add role" style="border-radius: 2px;" >
+
+<img src="/images/2019-08-21-gcp-kms-encryption/datastore-user.png" alt="Datastore USer - add role" style="border-radius: 2px;margin-top:5px;" >
 
 # Creating key and key-ring
 
@@ -171,7 +175,10 @@ if _, err = ds.Put(ctx, key, &u); err != nil {
 }
 ```
 You could see the saved password in datastore as
-<img src="/images/2019-08-21-gcp-kms-encryption/datastore-enc.png" alt="Datastore User - add role" style="border-radius: 2px;" >
+
+
+
+<img src="/images/2019-08-21-gcp-kms-encryption/datastore-enc.png" alt="Datastore User - add role" style="border-radius: 2px;margin-top:5px;" >
 
 # Reading datastore and decrypting password before using
 
