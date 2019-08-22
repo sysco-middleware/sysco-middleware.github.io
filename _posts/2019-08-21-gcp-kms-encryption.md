@@ -137,7 +137,7 @@ type User struct {
 }
 ```
 
-We want to store the password as sequence of bytes which can only be encrypted using the KMS keys. Therefore the type of the password field is []byte. This way we always store the password as bytes (after encryption) and decrypt them using KMS key in order to call third parties. To encrypt the credentials, we will use the service account kms-enc-dec, which has a limited scope to encrypt or decrypt the password. The following code snippet shows how to encrypt the password and store it as a datastore entity.
+We store the password as sequence of bytes as bytes (after encryption) and decrypt them using KMS key in order to call third parties. To encrypt the credentials, we use the service account kms-enc-dec, which has a limited scope to encrypt or decrypt the password. The following code snippet shows how to encrypt the password and store it as a datastore entity.
 
 ```go
 // create kms client
@@ -226,7 +226,7 @@ prakhar@tardis (master)✗ [2] % go run main.go
 
 # Conclusion
 
-With Cloud KMS, setting up and maintaining the PKI infrastructure is extremely. Cloud KMS, abstracts away all the underlying complexities and provides a set of simple APIs to easily manage cryptographic keys for cloud services as well as for your on-premise applications. You can generate, use, rotate, and destroy AES256, RSA 2048, RSA 3072, RSA 4096, EC P256, and EC P384 cryptographic keys. Cloud KMS is integrated with Cloud IAM and Cloud Audit Logging so that you can manage permissions on individual keys and monitor how these are used.
+With Cloud KMS, setting up and maintaining the PKI infrastructure is extremely simple. Cloud KMS, abstracts away all the underlying complexities and provides a set of simple APIs to easily manage cryptographic keys for cloud services as well as for your on-premise applications. You can generate, use, rotate, and destroy AES256, RSA 2048, RSA 3072, RSA 4096, EC P256, and EC P384 cryptographic keys. Cloud KMS is integrated with Cloud IAM and Cloud Audit Logging so that you can manage permissions on individual keys and monitor how these are used.
 
 I encourage the readers of this post to give it a try.
 
