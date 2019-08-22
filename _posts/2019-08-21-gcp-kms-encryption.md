@@ -40,7 +40,7 @@ In order to start with KMS, we should understand the object hierarchy used in th
 
 - **Projects**: All the objects in the hierarchy belong to a project.
 - **Location**: It defines the geographical location (data center) where the keys will be stored and served from.
-- **Key Ring**: Represents a set of keys. This is a logical way to group key (for example specific department, functional domain, user group, etc).
+- **Key Ring**: Represents a set of keys. This is a logical way to group keys (for example specific department, functional domain, user group, etc).
 - **Key**: The cryptographic key used for encryption and decryption.
 - **Key Version** : Numerical version linked to a key.
 
@@ -65,7 +65,7 @@ We start by creating three service accounts.
 - kms-enc-dec with a role Cloud KMS CryptoKey Encrypter/Decrypter.
 - datastore-user with a role Cloud Datastore User.
 
-If the users are following the code in the [github](https://github.com/PrakharSrivastav/gcp-kms-encryption-decryption), they should create these service-accounts and save the three credential files under the project root.
+If you are following the code in the [github](https://github.com/sysco-middleware/post-gcp-kms), you should create these service-accounts and save the three credential files under the project root.
 
 #### KMS - Admin service account
 
