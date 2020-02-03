@@ -95,6 +95,9 @@ authors:
   IvanStevanovic:
     name: Ivan Stevanovic
     avatar: /images/avatars/IvanStevanovic.jpg
+  AnitaLipsky:
+    name: Anita Lipsky
+    avatar: /images/avatars/anita.jpg
 
 # Build settings
 markdown:       kramdown

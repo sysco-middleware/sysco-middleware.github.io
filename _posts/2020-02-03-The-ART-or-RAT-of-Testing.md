@@ -21,6 +21,7 @@ update or refer to the tests?
 - **T**ested: Are the tests covering scenarios that are valuable?
 
 
+
 # Asserts
 
 For Asserts, this means asserts in the tests should be there and assert the right
@@ -44,6 +45,7 @@ I completely blanked on the A. In other words, that sneaky Assert was
 forgotten, even in the meta sense! So again, no judgements.
 
 
+
 # Readability
 
 For Readability, this means the coding style needs to be simple and obvious
@@ -64,6 +66,7 @@ language actual humans would say to each other it important.
 At the end of the day, software is made by humans — don’t talk to me about “AI
 takeover” or recite “2001: A Space Odyssey” robot rules to me — so let’s use
 human language wherever we can.
+
 
 
 # Tested
@@ -94,6 +97,7 @@ and keep moving to the next most valuable area to add test coverage.
 Ultimately, look for evidence tests will fail when important scenarios will stop
 working. Even better, run the tests with the test environment tweaked to fail for
 that scenario, and look for test failures.
+
 
 
 # Conclusion
