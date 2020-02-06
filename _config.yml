@@ -11,6 +11,8 @@ host: 0.0.0.0
 port: 4000
 baseurl: ""
 
+google_analytics: UA-60980318-1
+
 # Owner
 owner:
   name:         Sysco Middleware
@@ -87,6 +89,15 @@ authors:
   TimurSamkharadze:
     name: Timur Samkharadze
     avatar: /images/avatars/timsamkharadze.jpg
+  MarijanaJuric:
+    name: Marijana Juric Fraculj
+    avatar: /images/avatars/marijanajuricfraculj.png
+  IvanStevanovic:
+    name: Ivan Stevanovic
+    avatar: /images/avatars/IvanStevanovic.jpg
+  AnitaLipsky:
+    name: Anita Lipsky
+    avatar: /images/avatars/anita.jpg
 
 # Build settings
 markdown:       kramdown
