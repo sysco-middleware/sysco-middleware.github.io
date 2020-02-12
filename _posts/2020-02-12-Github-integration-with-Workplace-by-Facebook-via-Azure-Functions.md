@@ -12,10 +12,10 @@ At my company we are using Workplace by Facebook for all of it’s possibilities
 
 In this post I will try to show the easiest way to integrate these two systems and share my code and findings in one place. So, don’t expect anything fancy because this is still work in progress and it will definitely grow in functionality. As an easy example I decided to use Github trigger on creation of a new issue in the Repo. That being said first thing I had to do is to create a function which I need to expose and use the Azure function URL to create a webhook in the desired Github repository. I used C# for development of the integration.
 
-*"If you are just starting with Azure Functions with Java and you came upon this blog post this what I have followed and installed and eventually used and tested successfully the quickstart of: 
-[Use Java and Maven to create and publish a function to Azure.][https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-java-maven]"
+*If you are just starting with Azure Functions with Java and you came upon this blog post this what I have followed and installed and eventually used and tested successfully the quickstart of: *
+*[Use Java and Maven to create and publish a function to Azure.](https://docs.microsoft.com/en-us/azure/azure-functions/functions-create-first-java-maven)"*
 
-Then if you want to use C# then you need the latest version of the [Visual Studio 2019][https://visualstudio.microsoft.com/vs/] form which you have all the support needed to develop and deploy in Azure Functions and much more.*
+*Then if you want to use C# then you need the latest version of the [Visual Studio 2019](https://visualstudio.microsoft.com/vs/) form which you have all the support needed to develop and deploy in Azure Functions and much more.*
 
 Ok lets start with the code of the Azure function written in C# then a setup of the Github webhook and setup of the Workplace Bot
 
