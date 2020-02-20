@@ -4,6 +4,62 @@
   width: 80%;
 }
 
+@font-face {
+  font-family:sneak_light;
+  src:url(/fonts/Sneak-Light.woff2) format("woff2"),url(/fonts/Sneak-Light.woff) format("woff");
+  font-weight:300;
+  font-style:normal
+}
+
+@font-face {
+  font-family:sneak_light_italic;
+  src:url(/fonts/Sneak-Light-Italic.woff2) format("woff2"),url(/fonts/Sneak-Light-Italic.woff) format("woff");
+  font-weight:300;
+  font-style:italic
+}
+
+@font-face {
+  font-family:sneak_regular;
+  src:url(/fonts/Sneak-Regular.woff2) format("woff2"),url(/fonts/Sneak-Regular.woff) format("woff");
+  font-weight:400;
+  font-style:normal
+}
+
+@font-face {
+  font-family:sneak_regular_italic;
+  src:url(/fonts/Sneak-Regular-Italic.woff2) format("woff2"),url(/fonts/Sneak-Regular-Italic.woff) format("woff");
+  font-weight:400;
+  font-style:italic
+}
+  
+@font-face {
+  font-family:sneak_medium;
+  src:url(/fonts/Sneak-Medium.woff2) format("woff2"),url(/fonts/Sneak-Medium.woff) format("woff");
+  font-weight:500;
+  font-style:normal
+}
+
+@font-face {
+  font-family:sneak_medium_italic;
+  src:url(/fonts/Sneak-Medium-Italic.woff2) format("woff2"),url(/fonts/Sneak-Medium-Italic.woff) format("woff");
+  font-weight:500;
+  font-style:italic
+}
+
+@font-face {
+  font-family:sneak_medium_quirky;
+  src:url(/fonts/Sneak-Medium-Quirky.woff2) format("woff2"),url(/fonts/Sneak-Medium-Quirky.woff) format("woff");
+  font-weight:500;
+  font-style:normal
+}
+
+@font-face {
+  font-family:sneak_bold;
+  src:url(/fonts/Sneak-Bold.woff2) format("woff2"),url(/fonts/Sneak-Bold.woff) format("woff");
+  font-weight:700;
+  font-style:normal
+}
+
 main,
 footer,
 .nav-container {
@@ -19,14 +75,7 @@ footer,
   display: flex;
   align-items: flex-end;
 
-  background: rgba(179,220,237,1);
-  background: -moz-linear-gradient(45deg, rgba(179,220,237,1) 0%, rgba(41,184,229,1) 50%, rgba(42,116,190,1) 100%);
-  background: -webkit-gradient(left bottom, right top, color-stop(0%, rgba(179,220,237,1)), color-stop(50%, rgba(41,184,229,1)), color-stop(100%, rgba(42,116,190,1)));
-  background: -webkit-linear-gradient(45deg, rgba(179,220,237,1) 0%, rgba(41,184,229,1) 50%, rgba(42,116,190,1) 100%);
-  background: -o-linear-gradient(45deg, rgba(179,220,237,1) 0%, rgba(41,184,229,1) 50%, rgba(42,116,190,1) 100%);
-  background: -ms-linear-gradient(45deg, rgba(179,220,237,1) 0%, rgba(41,184,229,1) 50%, rgba(42,116,190,1) 100%);
-  background: linear-gradient(45deg, rgba(179,220,237,1) 0%, rgba(41,184,229,1) 50%, rgba(42,116,190,1) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#b3dced', endColorstr='#2a74be', GradientType=1 );
+  background: #121921;
 
   * {
     color: #FFF;

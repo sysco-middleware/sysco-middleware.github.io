@@ -1,5 +1,5 @@
 
-title:            Sysco Middleware
+title:            SYSCO Middleware Blog
 subtitle:         data integration
 description:      Data Integration, Open-Source, Oracle
 disqus_shortname: syscomiddlewareblog
@@ -15,7 +15,7 @@ google_analytics: UA-60980318-1
 
 # Owner
 owner:
-  name:         Sysco Middleware
+  name:         SYSCO Middleware Blog
   url:          https://sysco.no
   email:        info@sysco.no
 
