@@ -40,7 +40,7 @@ So, native integration becomes a very viable option for keeping architectural in
 
 # 3. Connect-Native integrating Presto
 
-Native integration is basically mutual TLS + an API Authorization call, so we decided to contribute some code to the Presto open-source distribution (prestosql.io), in order to make the Certificate handling functionality pluggable as well. 
+Native integration is basically mutual TLS + an API Authorization call, so we decided to contribute some code to the Presto open-source distribution [prestosql.io](prestosql.io), in order to make the Certificate handling functionality pluggable as well. 
 
 ![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/contrib.png)
 
