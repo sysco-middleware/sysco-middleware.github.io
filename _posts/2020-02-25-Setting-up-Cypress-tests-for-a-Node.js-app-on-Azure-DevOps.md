@@ -1,15 +1,16 @@
 ---
 layout: post
-title: Setting up Cypress tests for a ode.js app on Azure DevOps
+title: Setting up Cypress tests for a Node.js app on Azure DevOps
 categories: testing
 tags: [testing,azure,devops,node.js,cypress]
 author: AnitaLipsky 
 ---
 
 # Introduction
-This shows how to set up Cypress([cypress.io](cypress.io)) tests towards a Node.js application on an Azure DevOps pipeline, based on how the team did this for the first time, step by step.
+This shows how to set up Cypress([cypress.io](http://cypress.io)) tests towards a Node.js application on an Azure DevOps pipeline, based on how the team did this for the first time, step by step.
 
 The steps were done using shared team knowledge.
+
 
 
 # Overview of steps
@@ -18,12 +19,15 @@ The steps were done using shared team knowledge.
 - Goal 3: Send test results to a Cypress Dashboard
 - Goal 4: Configure pipeline to fail if tests fail
 
+
+
 # Goal 1: Run Cypress test towards a Node.js app
 ## Background: Selection of Cypress as the test framework
 
 Cypress was the test automation framework chosen for this project due to it seeming like a good match for the project based on a previous trial, seeing this used successfully for another project, and experience with other test frameworks.
 
 The project is a 20 week, 10 sprint delivery for revamping web application used for both back office administration and customer facing administration. The database will be migrated to the cloud, an API will be built and a new GUI will be created. The team consists of an architect, backend / middleware developers, a front end developer, a tester (myself) and project management.
+
 
 ## Try a quick Cypress pilot locally
 
@@ -34,6 +38,7 @@ The tester (myself) setup several different types of Cypress tests to test diffe
 In this way we did not depend upon each other and could share different learnings.
 
 We them demo’d this to each other, and were keen to continue with Cypress.
+
 
 ## Commands for running the tests on the command line in the node application
 
@@ -62,8 +67,8 @@ Snip:
  "serve": "vue-cli-service serve",
  "build": "vue-cli-service build",
  "test:unit": "vue-cli-service test:unit",
-<b> "test:e2e": "vue-cli-service test:e2e",</b>
-<b> "test:e2ehl": "vue-cli-service test:e2e --headless",</b>
+ "test:e2e": "vue-cli-service test:e2e",
+ "test:e2ehl": "vue-cli-service test:e2e --headless",
  "lint": "vue-cli-service lint"
  }
 ```
@@ -119,10 +124,10 @@ steps:
 
  - script: |
     npm install
-    <b>npm run test:e2ehl</b>
+    npm run test:e2ehl
     npm run build
    displayName: 'npm install, test and build'
-
+```
 After pushing the update to the repository, verify the logs to be sure the test ran.
 
 Snip:
@@ -143,12 +148,12 @@ elegant way.
 ## Update package.json with the new command to send test results to the dashboard
 Snip:
 ```json
-{…
+{..…
  "build": "vue-cli-service build",
  "test:unit": "vue-cli-service test:unit",
  "test:e2e": "vue-cli-service test:e2e",
  "test:e2ehl": "vue-cli-service test:e2e --headless",
-<b> "test:e2e-pipeline": "vue-cli-service test:e2e --headless --record --key the-key-goes-in-here",</B<
+ "test:e2e-pipeline": "vue-cli-service test:e2e --headless --record --key the-key-goes-in-here",
  "lint": "vue-cli-service lint"
  }
 ```
@@ -156,9 +161,9 @@ Snip:
 ## Update azure-pipelines.yml to run this command instead
 Snip:
 ```
- - script: |
+- script: |
      npm install
-     <b>npm run test:e2e-pipeline</b>
+     npm run test:e2e-pipeline
      npm run build
 ```
 
@@ -190,7 +195,7 @@ Snip of azure-pipeline.yml:
 
 Trigger the pipeline where there is one known failing test. If one does not exist, write one for the purpose of testing the pipeline.
 The pipeline now shows this error message:
-
+![Error message](/images/2020-02-25-Setting-up-Cypress-tests-for-a-Node.js-app-on-Azure-DevOps/Devops-npm-failed.png)
 
 The full azure-pipeline.yml is now
 ```yaml
@@ -221,8 +226,8 @@ steps:
     displayName: 'Test'
   - task: Npm@1
     inputs:
- command: 'custom'
- customCommand: 'run build'
+      command: 'custom'
+      customCommand: 'run build'
     displayName: 'Build'
 ```
 
