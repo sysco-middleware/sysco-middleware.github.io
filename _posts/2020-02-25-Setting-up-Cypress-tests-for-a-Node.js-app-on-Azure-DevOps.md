@@ -132,13 +132,12 @@ After pushing the update to the repository, verify the logs to be sure the test 
 
 Snip:
 ```
-<b> My First Test
-✓ Visits the app root url (982ms)</b>
+My First Test
+✓ Visits the app root url (982ms)
 ```
 
 # Goal 3: Send test results to a Cypress Dashboard
-Cypress has a Dashboard feature which shows test run results in a simple an
-elegant way.
+Cypress has a Dashboard feature which shows test run results in a simple and elegant way.
 
 ## Pre-requisites
 * A Cypress dashboard was created and tested locally
