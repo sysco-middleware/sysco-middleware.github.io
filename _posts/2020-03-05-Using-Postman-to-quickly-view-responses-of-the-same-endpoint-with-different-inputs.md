@@ -37,18 +37,18 @@ https://mydomain/myapp/api/v1/customer/483228
 
 
 ## Update the request to use a variable
-Update the request by replacing the hardcoded value with a variable inside double curly brackets, eg {{custId}}
+Update the request by replacing the hardcoded value with a variable inside double curly brackets, eg{% raw %} {{custId}} {% endraw %}
 
 Save the request.
 
 Request example:
-```
+{% raw %}
 https://mydomain/myapp/api/v1/customer/{{custId}}
-```
+{% endraw %}
 
 
 ## Create a .csv file with values for the variable
-Create a .cvs file with a heading that matches the variable name.
+Create a .csv file with a heading that matches the variable name.
 
 Add one row for each variable value, eg each customerId
 
@@ -71,7 +71,7 @@ custId
 ## Run the request in Runner
 Open the runner - look for the light grey “Runner” button in the top left hand part of the screen which can be hard to notice.
 
-![Postman runner button](/images/2020-02-25-Setting-up-Cypress-tests-for-a-Node.js-app-on-Azure-DevOps/postman-runner-button.png)
+![Postman runner button](/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-runner-button.png)
 
 Select the collection that you created containing the request to iterate over.
 
@@ -81,11 +81,21 @@ Postman will run the same request for each line of data in the file, so click Pr
 
 Click the big blue Run button towards the bottom of the screen. If this button is greyed out, be sure you selected a collection.
 
-![Postman interations one response](/images/2020-02-25-Setting-up-Cypress-tests-for-a-Node.js-app-on-Azure-DevOps/postman-iterations-one-response.png)
+
+## Quickly view the responses
+The default screen contains a lot of information that I find involves too much clicking and right-clicking to view the results, so I recommend opening the Postman Console.
+
+Open this by going to the top menu bar and selecting View > Show Postman Console
+
+This will open a new window.
+
+Expand the request to see its response and expand its response body.
+
+![Postman interations one response](/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-iterations-one-response.png)
 
 Scrolling down it is nice to see the arrays collapsed by default which gives a quick overview of the data.
 
-![Postman response with arrays](/images/2020-02-25-Setting-up-Cypress-tests-for-a-Node.js-app-on-Azure-DevOps/postman-response-with-arrays.png)
+![Postman response with arrays](/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-response-with-arrays.png)
 
 Looking through the responses for various customerIds it is easy to get a quick overview of the types of customers by viewing the values of “type” in the responses and their other values returned.
 
