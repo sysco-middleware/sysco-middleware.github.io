@@ -142,7 +142,6 @@ Now we need implement the following steps to implement our Human Task UI with Ja
 
 ![Create WS Proxies](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1042-610x429.png)
 
-![WS Proxies - 1](/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1046.png)
 
 Validate *"Wrapper Style"* property is disable on Web Service Reference:
 
