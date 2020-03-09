@@ -18,7 +18,7 @@ Many administrators do not realize the fact that HotSpot JVM prior to Java 8 has
 - Old Generation and
 - Permanent Generation. (replaced with Metaspace in Java 8 [3])
 
-![](../images/2016-04-29-WebLogic-JVM-setup-problems/01.png)
+![](/images/2016-04-29-WebLogic-JVM-setup-problems/01.png)
 
 Fig. 1. HotSpot Heap memory architecture
 
