@@ -1,0 +1,149 @@
+I"�0<p>In this entry, I would like to show how to use Parametric Roles, why we need Extended User Properties, some limitations and how to solve them.</p>
+
+<p>Parametric Roles are user to customize one role depending on some conditions. e.g.: I want to assign one task depending on user’s specializations, if one task requires check a quote related with heavy machines, this should be assigned to the supervisor specialized on heavy machines, if the quote is about light machines, should be assigned to the supervisor of light machines, and so on.</p>
+
+<p>Parametric Roles use the users information founded in LDAP. This specific information could be stored on a LDAP system, but normally LDAP are only used to store basic information like e-mail accounts, names and password.</p>
+
+<p>To extend the user properties, Oracle BPM offer a feature called Extended User Properties. This let us define information like location, specializations, etc.</p>
+
+<p>Using this properties we can define Parametric Roles and avoid creating a “USER” table or Business Rules to define the user or users to assign a task.</p>
+
+<h2 id="extended-user-properties">Extended User Properties</h2>
+
+<h3 id="creating-extended-user-properties">Creating Extended User Properties</h3>
+
+<p>To create and assign user properties we can use Oracle BPM Workspace application:</p>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-18_2333-610x315.png" alt="Extended User Properties" /></p>
+
+<p>But this feature has one limitation (or bug): <a href="http://docs.oracle.com/cd/E14571_01/doc.1111/e15175/bpmug_ws_admin.htm#BPMUG232">Oracle Documentation</a> says you can define four types of properties: STRING, NUMBER, DATE, and FREEFORM. And from Workspace you only can define 2: STRING and NUMBER. What if I want to define a property to store some description or address and this cannot be defined as an option list?</p>
+
+<p>Well, after some tests, I have implemented a JDeveloper project to access User Properties and create NUMBER, DATE or FREEFORM properties:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">createUserExtendedProperty</span><span class="o">(</span><span class="nc">String</span> <span class="n">propertyName</span><span class="o">,</span>
+                                           <span class="nc">PropertyType</span> <span class="n">propertyType</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">beginConnection</span><span class="o">();</span>
+
+            <span class="nc">IBPMServiceClient</span> <span class="n">bpmServiceClient</span> <span class="o">=</span>
+                <span class="n">clientFactory</span><span class="o">.</span><span class="na">getBPMServiceClient</span><span class="o">();</span>
+
+            <span class="nc">IBPMOrganizationService</span> <span class="n">bpmOrganizationService</span> <span class="o">=</span>
+                <span class="n">bpmServiceClient</span><span class="o">.</span><span class="na">getBPMOrganizationService</span><span class="o">();</span>
+
+            <span class="nc">ParticipantProperty</span> <span class="n">participantProperty</span> <span class="o">=</span>
+                <span class="k">new</span> <span class="nf">ParticipantProperty</span><span class="o">();</span>
+
+            <span class="n">participantProperty</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">propertyName</span><span class="o">);</span>
+            <span class="n">participantProperty</span><span class="o">.</span><span class="na">setPropertyType</span><span class="o">(</span><span class="n">propertyType</span><span class="o">.</span><span class="na">name</span><span class="o">());</span>
+
+            <span class="n">bpmOrganizationService</span><span class="o">.</span><span class="na">createParticipantProperty</span><span class="o">(</span><span class="n">bpmContext</span><span class="o">,</span>
+                                                             <span class="n">participantProperty</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">closeConnection</span><span class="o">();</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>Also, is implemented how to get user assigned properties from BPM Workspace:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kd">public</span> <span class="nc">List</span> <span class="nf">getParticipantsProperties</span><span class="o">(</span><span class="nc">List</span> <span class="n">participantsNames</span><span class="o">)</span> <span class="o">{</span>
+
+        <span class="nc">List</span> <span class="n">participantsProperties</span> <span class="o">=</span>
+            <span class="k">new</span> <span class="nf">ArrayList</span><span class="o">();</span>
+
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="n">beginConnection</span><span class="o">();</span>
+
+            <span class="nc">IBPMServiceClient</span> <span class="n">bpmServiceClient</span> <span class="o">=</span>
+                <span class="n">clientFactory</span><span class="o">.</span><span class="na">getBPMServiceClient</span><span class="o">();</span>
+
+            <span class="nc">IBPMOrganizationService</span> <span class="n">bpmOrganizationService</span> <span class="o">=</span>
+                <span class="n">bpmServiceClient</span><span class="o">.</span><span class="na">getBPMOrganizationService</span><span class="o">();</span>
+
+            <span class="nc">List</span> <span class="n">participantes</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">ArrayList</span><span class="o">();</span>
+
+            <span class="k">for</span> <span class="o">(</span><span class="nc">String</span> <span class="n">participantName</span> <span class="o">:</span> <span class="n">participantsNames</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">PrincipleRefType</span> <span class="n">principleRef</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">MemberType</span><span class="o">();</span>
+                <span class="n">principleRef</span><span class="o">.</span><span class="na">setName</span><span class="o">(</span><span class="n">participantName</span><span class="o">);</span>
+                <span class="n">principleRef</span><span class="o">.</span><span class="na">setRealm</span><span class="o">(</span><span class="s">"jazn.com"</span><span class="o">);</span>
+                <span class="n">principleRef</span><span class="o">.</span><span class="na">setType</span><span class="o">(</span><span class="nc">ParticipantTypeEnum</span><span class="o">.</span><span class="na">USER</span><span class="o">);</span>
+
+                <span class="nc">Participant</span> <span class="n">participante</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Participant</span><span class="o">(</span><span class="n">principleRef</span><span class="o">);</span>
+
+                <span class="n">participantes</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">participante</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="n">participantsProperties</span> <span class="o">=</span>
+                    <span class="n">bpmOrganizationService</span><span class="o">.</span><span class="na">getPropertiesOfParticipants</span><span class="o">(</span><span class="n">bpmContext</span><span class="o">,</span>
+                                                                       <span class="n">participantes</span><span class="o">);</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">e</span><span class="o">.</span><span class="na">printStackTrace</span><span class="o">();</span>
+        <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+            <span class="n">closeConnection</span><span class="o">();</span>
+        <span class="o">}</span>
+
+        <span class="k">return</span> <span class="n">participantsProperties</span><span class="o">;</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>This is the link to the Git repository:</p>
+
+<p>GitHub: <a href="https://github.com/jeqo/bpm_org_poc/tree/master/part2/AcmeBpmApp/BPMClient">JDeveloper Project</a></p>
+
+<p>Check the BPMClient library on the project, should have these links:</p>
+
+<ul>
+  <li>[MW_HOME]\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.bpm-services.client.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.bpm-services.interface.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.client.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.bpm.client_11.1.1\oracle.bpm.web-resources.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.workflow_11.1.1\bpm-services.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.workflow_11.1.1\bpm-workflow-datacontrol.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.workflow_11.1.1\oracle.soa.workflow.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.workflow_11.1.1\oracle.soa.workflow.wc.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.worklist_11.1.1\adflibTaskListTaskFlow.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.worklist_11.1.1\adflibWorklistComponents.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.worklist_11.1.1\adflibWorkspaceFramework.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.soa.worklist_11.1.1\oracle.soa.worklist.jar</li>
+  <li>[MW_HOME]\soa\modules\oracle.bpm.runtime_11.1.1\oracle.bpm.metadata.jar</li>
+</ul>
+
+<h2 id="parametric-roles">Parametric Roles</h2>
+
+<p>This artifacts are ideals when you have custom conditions to assign a task related with extended user properties (like specializations). In the previous example about heavy and light machines, the parametric role would have this definition: Group: Supervisor, and Extended Property: Machine Specialization.</p>
+
+<p>Here you can see how to create a parametric role and test it:</p>
+
+<ol>
+  <li>Create a new parametric role from Oracle BPM Workspace:</li>
+</ol>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1300-610x263.png" alt="Parametric Roles" /></p>
+
+<p>In this case we are using some group called “approvers” and a random property called “ABC”.</p>
+
+<ol>
+  <li>Then, we must define what Parametric Role use in the Human Task definition:</li>
+</ol>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1303-610x338.png" alt="Human Task Definition" /></p>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1303_001-610x583.png" alt="Participant Type" /></p>
+
+<ol>
+  <li>Then we can deploy and test the process from Enterprise Manager:</li>
+</ol>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1307-610x401.png" alt="Parametric Role - 1" /></p>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1308-610x119.png" alt="Parametric Role - 2" /></p>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1308_001.png" alt="Parametric Role - 3" /></p>
+
+<p><img src="/images/2014-05-19-how-to-use-parametric-roles-extended-properties-oracle-bpm-11g/2014-05-19_1309.png" alt="Parametric Role - 4" /></p>
+
+<p>Source code: <a href="https://github.com/jeqo/bpm_org_poc/tree/master/part2">https://github.com/jeqo/bpm_org_poc/tree/master/part2</a></p>
+:ET

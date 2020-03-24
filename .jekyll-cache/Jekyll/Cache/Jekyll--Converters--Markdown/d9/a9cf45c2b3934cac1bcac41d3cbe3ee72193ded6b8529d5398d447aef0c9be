@@ -1,0 +1,20 @@
+I"w<h1 id="problems-with-a-space-character-in-domain">Problems with a space character in Domain</h1>
+<p>If you have a SOA Quickstart installation on Windows, and your domain directory name contains a space character - you will have a problem starting up the integrated WLS server.</p>
+
+<p>You will see something similar (my directory is named Jon Petter)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  Error: Could not find or load main class Petter<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\J</span>Developer<span class="se">\s</span>ystem12.2.1.0.42.151011.0031<span class="se">\D</span>efaultDomain
+</code></pre></div></div>
+
+<p>To fix this  you can go to the directory mentioned - and change the file: /bin/setStartupEnv.cmd.</p>
+
+<p>From</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nb">set </span><span class="nv">EXTRA_JAVA_PROPERTIES</span><span class="o">=</span>%EXTRA_JAVA_PROPERTIES% <span class="nt">-Dem</span>.oracle.home<span class="o">=</span>D:<span class="se">\O</span>racle<span class="se">\M</span>iddleware1221<span class="se">\e</span>m <span class="nt">-DINSTANCE_HOME</span><span class="o">=</span>C:<span class="se">\U</span>sers<span class="se">\J</span>on Petter<span class="se">\A</span>ppData<span class="se">\R</span>oaming<span class="se">\J</span>Developer<span class="se">\s</span>ystem12.2.1.0.42.151011.0031<span class="se">\D</span>efaultDomain <span class="nt">-Djava</span>.awt.headless<span class="o">=</span><span class="nb">true</span> <span class="nt">-Doracle</span>.sysman.util.logging.mode<span class="o">=</span>dual_mode
+</code></pre></div></div>
+
+<p>to (adding “ before and after in the INSTANCE_HOME):</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">set </span><span class="nv">EXTRA_JAVA_PROPERTIES</span><span class="o">=</span>%EXTRA_JAVA_PROPERTIES% <span class="nt">-Dem</span>.oracle.home<span class="o">=</span>D:<span class="se">\O</span>racle<span class="se">\M</span>iddleware1221<span class="se">\e</span>m <span class="nt">-DINSTANCE_HOME</span><span class="o">=</span><span class="s2">"C:</span><span class="se">\U</span><span class="s2">sers</span><span class="se">\J</span><span class="s2">on Petter</span><span class="se">\A</span><span class="s2">ppData</span><span class="se">\R</span><span class="s2">oaming</span><span class="se">\J</span><span class="s2">Developer</span><span class="se">\s</span><span class="s2">ystem12.2.1.0.42.151011.0031</span><span class="se">\D</span><span class="s2">efaultDomain"</span> <span class="nt">-Djava</span>.awt.headless<span class="o">=</span><span class="nb">true</span> <span class="nt">-Doracle</span>.sysman.util.logging.mode<span class="o">=</span>dual_mode
+</code></pre></div></div>
+:ET

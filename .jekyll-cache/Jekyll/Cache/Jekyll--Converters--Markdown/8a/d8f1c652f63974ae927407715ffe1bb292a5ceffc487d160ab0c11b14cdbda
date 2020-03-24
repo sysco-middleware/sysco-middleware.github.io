@@ -1,0 +1,374 @@
+I"�x<h1 id="introduction">Introduction</h1>
+
+<p>It is fine to run small and ad hoc API and functional tests from <a href="https://www.soapui.org/">SoapUI</a> GUI environment but it is not suitable for running automated regression tests that are running on a test automation server by using some form of scheduling mechanism. Fortunately there is a possibility to run <a href="https://www.soapui.org/">SoapUI</a> tests in fully automated fashion on e.g. <a href="https://jenkins.io/">Jenkins</a> server.</p>
+
+<p>In this article we are going to explain all the steps needed to enable fully automated <a href="https://www.soapui.org/">SoapUI</a> test on <a href="https://jenkins.io/">Jenkins</a> server.</p>
+
+<h1 id="automating-soapui-to-run-on-jenkins">Automating SoapUI to run on Jenkins</h1>
+
+<p>Easiest way to automate <a href="https://www.soapui.org/">SoapUI</a> test in order to run them on <a href="https://jenkins.io/">Jenkins</a> server is to follow this steps:</p>
+
+<ol>
+  <li>Split big <a href="https://www.soapui.org/">SoapUI</a> project</li>
+  <li>Create managing IDE project</li>
+  <li>Prepare <a href="https://maven.apache.org/">Maven</a> build</li>
+  <li>Enable versioning</li>
+  <li>Running tests on Jenkins</li>
+</ol>
+
+<h2 id="split-big-soapui-project">Split big SoapUI project</h2>
+
+<p>Big SoapUI can create a lot of problem for management and versioning as a project file, essentially XML file, can become too big and thus cumbersome to: maintain, version and fix, if necessary. In a screenshot below we can see such a big project that is composed of many different <a href="https://www.soapui.org/docs/functional-testing/reference/testsuite-reference.html">Test Suites</a>. Each <a href="https://www.soapui.org/docs/functional-testing/structuring-and-running-tests.html#1-Test-Structure">Test Suite</a> is than composed of many different <a href="https://www.soapui.org/docs/functional-testing/structuring-and-running-tests.html#1-Test-Structure">Test Cases</a> and in turn each <a href="https://www.soapui.org/docs/functional-testing/structuring-and-running-tests.html#1-Test-Structure">Test Case</a> is composed of various <a href="https://www.soapui.org/docs/functional-testing/working-with-teststeps.html">Test Steps</a>:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/big_project.png" alt="Project with many test suites, test cases and test steps initialization" /></p>
+
+<p>Fig. 1. Project with many <a href="https://www.soapui.org/docs/functional-testing/reference/testsuite-reference.html">Test Suites</a>, <a href="https://www.soapui.org/docs/functional-testing/structuring-and-running-tests.html#1-Test-Structure">Test Cases</a> and <a href="https://www.soapui.org/docs/functional-testing/working-with-teststeps.html">Test Steps</a></p>
+
+<p>More manageable way is to split this big project in many smaller projects each containing essentially one <a href="https://www.soapui.org/docs/functional-testing/reference/testsuite-reference.html">Test Suite</a>:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/smaller_projects.png" alt="Big project split in many smaller" /></p>
+
+<p>Fig. 2. Big project split in many smaller</p>
+
+<p>NOTE: Split projects have to be saved in specific folder (see below)</p>
+
+<h2 id="create-managing-ide-project">Create managing IDE project</h2>
+
+<p>Because we have to deal with versioning, <a href="https://maven.apache.org/">Maven</a> and <a href="https://jenkins.io/">Jenkins</a> files, it is easier if we create project with specific folder structure in development environment of choice. Here we have used <a href="https://www.jetbrains.com/idea/">IntelliJ</a> to create such a project:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/intellij_project.png" alt="IntelliJ project for SoapUI projects" /> Fig. 3. <a href="https://www.jetbrains.com/idea/">IntelliJ</a> project for <a href="https://www.soapui.org/">SoapUI</a> projects</p>
+
+<h3 id="project-structure">Project structure</h3>
+
+<p>To run successfully on <a href="https://jenkins.io/">Jenkins</a>, <a href="https://www.jetbrains.com/idea/">IntelliJ</a> project structure has to be composed as follows:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>├── Jenkinsfile
+├── README.md
+├── elemif.iml
+├── ext
+│   └── ojdbc8-12.2.0.1.jar
+├── global-groovy.log
+├── pom.xml
+├── soapui-errors.log
+├── soapui-settings.xml
+├── soapui.log
+├── src
+│   └── <span class="nb">test</span>
+│       ├── resources
+│       │   ├── UAT.jks
+│       │   ├── database.json
+│       │   └── qa.jks
+│       └── soapui
+│           ├── EMIF-archive.xml
+│           ├── EMIF-compression.xml
+│           ├── EMIF-content-type.xml
+│           ├── EMIF-duplicate-messages.xml
+│           ├── EMIF-header-issues.xml
+│           ├── EMIF-library.xml
+│           ├── EMIF-security.xml
+│           └── EMIF-wrong-message.xml
+└── target
+    ├── surefire-reports
+    │   ├── Archive-Initialization-InitDB-0-OK.txt
+    │   ├── Archive-Initialization-InitLib-0-OK.txt
+    │   └── TEST-Archive.xml
+    └── test-classes
+        ├── UAT.jks
+        ├── database.json
+        └── qa.jks
+</code></pre></div></div>
+
+<p>Where:</p>
+
+<ul>
+  <li>Jenkinsfile - contains <a href="https://jenkins.io/">Jenkins</a> pipeline build instructions</li>
+  <li>README.md - optional README file with the setup instructions</li>
+  <li>elemif.iml - file generated by <a href="https://www.jetbrains.com/idea/">IntelliJ</a></li>
+  <li>ext - folder containing additional JAR libraries used during test execution (database driver in this case)</li>
+  <li>*.log - various log Files</li>
+  <li>pom.xml - <a href="https://maven.apache.org/">Maven</a> build file</li>
+  <li>soapui-settings.xml - File that contains <a href="https://www.soapui.org/docs/preferences-and-settings.html">SoapUI Preferences</a></li>
+  <li>src/test/resources - folder containing <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> databases and database credentials</li>
+  <li>src/test/soapui - folder containing projects that we have split in previous step and saved to this folder.</li>
+</ul>
+
+<p>Normally <a href="https://www.soapui.org/">SoapUI</a> is storing preferences file (soapui-settings.xml) in users home folder. We can copy this file to our IDE project location and update it every time we do some important preference changes trough <a href="https://www.soapui.org/">SoapUI</a> GUI or we can discard file from original location and make symbolic link to the file in our IDE project folder.</p>
+
+<h4 id="setting-absolute-and-relative-paths">Setting absolute and relative paths</h4>
+
+<p>When we are running our tests from within <a href="https://www.soapui.org/">SoapUI</a> GUI environment we have to supply absolute paths but when we are running our tests from command line or from e.g. <a href="https://jenkins.io/">Jenkins</a> server than we have to use relative paths. The same goes for specifying location of <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> used to sign and/or encrypt our messages. So in a project file (e.g. <code class="highlighter-rouge">EMIF-archive.xml</code>) we have to serch for the location of <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> database (e.g. <code class="highlighter-rouge">qa.jks</code>) and than assure that absolute path is used:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/Absolute-path-xml.png" alt="Absolute Java Keystore path in project file" /> Fig. 4. Absolute <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> path in project file</p>
+
+<p>When wi then open our project in <a href="https://www.soapui.org/">SoapUI</a> and we open Project-&gt;<a href="https://www.soapui.org/soapui-projects/reference/project-window.html">Show Project View</a> menu, we can verify that <a href="https://www.soapui.org/">SoapUI</a> can recognize and verify our Keystore</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/Absolute-path.png" alt="Absolute Java Keystore path in Show Project View dialog box" /> Fig. 5. Absolute <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> in <a href="https://www.soapui.org/soapui-projects/reference/project-window.html">Show Project View</a> dialog</p>
+
+<p>However to run the same project on <a href="https://jenkins.io/">Jenkins</a> server we have to supply relative paths. Thus we have to modify project file to use relative path:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/relative-path-xml.png" alt="Relative Java Keystore path in project file" /> Fig. 6. Relative <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> path in project file</p>
+
+<p>When we than open the same project in <a href="https://www.soapui.org/">SoapUI</a> we can see that <a href="https://www.soapui.org/">SoapUI</a> is not able to recognise location of <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> and thus not able to use it:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/relative-path.png" alt="Relative Java Keystore path in Show Project View dialog box" /> Fig. 7. Relative <a href="https://en.wikipedia.org/wiki/Keystore">Java Keystore</a> in <a href="https://www.soapui.org/soapui-projects/reference/project-window.html">Show Project View</a> dialog</p>
+
+<p>The same principle has to be applied to all other files. Unfortunately <a href="https://www.soapui.org/">SoapUI</a> is not capable to work with relative paths so in order to test our test cases in <a href="https://www.soapui.org/">SoapUI</a> we have to use absolute paths but to run it on <a href="https://jenkins.io/">Jenkins</a> server we have to use relative paths.</p>
+
+<h2 id="prepare-maven-build">Prepare Maven build</h2>
+
+<p><a href="https://www.soapui.org/">SoapUI</a> <a href="https://maven.apache.org/">Maven</a> artefacts are not stored on <a href="https://mvnrepository.com/">Maven Central</a> repository and thus we have to add additional repository location to <a href="https://maven.apache.org/">Maven</a> settings file which is located in users home folder (usually: <code class="highlighter-rouge">$HOME/.m2/settings.xml</code>), assuming that we have dowloaded and installed <a href="https://maven.apache.org/">Maven</a> support previously (Installation instructions can be found <a href="https://maven.apache.org/install.html">here</a>).</p>
+
+<p>The easiest way, thus to modify <code class="highlighter-rouge">settings.xml</code> file is by adding additional <code class="highlighter-rouge">&lt;profile&gt;</code> XML element under the <code class="highlighter-rouge">&lt;profiles&gt;</code> section and than reference it in <code class="highlighter-rouge">&lt;activeProfiles&gt;</code> section, as in this code excerpt from <code class="highlighter-rouge">settings.xml</code>:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;settings&gt;</span>
+  .
+  .
+  .
+ <span class="nt">&lt;profiles&gt;</span>
+    <span class="nt">&lt;profile&gt;</span>
+      <span class="nt">&lt;id&gt;</span>maven.central<span class="nt">&lt;/id&gt;</span>
+      <span class="nt">&lt;activation&gt;</span>
+        <span class="nt">&lt;activeByDefault&gt;</span>true<span class="nt">&lt;/activeByDefault&gt;</span>
+      <span class="nt">&lt;/activation&gt;</span>
+      <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+          <span class="nt">&lt;id&gt;</span>central<span class="nt">&lt;/id&gt;</span>
+          <span class="nt">&lt;name&gt;</span>Maven2 Central<span class="nt">&lt;/name&gt;</span>
+          <span class="nt">&lt;releases&gt;</span>
+            <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;updatePolicy&gt;</span>always<span class="nt">&lt;/updatePolicy&gt;</span>
+            <span class="nt">&lt;checksumPolicy&gt;</span>warn<span class="nt">&lt;/checksumPolicy&gt;</span>
+          <span class="nt">&lt;/releases&gt;</span>
+          <span class="nt">&lt;snapshots&gt;</span>
+            <span class="nt">&lt;enabled&gt;</span>true<span class="nt">&lt;/enabled&gt;</span>
+            <span class="nt">&lt;updatePolicy&gt;</span>always<span class="nt">&lt;/updatePolicy&gt;</span>
+            <span class="nt">&lt;checksumPolicy&gt;</span>warn<span class="nt">&lt;/checksumPolicy&gt;</span>
+          <span class="nt">&lt;/snapshots&gt;</span>
+          <span class="nt">&lt;url&gt;</span>https://repo.maven.apache.org/maven2<span class="nt">&lt;/url&gt;</span>
+          <span class="nt">&lt;layout&gt;</span>default<span class="nt">&lt;/layout&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+      <span class="nt">&lt;/repositories&gt;</span>
+    <span class="nt">&lt;/profile&gt;</span>
+
+    <span class="nt">&lt;profile&gt;</span>
+      <span class="nt">&lt;id&gt;</span>com.smartbear<span class="nt">&lt;/id&gt;</span>
+
+      <span class="nt">&lt;activation&gt;</span>
+        <span class="nt">&lt;activeByDefault&gt;</span>false<span class="nt">&lt;/activeByDefault&gt;</span>
+      <span class="nt">&lt;/activation&gt;</span>
+
+      <span class="nt">&lt;repositories&gt;</span>
+        <span class="nt">&lt;repository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>smartbear-sweden-plugin-repository<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;url&gt;</span>http://www.soapui.org/repository/maven2/<span class="nt">&lt;/url&gt;</span>
+        <span class="nt">&lt;/repository&gt;</span>
+      <span class="nt">&lt;/repositories&gt;</span>
+
+      <span class="nt">&lt;pluginRepositories&gt;</span>
+        <span class="nt">&lt;pluginRepository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>smartbear-sweden-plugin-repository<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;url&gt;</span>http://www.soapui.org/repository/maven2/<span class="nt">&lt;/url&gt;</span>
+        <span class="nt">&lt;/pluginRepository&gt;</span>
+      <span class="nt">&lt;/pluginRepositories&gt;</span>
+    <span class="nt">&lt;/profile&gt;</span>
+  <span class="nt">&lt;/profiles&gt;</span>
+
+  <span class="nt">&lt;activeProfiles&gt;</span>       
+     <span class="nt">&lt;activeProfile&gt;</span>com.smartbear<span class="nt">&lt;/activeProfile&gt;</span>
+  <span class="nt">&lt;/activeProfiles&gt;</span>
+<span class="nt">&lt;/settings&gt;</span>
+</code></pre></div></div>
+
+<p>After we have enabled additional repository location for <a href="https://www.soapui.org/">SoapUI</a> specific artefacts, we are able to specify content of <code class="highlighter-rouge">pom.xml</code> which is <a href="https://maven.apache.org/">Maven</a> build file and is located at the root of our IDE project location. Content of <code class="highlighter-rouge">pom.xml</code> file can look something like this:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
+         <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+    <span class="nt">&lt;artifactId&gt;</span>emif<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;plugins&gt;</span>
+
+            <span class="nt">&lt;plugin&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>com.smartbear.soapui<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>soapui-maven-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>5.4.0<span class="nt">&lt;/version&gt;</span>
+
+                <span class="nt">&lt;executions&gt;</span>
+                  <span class="nt">&lt;execution&gt;</span>
+                       <span class="nt">&lt;id&gt;</span>EMIF-archive<span class="nt">&lt;/id&gt;</span>
+                       <span class="nt">&lt;configuration&gt;</span>
+                           <span class="nt">&lt;settingsFile&gt;</span>soapui-settings.xml<span class="nt">&lt;/settingsFile&gt;</span>
+                           <span class="nt">&lt;projectFile&gt;</span>src/test/soapui/EMIF-archive.xml<span class="nt">&lt;/projectFile&gt;</span>
+
+                           <span class="nt">&lt;outputFolder&gt;</span>target/surefire-reports<span class="nt">&lt;/outputFolder&gt;</span>
+                           <span class="nt">&lt;testSuite&gt;</span>Archive<span class="nt">&lt;/testSuite&gt;</span>
+                           <span class="c">&lt;!--&lt;testCase&gt;1\. Verify request and response are logged for all interfaces for accepted messages&lt;/testCase&gt;--&gt;</span>
+                           <span class="c">&lt;!--&lt;testCase&gt;Initialization&lt;/testCase&gt;--&gt;</span>
+                           <span class="c">&lt;!--&lt;testCase&gt;CommonFunctions&lt;/testCase&gt;--&gt;</span>
+                           <span class="nt">&lt;junitReport&gt;</span>true<span class="nt">&lt;/junitReport&gt;</span>
+                           <span class="nt">&lt;exportAll&gt;</span>true<span class="nt">&lt;/exportAll&gt;</span>
+                           <span class="nt">&lt;printReport&gt;</span>true<span class="nt">&lt;/printReport&gt;</span>
+                           <span class="nt">&lt;testFailIgnore&gt;</span>true<span class="nt">&lt;/testFailIgnore&gt;</span>
+                       <span class="nt">&lt;/configuration&gt;</span>
+                       <span class="nt">&lt;goals&gt;</span>
+                           <span class="nt">&lt;goal&gt;</span>test<span class="nt">&lt;/goal&gt;</span>
+                       <span class="nt">&lt;/goals&gt;</span>
+                       <span class="nt">&lt;phase&gt;</span>test<span class="nt">&lt;/phase&gt;</span>
+                   <span class="nt">&lt;/execution&gt;</span>
+
+                    <span class="nt">&lt;execution&gt;</span>
+                        <span class="nt">&lt;id&gt;</span>EMIF-compression<span class="nt">&lt;/id&gt;</span>
+                        <span class="nt">&lt;configuration&gt;</span>
+                            <span class="nt">&lt;settingsFile&gt;</span>soapui-settings.xml<span class="nt">&lt;/settingsFile&gt;</span>
+                            <span class="nt">&lt;projectFile&gt;</span>src/test/soapui/EMIF-compression.xml<span class="nt">&lt;/projectFile&gt;</span>
+
+                            <span class="nt">&lt;outputFolder&gt;</span>target/surefire-reports<span class="nt">&lt;/outputFolder&gt;</span>
+                            <span class="nt">&lt;testSuite&gt;</span>Compression<span class="nt">&lt;/testSuite&gt;</span>
+                            <span class="c">&lt;!--&lt;testCase&gt;2\. Wrong Organization&lt;/testCase&gt;--&gt;</span>
+                            <span class="nt">&lt;junitReport&gt;</span>true<span class="nt">&lt;/junitReport&gt;</span>
+                            <span class="nt">&lt;exportAll&gt;</span>true<span class="nt">&lt;/exportAll&gt;</span>
+                            <span class="nt">&lt;printReport&gt;</span>true<span class="nt">&lt;/printReport&gt;</span>
+                            <span class="nt">&lt;testFailIgnore&gt;</span>true<span class="nt">&lt;/testFailIgnore&gt;</span>
+                        <span class="nt">&lt;/configuration&gt;</span>
+                        <span class="nt">&lt;goals&gt;</span>
+                            <span class="nt">&lt;goal&gt;</span>test<span class="nt">&lt;/goal&gt;</span>
+                        <span class="nt">&lt;/goals&gt;</span>
+                        <span class="nt">&lt;phase&gt;</span>test<span class="nt">&lt;/phase&gt;</span>
+                    <span class="nt">&lt;/execution&gt;</span>
+                <span class="nt">&lt;/executions&gt;</span>
+            <span class="nt">&lt;/plugin&gt;</span>
+
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>The <a href="https://maven.apache.org/">Maven</a> plugin responsible for executing build process is: <code class="highlighter-rouge">soapui-maven-plugin</code> and this plugin allows for one or more <code class="highlighter-rouge">&lt;execution&gt;</code> blocks inside <code class="highlighter-rouge">&lt;executions&gt;</code> element. Each <code class="highlighter-rouge">&lt;execution&gt;</code> block is responsible for running one <a href="https://www.soapui.org/">SoapUI</a> project. Which project file to run, which test suite to run or even specific test case to run, is defined with: <code class="highlighter-rouge">&lt;projectFile&gt;</code>, <code class="highlighter-rouge">&lt;testSuite&gt;</code> and <code class="highlighter-rouge">&lt;testCase&gt;</code> elements.</p>
+
+<p>Now we can test our build and execute all tests from command line by executing following maven command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mvn clean <span class="nb">test</span>
+</code></pre></div></div>
+
+<p>If everything is successful <a href="https://maven.apache.org/">Maven</a> will execute all tests specified in <code class="highlighter-rouge">pom.xml</code> file, print results on the console and store them in text files in <code class="highlighter-rouge">target/surefire-reports</code> folder</p>
+
+<h2 id="enable-versioning">Enable versioning</h2>
+
+<p>To have full Continuous Integration (CI) cycle we have to initialize our IDE project folder as version controlled folder. For GIT version control system it is done with command:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git init
+git add <span class="nb">.</span>
+git commit <span class="nt">-m</span> <span class="s2">"first commit"</span>
+</code></pre></div></div>
+
+<p>Than we have to create repository on the version control server that will contain our project. For <a href="https://github.com">GitHub</a> it is done by clicking on the “New” button under Repositories section. After we have given the name to repository we can upload our project to version control server. For <a href="https://github.com">GitHub</a>:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git remote add origin https://github.com/&lt;your user name&gt;/emif.git
+git push <span class="nt">-u</span> origin master
+</code></pre></div></div>
+
+<p>Than we can use:</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git commit <span class="nt">-a</span> <span class="nt">-m</span> <span class="s2">"description of change"</span>
+git push
+</code></pre></div></div>
+
+<p>each time we have modified our projects and we would like to push changes to <a href="https://jenkins.io/">Jenkins</a></p>
+
+<h2 id="running-tests-on-jenkins">Running tests on Jenkins</h2>
+
+<h3 id="prepare-jenkins-file">Prepare Jenkins file</h3>
+
+<p>We want to use new <a href="https://jenkins.io/">Jenkins</a> pipeline build facilities that treats build process as a code. Therefore we have to create <a href="https://jenkins.io/doc/book/pipeline/jenkinsfile/">Jenkins file</a> that contains build instructions in a declarative form or in a form of <a href="http://groovy-lang.org/">Groovy</a> code. Our <a href="https://jenkins.io/doc/book/pipeline/jenkinsfile/">Jenkins file</a> looks like this:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">pipeline</span> <span class="p">{</span>
+    <span class="n">options</span> <span class="p">{</span>
+        <span class="n">disableConcurrentBuilds</span><span class="p">()</span>
+        <span class="n">buildDiscarder</span><span class="p">(</span><span class="n">logRotator</span><span class="p">(</span><span class="ss">numToKeepStr: </span><span class="s1">'50'</span><span class="p">,</span> <span class="ss">artifactNumToKeepStr: </span><span class="s1">'50'</span><span class="p">))</span>
+    <span class="p">}</span>
+
+    <span class="n">agent</span> <span class="n">any</span>
+
+    <span class="n">tools</span> <span class="p">{</span>
+        <span class="n">maven</span> <span class="s1">'maven3'</span>
+        <span class="n">jdk</span> <span class="s1">'jdk8'</span>
+        <span class="n">allure</span> <span class="s1">'allure2'</span>
+    <span class="p">}</span>
+
+    <span class="n">triggers</span> <span class="p">{</span>
+        <span class="n">pollSCM</span> <span class="s1">'H/5 * * * *'</span>
+          <span class="n">cron</span> <span class="s1">'''TZ=Europe/Oslo
+        H H(13-14) * * *'''</span>
+    <span class="p">}</span>
+
+    <span class="n">stages</span> <span class="p">{</span>
+        <span class="n">stage</span><span class="p">(</span><span class="s1">'Test'</span><span class="p">)</span> <span class="p">{</span>
+            <span class="n">steps</span> <span class="p">{</span>
+                <span class="n">sh</span> <span class="s1">'''
+                    mvn clean test
+                '''</span>
+            <span class="p">}</span>
+            <span class="n">post</span> <span class="p">{</span>
+                <span class="n">always</span> <span class="p">{</span>
+                    <span class="n">archiveArtifacts</span> <span class="s1">'target/surefire-reports/**/*.xml'</span>
+                    <span class="n">junit</span> <span class="s1">'target/surefire-reports/**/*.xml'</span>
+                <span class="p">}</span>
+            <span class="p">}</span>
+         <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>It essentially says that we do not allow parallel builds, we use maven to build, build will start whenever we post changes to source version control server and than on daily schedule. It also says that the test outputs are going to be available in: <code class="highlighter-rouge">target/surefire-reports/</code> folder on the server.</p>
+
+<h3 id="prepare-jenkins-server">Prepare Jenkins server</h3>
+
+<p>After we have prepared <a href="https://jenkins.io/doc/book/pipeline/jenkinsfile/">Jenkins file</a> we have to create new <a href="https://jenkins.io/">Jenkins</a> project by clicking on New Item button in Jenkins classic user interface web console:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins1.png" alt=" Jenkins classic user interface web console" /> Fig. 8. Jenkins classic user interface web console</p>
+
+<p>From the new page that opens we can chose to create “Pipeline” project or “Multibranch pipeline” if we plan to have multiple branches in our version control system (e.g. “master”, “stage”) that we build separately with different options:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins2.png" alt=" Miltibranch Pipeline creation option" /> Fig. 9. Miltibranch Pipeline creation option</p>
+
+<p>When we have chosen appropriate option we have to configure project. First we establish connection with version control system:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins3.png" alt=" Connection to version control system" /> Fig. 10. Connection to version control system</p>
+
+<p>Finally we define how our build process is going to be executed. As we have opted to use <a href="https://jenkins.io/doc/book/pipeline/jenkinsfile/">Jenkins file</a> to define our build process, we are going to specify that option in “Build Configuration” tab:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins4.png" alt=" Build configuration tab" /> Fig. 11. Build configuration tab</p>
+
+<h3 id="checking-test-executions-on-jenkins">Checking test executions on Jenkins</h3>
+
+<p>After we have saved project we are ready to run our first test build. Build can be run automatically by pushing changes to version control server, waiting on a schedule or running it manually. To running it manually, we have to go to the <a href="https://jenkins.io/">Jenkins</a> web console, and than click project name we gave to Jenkins project in previous step. Than we can chose version control branch we want to execute:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins5.png" alt="Jenkins project page" /> Fig. 12. Jenkins project page</p>
+
+<p>By clicking on a branch name the page that contains executions statuses and links to reports is opened. We can than click on “Build Now” button to start our build manually. To check build results we click on build execution number:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins6.png" alt="Branch execution status page" /> Fig. 13. Branch execution status page</p>
+
+<p>Clicking on build execution number opens the page that give us access to various execution status information. Like: access to text console output, pipeline steps, etc. and most important test results:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins7.png" alt="Execution status information" /> Fig. 14. Execution status information</p>
+
+<p>Test result page displays all successfully executed tests and all failed tests:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins8.png" alt="Test results page" /> Fig. 15. Test results page</p>
+
+<p>By clicking on the failed test name link we can see detailed explanation why test failed that allows for easier investigation and fix:</p>
+
+<p><img src="/images/2018-11-28-soapui-tests-on-jenkins/jenkins9.png" alt="Failure details page" /> Fig. 16. Failure details page</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Setting up and running <a href="https://www.soapui.org/">SoapUI</a> tests on <a href="https://jenkins.io/">Jenkins</a> is not trivial process but but is worth time and effort investment, because this allows us to run fully automated regression test that will allow for automatic checking of the system on the regular basis. This process also generates report for every failure that is discovered in the process allowing us to apply fixes and patches immediately or to roll back our deployments.</p>
+:ET

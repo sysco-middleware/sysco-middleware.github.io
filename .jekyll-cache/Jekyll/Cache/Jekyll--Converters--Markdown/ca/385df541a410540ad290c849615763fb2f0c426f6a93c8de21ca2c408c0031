@@ -1,0 +1,112 @@
+I"`*<p>This will be a part two of my previous post which you can read <a href="http://blog.sysco.no/osb/jdeveloper/Service-call-with-multiple-levels-of-security-in-OSB-12c/" title="Service call with multiple levels of security in OSB 12c">here</a>. In this post I will talk about customization part of the solution for service calls with different levels of security in OSB 12c. So, we had to develop two different solutions ei. two different service calls to different environments with different levels of security.</p>
+
+<p>Let see what was the requirement in the first place, this is part of the previous post but just for a refresh:</p>
+<ul>
+  <li>In one of the Oracle Service Bus 12c integrations we had system which had different security for different environments for its services. So, for Development environment there was a simple Basic authentication (Username/Password combo) which was theirs Test environment also. Then in their Production environment they had Basic authentication + Client Certificate authentication combined. So, only two environments with two different set of security and there was no option for us to test any kind of solution in theirs one and only Dev/Test/QA environment which from now on I will refer as PREPROD. We had to do it directly in their PROD environment.</li>
+</ul>
+
+<p>So, basically what we have here is that every service call has a Proxy service as initial call. After that proxy calls Business service or in other cases calls a Pipeline. But even those business services were different. We had to develop PREPROD_Proxy and PREPROD_Business service for each service call. And then the same for PROD, we created PROD_Proxy and PROD_Business. 
+This means that you will need to replace PREPROD_Proxy for PROD_Proxy in the customization file. 
+And this can be done in the <strong>ReferenceCustomizationType</strong> element in your customization file:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;cus:customization</span> <span class="na">xsi:type=</span><span class="s">"cus:ReferenceCustomizationType"</span><span class="nt">&gt;</span>
+</code></pre></div></div>
+
+<p>This element is usually generated last in the customization file and here you can find your Proxy and do the change easily as <strong>externalReferenceMap</strong> element. For example:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;cus:externalReferenceMap&gt;</span>
+    <span class="nt">&lt;xt:oldRef&gt;</span>
+      <span class="nt">&lt;xt:type&gt;</span>ProxyService<span class="nt">&lt;/xt:type&gt;</span>
+      <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization/Proxy/PutFiles_to_External_PS_PREPROD<span class="nt">&lt;/xt:path&gt;</span>
+    <span class="nt">&lt;/xt:oldRef&gt;</span>
+    <span class="nt">&lt;xt:newRef&gt;</span>
+      <span class="nt">&lt;xt:type&gt;</span>ProxyService<span class="nt">&lt;/xt:type&gt;</span>
+      <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization /Proxy/PutFiles_to_External_PS_PROD<span class="nt">&lt;/xt:path&gt;</span>
+    <span class="nt">&lt;/xt:newRef&gt;</span>
+<span class="nt">&lt;/cus:externalReferenceMap&gt;</span>
+</code></pre></div></div>
+<p>And the proxy will be replaced in the entire OSB project. But there is also an option if you want this to be replaced in a specific Pipeline. 
+As a last entry in the customization file just add the same element with the xsi:type=”cus:ReferenceCustomizationType” to override all the changes above.
+And that would look something like this:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;cus:customization</span> <span class="na">xsi:type=</span><span class="s">"cus:ReferenceCustomizationType"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;cus:description/&gt;</span>
+    <span class="nt">&lt;cus:refsToBeConsidered</span> <span class="na">xsi:type=</span><span class="s">"xt:ResourceRefType"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;xt:type&gt;</span>Pipeline<span class="nt">&lt;/xt:type&gt;</span>
+      <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization /Proxy/Testing_Security_Customization<span class="nt">&lt;/xt:path&gt;</span>
+    <span class="nt">&lt;/cus:refsToBeConsidered&gt;</span>
+      <span class="nt">&lt;cus:externalReferenceMap&gt;</span>
+       <span class="nt">&lt;xt:oldRef&gt;</span>
+         <span class="nt">&lt;xt:type&gt;</span>ProxyService<span class="nt">&lt;/xt:type&gt;</span>
+         <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization/Proxy/PutFiles_to_External_PS_PREPROD<span class="nt">&lt;/xt:path&gt;</span>
+       <span class="nt">&lt;/xt:oldRef&gt;</span>
+       <span class="nt">&lt;xt:newRef&gt;</span>
+         <span class="nt">&lt;xt:type&gt;</span>ProxyService<span class="nt">&lt;/xt:type&gt;</span>
+         <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization /Proxy/PutFiles_to_External_PS_PROD<span class="nt">&lt;/xt:path&gt;</span>
+       <span class="nt">&lt;/xt:newRef&gt;</span>
+    <span class="nt">&lt;/cus:externalReferenceMap&gt;</span>
+  <span class="nt">&lt;/cus:customization&gt;</span>
+</code></pre></div></div>
+
+<p>And this is how we change the Proxy Endpoint in the Service Callout or Publish or any kind of activity inside the pipeline of the OSB 12c project.</p>
+
+<p>Next thing we have to customize is as you remember authentication for two environments and different credentials. These credentials are used in the Transport Headers activity as you can see in <a href="http://blog.sysco.no/osb/jdeveloper/Service-call-with-multiple-levels-of-security-in-OSB-12c/" title="Service call with multiple levels of security in OSB 12c">previous post</a> and it looks like this:</p>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/03_TransportHeadersAutorization.jpg" alt="" /></p>
+
+<p>Here is why I used the variable $AutorizationVar instead of hardcoding the credentials, Customization. To be able to customize a variable value we can use this trick with the xQuery.
+Create a new xQuery files where you will add content with your authentication credentials:</p>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/AuthenticationxQuery.jpg" alt="" /></p>
+
+<p>Now to assign this value to the variable from xQuery use Assign activity.</p>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/AuthenticationxQueryAssign.jpg" alt="" /></p>
+
+<p>And as a last step we will update the Customization file the same way as above for replacing the Proxy.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;cus:externalReferenceMap&gt;</span>
+      <span class="nt">&lt;xt:oldRef&gt;</span>
+        <span class="nt">&lt;xt:type&gt;</span>Xquery<span class="nt">&lt;/xt:type&gt;</span>
+        <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization/Mapping/AutorizationTest<span class="nt">&lt;/xt:path&gt;</span>
+      <span class="nt">&lt;/xt:oldRef&gt;</span>
+      <span class="nt">&lt;xt:newRef&gt;</span>
+        <span class="nt">&lt;xt:type&gt;</span>Xquery<span class="nt">&lt;/xt:type&gt;</span>
+        <span class="nt">&lt;xt:path&gt;</span>Testing_Security_Customization/Mapping/AutorizationProduction<span class="nt">&lt;/xt:path&gt;</span>
+      <span class="nt">&lt;/xt:newRef&gt;</span>
+    <span class="nt">&lt;/cus:externalReferenceMap&gt;</span>
+</code></pre></div></div>
+<p>And now you are set and can deploy your integration and test your customization.</p>
+
+<h2 id="customization-and-replacement-of-business-with-proxy-service-with-dynamic-routing">Customization and replacement of Business with Proxy service with Dynamic Routing</h2>
+
+<p>This is an additional customization where I needed to use Routing inside my Pipeline and I wanted to use Business service call for DEV and Proxy service call for PROD. Here I had couple of things to customize. First, replace Business service with the Proxy is not possible in the same standard way in the Customization file as shown above. 
+Here I had to customize:</p>
+<ul>
+  <li>Authentication – Done and explained above</li>
+  <li>URI customization – Same method as for Authentication</li>
+  <li>Customization and replacement from Business to Proxy service used in Routing – Focus is on this implementation.</li>
+</ul>
+
+<p>To replace Business service with Proxy service in customization file seems not possible. As I needed to use Routing for this. Then I realized that I can actually use Dynamic Routing and in that way by manipulating the Service element I can change and replace any type of links and endpoints.
+This is done by using this example:</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ctx:route&gt;</span>
+<span class="nt">&lt;ctx:service</span> <span class="na">isProxy=</span><span class="s">’false’</span><span class="nt">&gt;</span>absolute path of business service<span class="nt">&lt;/ctx:service&gt;</span>
+<span class="nt">&lt;ctx:operation&gt;</span>operation name<span class="nt">&lt;/ctx:operation&gt;</span>
+<span class="nt">&lt;/ctx:route&gt;</span>
+</code></pre></div></div>
+
+<p>But I didn’t need the operation so I removed that element and this is how I used this example to customize by my needs.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ctx:route&gt;</span>
+<span class="nt">&lt;ctx:service</span> <span class="na">isProxy=</span><span class="s">'{$isProxy}'</span><span class="nt">&gt;</span>{$ExternalEnvironmentVar}<span class="nt">&lt;/ctx:service&gt;</span>
+<span class="nt">&lt;/ctx:route&gt;</span>
+</code></pre></div></div>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/DynamicRoutingCustomization.jpg" alt="" /></p>
+
+<p>I had to customize both of the variables because I’m replacing the Business to Proxy service. This is done in the same way as variable for Authentication explained above.</p>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/isProxyxQuery.jpg" alt="" /></p>
+
+<p><img src="/images/2018-03-11-Customizing-service-calls-with-multiple-levels-of-security-in-OSB-12c/BusinessToProxyxQuery.jpg" alt="" /></p>
+
+<p>Maybe there is more elegant way in resolving this type of replace and customization from Business to Proxy services or vice versa but this is what first worked in my case.</p>
+
+:ET

@@ -1,0 +1,39 @@
+I"�<p>If you want to change Access Control Policies in OSB on 12.1.3 it works fine on the Quickstart, but in the regular install you will probably get into the same problem as me. Fortunately I fould the solution on MOS: Cannot open the Policy Editor due to, “Logged in role is not allowed to view/edit Access Control Policies.” (Doc ID 1963087.1)</p>
+
+<p>A user which is a part of the Administrators group is unable to open the policy editor with the hint, “Logged in role is not allowed to view/edit Access Control Policies.” as below.</p>
+
+<p><img src="/images/2015-05-28-view-edit-access-osb/console_security.png" alt="" /></p>
+
+<p>The reason is because the Administrators group is a member of the application role MiddlwareAdministrator. However, MiddlewareAdministrator does not have a permission AdminOnlyTaskAccess.</p>
+
+<p>So what you have to do is the folowing:</p>
+
+<ol>
+  <li>Login to Enterprise Manager - Fusion Middleware Control 12c.</li>
+  <li>Select as below.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   WebLogic Domain
+   <span class="o">&gt;</span> &lt;domain-name&gt; <span class="o">(</span>right-click<span class="o">)</span>
+     <span class="o">&gt;</span> Security <span class="o">(</span>Menu<span class="o">)</span>
+       <span class="o">&gt;</span> Application Policies <span class="o">(</span>Menu<span class="o">)</span>
+</code></pre></div></div>
+
+<ol>
+  <li>Set as below, then click the arrow (Search application security grants) next to Principal Name.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   Application Stripe: Service_Bus_Console
+   Principal Type: Application Role
+</code></pre></div></div>
+
+<ol>
+  <li>Select MiddlewareAdministrator, then click Edit.</li>
+  <li>Add AdminOnlyTaskAccess to Permissions as below, then click OK.</li>
+</ol>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>   Permission Class: oracle.soa.osb.console.common.permissions.OSBPermission
+   Resource Name: AdminOnlyTaskAccess
+   Permission Actions: update
+</code></pre></div></div>
+:ET

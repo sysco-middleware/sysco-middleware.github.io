@@ -1,0 +1,406 @@
+I"��<h1 id="introduction">Introduction</h1>
+
+<p>Most of developers and DevOps engineer that are switching from Maven dependency management and Build tool, are familiar with the concept of Maven “Bill Of Material”.They find very soon that creating the same thing in Gradle is nowhere as easy as it was in Maven. When they start to dig into Gradle documentation on this topic they pretty soon are realising that documentation is scattered all over the place lacking an easy explanation and guidance on how to build Maven like BOM in Gradle.</p>
+
+<p>The aim of this tutorial is to fill in this gap an to provide an easy to understand guide on why and how to build Maven like BOM in Kotlin Gradle DSL. Even step further it ads capability to provide centralised management of plugin and dependency versions.</p>
+
+<h1 id="bring-it-on-bill">Bring it On Bill</h1>
+
+<p>On any major project we are often dealing with the problem of coordinating and managing many different and largely independent builds. Especially is that present in Microservice world. Each Microservice is mini project on its own, with his own GIT repository, and its own set of dependencies and plugins required to perform the build. This seams not to be a problem before we try to build all the projects on common build server and doing some code analysis on the fly. Pretty soon code analyser will throw report with tons of outdated packages with security vulnerabilities, our internal repository manager is soon cluttered with dozens of versions of the same package and some strange bugs are emerging due to the fact that internal package has been updated while our Microservice is still depending on the older version. We are not even spotting the problem until Microservice is already in production</p>
+
+<p>Solution to above mentioned problems is to have the common centralised place where version of all build plugins and dependencies can be managed. All of the build projects are then referring to this centralised place. Moreover this centralised place can hold definition to some common plugins, tasks and repositories that all of the referring projects are using. This place is usually referred to as “Bill Of Material” or BOM for short.</p>
+
+<h2 id="maven-bom-example">Maven BOM example</h2>
+
+<p>Maven build system is purely declarative. That means that whole build process is defined as a set of statements or declarations (no code). In the Maven case XML syntax is used to specify declarations. So in this light let us see how the Maven BOM looks like:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+<span class="nt">&lt;project</span> <span class="na">xmlns=</span><span class="s">"http://maven.apache.org/POM/4.0.0"</span>
+         <span class="na">xmlns:xsi=</span><span class="s">"http://www.w3.org/2001/XMLSchema-instance"</span>
+         <span class="na">xsi:schemaLocation=</span><span class="s">"http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;modelVersion&gt;</span>4.0.0<span class="nt">&lt;/modelVersion&gt;</span>
+
+    <span class="nt">&lt;groupId&gt;</span>no.sysco<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>base<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;packaging&gt;</span>pom<span class="nt">&lt;/packaging&gt;</span>
+
+    <span class="nt">&lt;name&gt;</span>base<span class="nt">&lt;/name&gt;</span>
+    <span class="nt">&lt;version&gt;</span>1.0-SNAPSHOT<span class="nt">&lt;/version&gt;</span>
+
+    <span class="nt">&lt;distributionManagement&gt;</span>
+        <span class="nt">&lt;snapshotRepository&gt;</span>
+            <span class="nt">&lt;id&gt;</span>snapshots<span class="nt">&lt;/id&gt;</span>
+            <span class="nt">&lt;url&gt;</span>http://localhost:8081/repository/maven-snapshots/<span class="nt">&lt;/url&gt;</span>
+        <span class="nt">&lt;/snapshotRepository&gt;</span>
+    <span class="nt">&lt;/distributionManagement&gt;</span>
+
+    <span class="nt">&lt;properties&gt;</span>        
+        <span class="nt">&lt;apache.cxf.version&gt;</span>3.2.6<span class="nt">&lt;/apache.cxf.version&gt;</span>        
+        <span class="nt">&lt;allure.maven.version&gt;</span>2.9<span class="nt">&lt;/allure.maven.version&gt;</span>
+        <span class="nt">&lt;commons-beanutils.version&gt;</span>1.9.3<span class="nt">&lt;/commons-beanutils.version&gt;</span>
+        <span class="nt">&lt;commons-io.version&gt;</span>2.6<span class="nt">&lt;/commons-io.version&gt;</span>        
+        <span class="nt">&lt;jdk.version&gt;</span>1.8<span class="nt">&lt;/jdk.version&gt;</span>        
+        <span class="nt">&lt;maven.plugins.clean.version&gt;</span>3.1.0<span class="nt">&lt;/maven.plugins.clean.version&gt;</span>
+        <span class="nt">&lt;maven.plugins.compiler.version&gt;</span>3.8.0<span class="nt">&lt;/maven.plugins.compiler.version&gt;</span>
+        <span class="nt">&lt;project.build.sourceEncoding&gt;</span>UTF-8<span class="nt">&lt;/project.build.sourceEncoding&gt;</span>        
+        <span class="nt">&lt;slf4j.log4j-over-slf4j.version&gt;</span>1.7.25<span class="nt">&lt;/slf4j.log4j-over-slf4j.version&gt;</span>
+        <span class="nt">&lt;slf4j.slf4j-simple.version&gt;</span>1.7.5<span class="nt">&lt;/slf4j.slf4j-simple.version&gt;</span>
+    <span class="nt">&lt;/properties&gt;</span>
+
+    <span class="nt">&lt;dependencyManagement&gt;</span>
+        <span class="nt">&lt;dependencies&gt;</span>
+            <span class="nt">&lt;dependency&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>commons-beanutils<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>commons-beanutils<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>${commons-beanutils.version}<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;/dependency&gt;</span>
+            <span class="nt">&lt;dependency&gt;</span>
+                <span class="nt">&lt;groupId&gt;</span>commons-io<span class="nt">&lt;/groupId&gt;</span>
+                <span class="nt">&lt;artifactId&gt;</span>commons-io<span class="nt">&lt;/artifactId&gt;</span>
+                <span class="nt">&lt;version&gt;</span>${commons-io.version}<span class="nt">&lt;/version&gt;</span>
+            <span class="nt">&lt;/dependency&gt;</span>
+        <span class="nt">&lt;/dependencies&gt;</span>
+    <span class="nt">&lt;/dependencyManagement&gt;</span>
+
+    <span class="nt">&lt;dependencies&gt;</span>    
+      <span class="nt">&lt;dependency&gt;</span>
+          <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+          <span class="nt">&lt;artifactId&gt;</span>log4j-over-slf4j<span class="nt">&lt;/artifactId&gt;</span>
+          <span class="nt">&lt;version&gt;</span>${slf4j.log4j-over-slf4j.version}<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;/dependency&gt;</span>
+      <span class="nt">&lt;dependency&gt;</span>
+          <span class="nt">&lt;groupId&gt;</span>org.slf4j<span class="nt">&lt;/groupId&gt;</span>
+          <span class="nt">&lt;artifactId&gt;</span>slf4j-simple<span class="nt">&lt;/artifactId&gt;</span>
+          <span class="nt">&lt;version&gt;</span>${slf4j.slf4j-simple.version}<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;/dependency&gt;</span>
+   <span class="nt">&lt;/dependencies&gt;</span>
+
+    <span class="nt">&lt;build&gt;</span>
+        <span class="nt">&lt;pluginManagement&gt;</span>
+            <span class="nt">&lt;plugins&gt;</span>
+                <span class="nt">&lt;plugin&gt;</span>
+                    <span class="nt">&lt;groupId&gt;</span>io.qameta.allure<span class="nt">&lt;/groupId&gt;</span>
+                    <span class="nt">&lt;artifactId&gt;</span>allure-maven<span class="nt">&lt;/artifactId&gt;</span>
+                    <span class="nt">&lt;version&gt;</span>${allure.maven.version}<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;/plugin&gt;</span>
+                <span class="nt">&lt;plugin&gt;</span>
+                    <span class="nt">&lt;groupId&gt;</span>org.apache.cxf<span class="nt">&lt;/groupId&gt;</span>
+                    <span class="nt">&lt;artifactId&gt;</span>cxf-codegen-plugin<span class="nt">&lt;/artifactId&gt;</span>
+                    <span class="nt">&lt;version&gt;</span>${apache.cxf.version}<span class="nt">&lt;/version&gt;</span>
+                <span class="nt">&lt;/plugin&gt;</span>
+            <span class="nt">&lt;/plugins&gt;</span>
+        <span class="nt">&lt;/pluginManagement&gt;</span>
+
+        <span class="nt">&lt;plugins&gt;</span>
+          <span class="nt">&lt;plugin&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>maven-clean-plugin<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;version&gt;</span>${maven.plugins.clean.version}<span class="nt">&lt;/version&gt;</span>
+          <span class="nt">&lt;/plugin&gt;</span>
+          <span class="nt">&lt;plugin&gt;</span>
+              <span class="nt">&lt;groupId&gt;</span>org.apache.maven.plugins<span class="nt">&lt;/groupId&gt;</span>
+              <span class="nt">&lt;artifactId&gt;</span>maven-compiler-plugin<span class="nt">&lt;/artifactId&gt;</span>
+              <span class="nt">&lt;version&gt;</span>${maven.plugins.compiler.version}<span class="nt">&lt;/version&gt;</span>
+              <span class="nt">&lt;configuration&gt;</span>
+                  <span class="nt">&lt;source&gt;</span>${jdk.version}<span class="nt">&lt;/source&gt;</span>
+                  <span class="nt">&lt;target&gt;</span>${jdk.version}<span class="nt">&lt;/target&gt;</span>
+                  <span class="nt">&lt;encoding&gt;</span>${project.build.sourceEncoding}<span class="nt">&lt;/encoding&gt;</span>
+              <span class="nt">&lt;/configuration&gt;</span>
+          <span class="nt">&lt;/plugin&gt;</span>
+        <span class="nt">&lt;/plugins&gt;</span>
+    <span class="nt">&lt;/build&gt;</span>
+
+<span class="nt">&lt;/project&gt;</span>
+</code></pre></div></div>
+
+<p>To quickly recap, let us explain different elements in Maven BOM. This will enable us to understand Gradle counterpart little bit easier:</p>
+
+<ul>
+  <li><code class="highlighter-rouge">&lt;distributionManagement&gt;</code> section describes to which repository this BOM is going to be deployed to</li>
+  <li><code class="highlighter-rouge">&lt;properties&gt;</code> section lists versions of all dependencies, plugins, constraints and configurations used later in the BOM file</li>
+  <li><code class="highlighter-rouge">&lt;dependencyManagement&gt;</code> section list all dependencies that potentially are going to be used in projects referencing this BOM</li>
+  <li><code class="highlighter-rouge">&lt;dependencies&gt;</code> section that resides outside <code class="highlighter-rouge">&lt;dependencyManagement&gt;</code> section list all dependencies with respective versions, that are common to all projects referencing this BOM</li>
+  <li><code class="highlighter-rouge">&lt;pluginManagement&gt;</code>section list all plugins that potentially are going be used in projects referencing this BOM</li>
+  <li><code class="highlighter-rouge">&lt;plugins&gt;</code> section that resides outside <code class="highlighter-rouge">&lt;pluginManagement&gt;</code> section list all plugins with respective versions, that are common to all projects referencing this BOM</li>
+</ul>
+
+<p>From this example we can se that Maven BOM provide us with easy to manage centralised place where we can specify common build things (plugins and dependencies) as well as versions for all dependencies and plugins that potentially are going be used in projects referencing this BOM</p>
+
+<h1 id="let-us-gradle-the-code">Let us Gradle the code</h1>
+
+<p>(Un)fortunately Gradle build script is code. Not set of declarative statements. This give us more flexibility, especially when it comes to building complex multilayered projects. However this adds to complexity when creating our builds also. Gradle syntax is quit strict when it comes to ordering of various elements in the script. One such example is a <code class="highlighter-rouge">plugins {}</code> section that has to be the first statement in each build script. This is quite logical as Gradle interpreter does not know nothing on its own unless we tell it what to do. So anything Gralde can do is by means of various plugins providing us with various built-in tasks. Some tasks are independent, some are dependent on other tasks. Some tasks can be specialized and some extended. One problem that this creates is that all plugins and all plugin versions have to be specified at the beginning of each <code class="highlighter-rouge">gradle.build</code> or <code class="highlighter-rouge">gradle.build.kts</code> file. Depending wheter we are using Groovy or Kotlin as Gradle DSL or scripting language. So here is Kotlin example for <code class="highlighter-rouge">plugins {}</code> section:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">plugins</span> <span class="p">{</span>
+  <span class="nf">kotlin</span><span class="p">(</span><span class="s">"jvm"</span><span class="p">)</span> <span class="n">version</span> <span class="s">"1.3.20"</span>
+  <span class="nf">kotlin</span><span class="p">(</span><span class="s">"plugin.spring"</span><span class="p">)</span> <span class="n">version</span> <span class="s">"1.3.20"</span>
+  <span class="nf">id</span><span class="p">(</span><span class="s">"com.github.ManifestClasspath"</span><span class="p">)</span> <span class="n">version</span> <span class="s">"0.1.0-RELEASE"</span>
+  <span class="nf">id</span><span class="p">(</span><span class="s">"maven-publish"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Later on we will se how to work around this problem, but let us now focus on creating Maven like BOM to start with, where we are going to specify dependencies and respective versions. Typical Gradle block specifying dependencies looks like this:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+  <span class="c1">//Spring boot dependencies</span>
+  <span class="nf">implementation</span><span class="p">(</span><span class="s">"org.springframework.boot:spring-boot-starter-actuator:$2.2.1.RELEASE"</span><span class="p">)</span>
+  <span class="nf">implementation</span><span class="p">(</span><span class="s">"org.springframework.boot:spring-boot-starter-web:2.2.1.RELEASE"</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nf">exclude</span><span class="p">(</span><span class="n">module</span> <span class="p">=</span> <span class="s">"spring-boot-starter-tomcat"</span><span class="p">)</span>
+  <span class="p">}</span>
+
+  <span class="nf">testImplementation</span><span class="p">(</span><span class="s">"com.jayway.awaitility:awaitility:1.7.0"</span><span class="p">)</span>
+  <span class="nf">testImplementation</span><span class="p">(</span><span class="s">"com.github.tomakehurst:wiremock-standalone:2.15.0"</span><span class="p">)</span>
+
+  <span class="nf">testRuntimeOnly</span><span class="p">(</span><span class="s">"org.junit.jupiter:junit-jupiter-engine"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h2 id="bom-the-gradle">BOM the Gradle</h2>
+
+<p>What we don’t want is that every Microservice project has his own version of the same dependencies and this version are usually not maintained and far from being on last stable version that can be found in <a href="https://mvnrepository.com/repos/central">Maven Central</a> for example. So we will build the common Gradle build project that all other projects can refer to. So let us do it. First we need to specialised plugins in our build script:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">plugins</span> <span class="p">{</span>
+  <span class="n">`java-platform`</span>
+  <span class="n">`maven-publish`</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">java-platform</code> plugin is used to build Maven like BOM</li>
+  <li><code class="highlighter-rouge">maven-publish</code> plugin is used to publish generated Maven like BOM XML file to desired repository</li>
+</ul>
+
+<p>Now we can specify our dependencies that are going to be mapped to Maven BOM <code class="highlighter-rouge">&lt;dependencyManagement&gt;</code> section:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+  <span class="c1">//Maven BOM &lt;dependencyManagement&gt; block</span>
+  <span class="nf">constraints</span> <span class="p">{</span>
+    <span class="nf">api</span><span class="p">(</span><span class="s">"commons-httpclient:commons-httpclient:3.1"</span><span class="p">)</span>
+    <span class="nf">runtime</span><span class="p">(</span><span class="s">"org.postgresql:postgresql:42.2.5"</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This effectively maps to:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencyManagement&gt;</span>
+    <span class="nt">&lt;dependencies&gt;</span>
+      <span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>commons-httpclient<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>commons-httpclient<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>3.1<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;/dependency&gt;</span>
+      <span class="nt">&lt;dependency&gt;</span>
+        <span class="nt">&lt;groupId&gt;</span>org.postgresql<span class="nt">&lt;/groupId&gt;</span>
+        <span class="nt">&lt;artifactId&gt;</span>postgresql<span class="nt">&lt;/artifactId&gt;</span>
+        <span class="nt">&lt;version&gt;</span>42.2.5<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;/dependency&gt;</span>
+    <span class="nt">&lt;/dependencies&gt;</span>
+  <span class="nt">&lt;/dependencyManagement&gt;</span>
+</code></pre></div></div>
+
+<p>We can optionally include common dependencies that are going to be applied to all projects using this BOM. To do this we have to specifically enable this feature:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">javaPlatform</span> <span class="p">{</span>
+  <span class="nf">allowDependencies</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now we can use it:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+  <span class="kd">val</span> <span class="py">jacksonModuleVersion</span><span class="p">:</span> <span class="nc">String</span> <span class="k">by</span> <span class="n">project</span>
+  <span class="nf">api</span><span class="p">(</span><span class="s">"com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonModuleVersion"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This effectively maps to:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencies&gt;</span>
+  <span class="nt">&lt;dependency&gt;</span>
+    <span class="nt">&lt;groupId&gt;</span>com.fasterxml.jackson.module<span class="nt">&lt;/groupId&gt;</span>
+    <span class="nt">&lt;artifactId&gt;</span>jackson-module-kotlin<span class="nt">&lt;/artifactId&gt;</span>
+    <span class="nt">&lt;version&gt;</span>2.9.6<span class="nt">&lt;/version&gt;</span>
+    <span class="nt">&lt;scope&gt;</span>compile<span class="nt">&lt;/scope&gt;</span>
+  <span class="nt">&lt;/dependency&gt;</span>
+<span class="nt">&lt;/dependencies&gt;</span>
+</code></pre></div></div>
+
+<p>As we can see from the above example, dependency version can be hardcoded in the file or provided as property in <code class="highlighter-rouge">gradle.property</code> file, like <code class="highlighter-rouge">jacksonModuleVersion=2.9.6</code> property that is mapped to string variable trough delegate object.</p>
+
+<p>We can also import BOM from another BOM creating hierarchy of BOMs:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+  <span class="nf">api</span><span class="p">(</span><span class="nf">platform</span><span class="p">(</span><span class="s">"com.fasterxml.jackson:jackson-bom:2.9.8"</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>This maps to:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;dependencyManagement&gt;</span>
+  <span class="nt">&lt;dependencies&gt;</span>
+    <span class="nt">&lt;dependency&gt;</span>
+      <span class="nt">&lt;groupId&gt;</span>com.fasterxml.jackson<span class="nt">&lt;/groupId&gt;</span>
+      <span class="nt">&lt;artifactId&gt;</span>jackson-bom<span class="nt">&lt;/artifactId&gt;</span>
+      <span class="nt">&lt;version&gt;</span>2.9.8<span class="nt">&lt;/version&gt;</span>
+      <span class="nt">&lt;type&gt;</span>pom<span class="nt">&lt;/type&gt;</span>
+      <span class="nt">&lt;scope&gt;</span>import<span class="nt">&lt;/scope&gt;</span>
+    <span class="nt">&lt;/dependency&gt;</span>
+  <span class="nt">&lt;/dependencies&gt;</span>
+<span class="nt">&lt;/dependencyManagement&gt;</span>
+</code></pre></div></div>
+
+<p>Finally we want to publish our generated BOM to Maven compatible repository. We do that using <code class="highlighter-rouge">publishing {}</code> section:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">publishing</span> <span class="p">{</span>
+  <span class="nf">repositories</span> <span class="p">{</span>
+    <span class="nf">maven</span><span class="p">{</span>
+      <span class="c1">//Properties from ./gradle/gradle.properties to variable mapping</span>
+      <span class="kd">val</span> <span class="py">localMavenUser</span><span class="p">:</span> <span class="nc">String</span> <span class="k">by</span> <span class="n">extra</span>
+      <span class="kd">val</span> <span class="py">localMavenPassword</span><span class="p">:</span> <span class="nc">String</span> <span class="k">by</span> <span class="n">extra</span>
+
+      <span class="c1">//Publishing Maven repository URL and credentials</span>
+      <span class="n">url</span> <span class="p">=</span> <span class="nf">uri</span><span class="p">(</span><span class="s">"http://localhost:8081/repository/maven-snapshots/"</span><span class="p">)</span>
+      <span class="nf">credentials</span> <span class="p">{</span>
+        <span class="n">username</span> <span class="p">=</span> <span class="n">localMavenUser</span>
+          <span class="n">password</span> <span class="p">=</span> <span class="n">localMavenPassword</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="c1">//Defines Maven BOM as valid publication</span>
+  <span class="nf">publications</span> <span class="p">{</span>
+    <span class="n">create</span><span class="p">&lt;</span><span class="nc">MavenPublication</span><span class="p">&gt;(</span><span class="s">"myPlatform"</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nf">from</span><span class="p">(</span><span class="n">components</span><span class="p">[</span><span class="s">"javaPlatform"</span><span class="p">])</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">publications {}</code> section defines that generated BOM will be produced as <code class="highlighter-rouge">pom-default.xml</code> found in <code class="highlighter-rouge">build/publications/myPlatform</code> folder.</li>
+  <li><code class="highlighter-rouge">repositories {}</code> section defines where this generated BOM will be send to. Credential can be supplied from properties file that is usually located in: <code class="highlighter-rouge">./gradle/gradle.properties</code></li>
+</ul>
+
+<p>Full <code class="highlighter-rouge">build.gradle.kts</code> code can be found in: <a href="https://github.com/cubeprogramming/GradleBOM/blob/master/MavenBOMPublisher/build.gradle.kts">https://github.com/cubeprogramming/GradleBOM/blob/master/MavenBOMPublisher/build.gradle.kts</a></p>
+
+<h2 id="lets-bom-it">Let’s BOM it</h2>
+
+<p>Now when we have defined and deployed BOM we have to reference it in our project <code class="highlighter-rouge">build.gradle.kts</code> file. So first we need to define the location where we can get it. We do this by using <code class="highlighter-rouge">repositories {}</code> block and referencing our internal Maven compatible repository:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">repositories</span> <span class="p">{</span>
+    <span class="nf">mavenCentral</span><span class="p">()</span>
+    <span class="nf">maven</span><span class="p">(</span><span class="n">url</span> <span class="p">=</span> <span class="nf">uri</span><span class="p">(</span><span class="s">"http://localhost:8081/repository/maven-snapshots/"</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Though we have to import our BOM as a dependency in order to use it:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+    <span class="c1">//api(platform(project("JavaPlatformProject")))</span>
+    <span class="nf">implementation</span><span class="p">(</span><span class="nf">platform</span><span class="p">(</span><span class="s">"com.cubeprogramming:MavenBOMPublisher:1.0-SNAPSHOT"</span><span class="p">))</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Now we are able to specify dependencies without specify version:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">dependencies</span> <span class="p">{</span>
+    <span class="c1">//api(platform(project("JavaPlatformProject")))</span>
+    <span class="nf">implementation</span><span class="p">(</span><span class="nf">platform</span><span class="p">(</span><span class="s">"com.cubeprogramming:MavenBOMPublisher:1.0-SNAPSHOT"</span><span class="p">))</span>
+    <span class="nf">implementation</span><span class="p">(</span><span class="s">"stdlib-jdk8"</span><span class="p">)</span>
+    <span class="nf">testImplementation</span><span class="p">(</span><span class="s">"junit"</span><span class="p">,</span> <span class="s">"junit"</span><span class="p">,</span> <span class="s">"4.12"</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>However nothing prevent us from overiding versions of referred depenencies or introduce new one if we need to to so.</p>
+
+<h2 id="how-about-plugins">How about plugins?</h2>
+
+<p>As said previously versioning plugins is little bit tricky as <code class="highlighter-rouge">plugins {}</code> section is always first section in every build script and generally does not allow specifying plugins outside of this section. Specifying plugin versions is a must. Only exception to this rule are some Gradle built-in plugins like <code class="highlighter-rouge">java</code>, <code class="highlighter-rouge">java-platform</code> or <code class="highlighter-rouge">maven-publish</code> plugin for example. as they are inheriting version numbers from <a href="https://plugins.gradle.org/search?term=central">gradlePluginPortal()</a> which is default built in location for Gradle plugins and thus does not have to be explicitly specified.</p>
+
+<p>So how to work around this problem? Fortunately for us, from Gradle 6.x it is possible to use <code class="highlighter-rouge">settings.gradle.kts</code> file to move some of the logic from <code class="highlighter-rouge">build.gradle.kts</code> to it. This allow us to build one common <code class="highlighter-rouge">settings.gradle.kts</code> that every project can implement in the same way. Essentially copy and paste.</p>
+
+<h3 id="special-settings-file">Special <code class="highlighter-rouge">settings</code> file</h3>
+
+<p>If we want to have common set of settings for every project we build and we are not prepared to create <a href="https://docs.gradle.org/current/userguide/multi_project_builds.html#multi_project_builds">Gradle multi-project build setup</a>, than the only solution is to create common <code class="highlighter-rouge">settings.gradle.kts</code> file that all project will copy to root project folder, along with the project specific <code class="highlighter-rouge">build.gradle.kts</code>. Let us see how the file looks like:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">pluginManagement</span> <span class="p">{</span>
+    <span class="c1">//Defining access to remote gradle.properties file that resides on GIT server</span>
+    <span class="kd">val</span> <span class="py">prop</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="nc">Properties</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">propertyResource</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">net</span><span class="p">.</span><span class="nc">URL</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/cubeprogramming/GradleBOM/master/MavenBOMPublisher/gradle.properties"</span><span class="p">)</span>
+    <span class="n">prop</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">InputStreamReader</span><span class="p">(</span><span class="n">propertyResource</span><span class="p">.</span><span class="nf">openStream</span><span class="p">()))</span>
+
+    <span class="c1">//Defining access to plugins.properties file that resides on GIT server</span>
+    <span class="kd">val</span> <span class="py">pluginsProp</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">util</span><span class="p">.</span><span class="nc">Properties</span><span class="p">()</span>
+    <span class="kd">val</span> <span class="py">pluginsPropResource</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">net</span><span class="p">.</span><span class="nc">URL</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/cubeprogramming/GradleBOM/master/MavenBOMPublisher/plugins.properties"</span><span class="p">)</span>
+    <span class="n">pluginsProp</span><span class="p">.</span><span class="nf">load</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">InputStreamReader</span><span class="p">(</span><span class="n">pluginsPropResource</span><span class="p">.</span><span class="nf">openStream</span><span class="p">()))</span>
+
+    <span class="nf">plugins</span> <span class="p">{</span>
+        <span class="n">java</span>
+        <span class="nf">kotlin</span><span class="p">(</span><span class="s">"jvm"</span><span class="p">)</span> <span class="n">version</span> <span class="n">prop</span><span class="p">.</span><span class="nf">getProperty</span><span class="p">(</span><span class="s">"kotlinPluginVersion"</span><span class="p">)</span>
+        <span class="n">pluginsProp</span><span class="p">.</span><span class="nf">forEach</span><span class="p">{</span>
+            <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span> <span class="p">-&gt;</span> <span class="nf">id</span><span class="p">(</span><span class="n">k</span><span class="p">.</span><span class="nf">toString</span><span class="p">())</span> <span class="n">version</span> <span class="n">v</span><span class="p">.</span><span class="nf">toString</span><span class="p">()</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="n">gradle</span><span class="p">.</span><span class="nf">allprojects</span><span class="p">{</span>
+    <span class="nf">apply</span><span class="p">(</span><span class="n">plugin</span> <span class="p">=</span> <span class="s">"java"</span><span class="p">)</span>
+
+    <span class="nf">repositories</span> <span class="p">{</span>
+        <span class="c1">//Defining access to repostoryList file that resides on GIT server</span>
+        <span class="kd">val</span> <span class="py">repositoryListRes</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">net</span><span class="p">.</span><span class="nc">URL</span><span class="p">(</span><span class="s">"https://raw.githubusercontent.com/cubeprogramming/GradleBOM/master/MavenBOMPublisher/repositoryList"</span><span class="p">)</span>
+        <span class="kd">val</span> <span class="py">repositoryLines</span> <span class="p">=</span> <span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">BufferedReader</span><span class="p">(</span><span class="n">java</span><span class="p">.</span><span class="n">io</span><span class="p">.</span><span class="nc">InputStreamReader</span><span class="p">(</span><span class="n">repositoryListRes</span><span class="p">.</span><span class="nf">openStream</span><span class="p">()))</span>
+
+        <span class="nf">mavenCentral</span><span class="p">()</span>
+        <span class="n">repositoryLines</span><span class="p">.</span><span class="nf">forEachLine</span> <span class="p">{</span>
+            <span class="nf">maven</span><span class="p">(</span><span class="n">url</span> <span class="p">=</span> <span class="nf">uri</span><span class="p">(</span><span class="n">it</span><span class="p">))</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="n">configure</span><span class="p">&lt;</span><span class="nc">JavaPluginConvention</span><span class="p">&gt;</span> <span class="p">{</span>
+        <span class="n">sourceCompatibility</span> <span class="p">=</span> <span class="nc">JavaVersion</span><span class="p">.</span><span class="nc">VERSION_1_8</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>The first section in the file <code class="highlighter-rouge">pluginManagement {}</code> corresponds with <code class="highlighter-rouge">&lt;pluginManagement&gt;</code> section in the typical Maven BOM. However, as this <code class="highlighter-rouge">settings.gradle.kts</code> is going to be copied to each project we still does not have centralised management of plugin versions unless we do some trick. The trick is to load the plugin names and versions from the property file that is accessible from every project. The best place to put this file is on the same GIT server that all other projects, that we are managing, are using. Obvious choice would be to put the file in the same project that is generating Maven BOM with <code class="highlighter-rouge">&lt;dependencyManagement&gt;</code> section. So we have created <a href="https://github.com/cubeprogramming/GradleBOM/blob/master/MavenBOMPublisher/plugins.properties">plugins.properties</a> file in that project.</p>
+
+<p>The next section in <code class="highlighter-rouge">settings.gradle.kts</code> file is <code class="highlighter-rouge">gradle.allprojects {}</code>. This section allow us to apply common configuration to all projects. Again we would like to load as much as possible of configuration settings from the central place. So as before have we decided to put this file is on the same GIT server that all other projects, that we are managing, are using. That is the same project that is generating Maven BOM.</p>
+
+<p>This <a href="https://github.com/cubeprogramming/GradleBOM/blob/master/MavenBOMPublisher/repositoryList">repositoryList</a> file contains the list of common repositories that are going to be used to download plugins and dependencies. List is than loaded from the server and applied in the <code class="highlighter-rouge">repositories {}</code> section.</p>
+
+<p>Now our <a href="https://github.com/cubeprogramming/GradleBOM/blob/master/BOMConsumingProject/build.gradle.kts">build.gradle.kts</a> looks pretty simple:</p>
+
+<div class="language-kotlin highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nf">plugins</span> <span class="p">{</span>
+    <span class="nf">kotlin</span><span class="p">(</span><span class="s">"jvm"</span><span class="p">)</span>
+    <span class="nf">id</span><span class="p">(</span><span class="s">"io.spring.dependency-management"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">group</span> <span class="p">=</span> <span class="s">"com.cubeprogramming"</span>
+<span class="n">version</span> <span class="p">=</span> <span class="s">"1.0-SNAPSHOT"</span>
+
+
+<span class="nf">dependencies</span> <span class="p">{</span>
+    <span class="nf">implementation</span><span class="p">(</span><span class="nf">platform</span><span class="p">(</span><span class="s">"com.cubeprogramming:MavenBOMPublisher:1.0-SNAPSHOT"</span><span class="p">))</span>
+    <span class="nf">implementation</span><span class="p">(</span><span class="nf">kotlin</span><span class="p">(</span><span class="s">"stdlib-jdk8"</span><span class="p">))</span>
+    <span class="nf">testImplementation</span><span class="p">(</span><span class="s">"junit"</span><span class="p">,</span> <span class="s">"junit"</span><span class="p">,</span> <span class="s">"4.12"</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="nf">tasks</span> <span class="p">{</span>
+    <span class="nf">compileKotlin</span> <span class="p">{</span>
+        <span class="n">kotlinOptions</span><span class="p">.</span><span class="n">jvmTarget</span> <span class="p">=</span> <span class="s">"1.8"</span>
+    <span class="p">}</span>
+    <span class="nf">compileTestKotlin</span> <span class="p">{</span>
+        <span class="n">kotlinOptions</span><span class="p">.</span><span class="n">jvmTarget</span> <span class="p">=</span> <span class="s">"1.8"</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>As we can se from simplified <a href="https://github.com/cubeprogramming/GradleBOM/blob/master/BOMConsumingProject/build.gradle.kts">build.gradle.kts</a>, there is no need to define and configure <code class="highlighter-rouge">java</code> plugin as it is already defined and configured in <code class="highlighter-rouge">settings.gradle.kts</code>. Also plugin versions are not specified as versions specification is downloaded from the GIT server. No need for <code class="highlighter-rouge">repositories {}</code> section as repository list is also being downloaded from the GIT server. And finally, in our <code class="highlighter-rouge">dependencies {}</code> section we are importing generated Maven BOM from our internal Maven repository server, thus allowing us to specify dependencies, without specifying versions.</p>
+
+<p>All our repository, plugin and dependency definition and versions are now managed centrally, thus reducing possibility that different project are using different plugin/dependency version for the same type of plugin/dependency. Centralised management allow us to reduce copying of boilerplate code as well.</p>
+
+<p>The complete project example can be accessed on: <a href="https://github.com/cubeprogramming/GradleBOM">https://github.com/cubeprogramming/GradleBOM</a></p>
+:ET

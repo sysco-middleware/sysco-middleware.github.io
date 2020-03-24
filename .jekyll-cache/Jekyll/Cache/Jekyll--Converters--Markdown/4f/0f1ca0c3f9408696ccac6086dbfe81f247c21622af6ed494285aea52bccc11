@@ -1,0 +1,20 @@
+I"�<p>Have you upgraded to Oracle SOA Suite 12.2.1.1 and can’t find the Partitions configuration any longer?</p>
+
+<p>Between Oracle SOA Suite 12.2.1.0 and 12.2.1.1 Partitions have been renamed to SOA Folders.</p>
+
+<p>12.2.1.0
+<img src="/images/2016-09-30_Partitions_have_now_become_SOA_Folders/index_1221.png" alt="From 12.2.1 docs" /></p>
+
+<p>12.2.1.1
+<img src="/images/2016-09-30_Partitions_have_now_become_SOA_Folders/index_12211.png" alt="From 12.2.1.1 docs" /></p>
+
+<p>12.2.1.0
+<img src="/images/2016-09-30_Partitions_have_now_become_SOA_Folders/doc_1221.png" alt="From 12.2.1 docs" /></p>
+
+<p>12.2.1.1
+<img src="/images/2016-09-30_Partitions_have_now_become_SOA_Folders/doc_12211.png" alt="From 12.2.1.1 docs" /></p>
+
+<p>Why would Oracle do this in a minor update?</p>
+
+<p>Good question, one reason could be to prepare for multitenancy. In WebLogic multitenancy, they use the name Partitions for the multitenant “areas”, so using Partitions several places meaning different things could be rather confusing.</p>
+:ET

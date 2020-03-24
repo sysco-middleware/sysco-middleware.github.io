@@ -1,0 +1,91 @@
+I"�<h1 id="purpose">Purpose</h1>
+<p>If you quickly wish to iterate over the same API endpoint using different inputs for that one endpoint and view the responses, this is for you.</p>
+
+<h2 id="example">Example</h2>
+<p>View the different responses from a “get customer info” API to see which fields and what kind of data is returned for various types of customers.</p>
+
+<h1 id="pre-requisites">Pre requisites</h1>
+<ul>
+  <li>Postman is installed</li>
+  <li>The URL is known along with a series of data values, eg customer ids</li>
+</ul>
+
+<h1 id="steps">Steps</h1>
+
+<h2 id="try-first-with-one-hardcoded-requestresponse">Try first with one hardcoded request/response</h2>
+<p>Create a collection in Postman and one request inside the collection with one value hardcoded, eg customerId is 483228</p>
+
+<p>Save the request.</p>
+
+<p>Test that one request returns the expected result and when satisfied, go to the next step.</p>
+
+<p>Request example:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://mydomain/myapp/api/v1/customer/483228
+</code></pre></div></div>
+
+<h2 id="update-the-request-to-use-a-variable">Update the request to use a variable</h2>
+<p>Update the request by replacing the hardcoded value with a variable inside double curly brackets, eg {{custId}}</p>
+
+<p>Save the request.</p>
+
+<p>Request example:</p>
+
+<p>https://mydomain/myapp/api/v1/customer/{{custId}}</p>
+
+<h2 id="create-a-csv-file-with-values-for-the-variable">Create a .csv file with values for the variable</h2>
+<p>Create a .csv file with a heading that matches the variable name.</p>
+
+<p>Add one row for each variable value, eg each customerId</p>
+
+<p>Note that Postman accepts other data file types such as application/json though for this example text/csv is used.</p>
+
+<p>Example customerId.csv contains:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>custId
+15
+16
+1054
+1141
+1211
+225880
+290188
+483228
+</code></pre></div></div>
+
+<h2 id="run-the-request-in-runner">Run the request in Runner</h2>
+<p>Open the runner - look for the light grey “Runner” button in the top left hand part of the screen which can be hard to notice.</p>
+
+<p><img src="/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-runner-button.png" alt="Postman runner button" /></p>
+
+<p>Select the collection that you created containing the request to iterate over.</p>
+
+<p>Select the file by clicking Data File Type in the left hand part of the screen.</p>
+
+<p>Postman will run the same request for each line of data in the file, so click Preview next to Data File Type to be sure the data looks ok.</p>
+
+<p>Click the big blue Run button towards the bottom of the screen. If this button is greyed out, be sure you selected a collection.</p>
+
+<h2 id="quickly-view-the-responses">Quickly view the responses</h2>
+<p>The default screen contains a lot of information that I find involves too much clicking and right-clicking to view the results, so I recommend opening the Postman Console.</p>
+
+<p>Open this by going to the top menu bar and selecting View &gt; Show Postman Console</p>
+
+<p>This will open a new window.</p>
+
+<p>Expand the request to see its response and expand its response body.</p>
+
+<p><img src="/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-iterations-one-response.png" alt="Postman interations one response" /></p>
+
+<p>Scrolling down it is nice to see the arrays collapsed by default which gives a quick overview of the data.</p>
+
+<p><img src="/images/2020-03-05-Using-Postman-to-quickly-view-responses-of-the-same-endpoint-with-different-inputs/postman-response-with-arrays.png" alt="Postman response with arrays" /></p>
+
+<p>Looking through the responses for various customerIds it is easy to get a quick overview of the types of customers by viewing the values of “type” in the responses and their other values returned.</p>
+
+<p>In this particular response we also see 37 addresses which indicates this customer has been used for testing since it is not a real world scenario to have 37 addresses for a customer.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+<p>Using Postman Runner is a quick way to get an overview of an endpoint that is populated with some data.</p>
+
+<p>It can be helpful especially during the early stages of development and testing when getting a feel for the APIs and the application in general.</p>
+
+:ET

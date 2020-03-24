@@ -1,0 +1,152 @@
+I"JC<p>Now, I will show you how to create a MAF application with several APIs in few steps. 
+There we go:</p>
+
+<p>I.	Create a MAF application, you can put a name that you want and go finish.</p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/createMAFapplication.jpg" alt="" /></p>
+
+<p>II.	Then we have to define the feature in maf-feature.xml similar to the image bellow.</p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/defineFeature.jpg" alt="" /></p>
+
+<p>III. Now we have to click on content tab then select Local HTML for the type and define a html page. In this sample is Index.html.</p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/createIndex.jpg" alt="" /></p>
+
+<p>IV. Inside of index.html we have to change the content by the code below
+We are including angular-ionic framework and google maps api.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">&lt;!</span><span class="nx">DOCTYPE</span> <span class="nx">html</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="nx">html</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="nx">head</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">meta</span> <span class="nx">charset</span><span class="o">=</span><span class="dl">"</span><span class="s2">utf-8</span><span class="dl">"</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">meta</span> <span class="nx">name</span><span class="o">=</span><span class="dl">"</span><span class="s2">viewport</span><span class="dl">"</span> <span class="nx">content</span><span class="o">=</span><span class="dl">"</span><span class="s2">initial-scale=1, maximum-scale=1, user-scalable=no, width=device-width</span><span class="dl">"</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">title</span><span class="o">&gt;&lt;</span><span class="sr">/title</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="dl">"</span><span class="s2">lib/ionic/css/ionic.css</span><span class="dl">"</span> <span class="nx">rel</span><span class="o">=</span><span class="dl">"</span><span class="s2">stylesheet</span><span class="dl">"</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">link</span> <span class="nx">href</span><span class="o">=</span><span class="dl">"</span><span class="s2">css/style.css</span><span class="dl">"</span> <span class="nx">rel</span><span class="o">=</span><span class="dl">"</span><span class="s2">stylesheet</span><span class="dl">"</span><span class="o">/&gt;</span>
+        <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text/javascript</span><span class="dl">"</span><span class="o">&gt;</span>
+          <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">window</span><span class="p">.</span><span class="nx">adf</span><span class="p">)</span>
+              <span class="nb">window</span><span class="p">.</span><span class="nx">adf</span> <span class="o">=</span> <span class="p">{</span>
+              <span class="p">};</span>
+          <span class="nx">adf</span><span class="p">.</span><span class="nx">wwwPath</span> <span class="o">=</span> <span class="dl">"</span><span class="s2">../../../../www/</span><span class="dl">"</span><span class="p">;</span>
+        <span class="o">&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>        <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">type</span><span class="o">=</span><span class="dl">"</span><span class="s2">text/javascript</span><span class="dl">"</span> <span class="nx">src</span><span class="o">=</span><span class="dl">"</span><span class="s2">../../../../www/js/base.js</span><span class="dl">"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>        <span class="c">&lt;!--</span> <span class="nx">ionic</span><span class="o">/</span><span class="nx">angularjs</span> <span class="nx">js</span> <span class="o">--&gt;</span>
+        <span class="o">&lt;</span><span class="nx">script</span> <span class="nx">src</span><span class="o">=</span><span class="dl">"</span><span class="s2">lib/ionic/js/ionic.bundle.js</span><span class="dl">"</span><span class="o">&gt;&lt;</span><span class="sr">/script</span><span class="err">&gt;
+</span>        <span class="c">&lt;!--</span> <span class="nx">your</span> <span class="nx">app</span><span class="dl">'</span><span class="s1">s js --&gt;
+        &lt;script src="js/app.js"&gt;&lt;/script&gt;
+        &lt;script src="js/controllers.js"&gt;&lt;/script&gt;
+        &lt;script src=</span><span class="dl">'</span><span class="nx">http</span><span class="p">:</span><span class="c1">//maps.googleapis.com/maps/api/js?&amp;sensor=true'&gt;&lt;/script&gt;</span>
+        
+    <span class="o">&lt;</span><span class="sr">/head</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="nx">body</span> <span class="nx">ng</span><span class="o">-</span><span class="nx">app</span><span class="o">=</span><span class="dl">"</span><span class="s2">starter</span><span class="dl">"</span><span class="o">&gt;</span>
+        <span class="o">&lt;</span><span class="nx">ion</span><span class="o">-</span><span class="nx">nav</span><span class="o">-</span><span class="nx">view</span><span class="o">&gt;&lt;</span><span class="sr">/ion-nav-view</span><span class="err">&gt;
+</span>    <span class="o">&lt;</span><span class="sr">/body</span><span class="err">&gt;
+</span><span class="o">&lt;</span><span class="sr">/html&gt;</span><span class="err"> 
+</span></code></pre></div></div>
+
+<p>V. Now we need to download the angular-ionic framework and include the folders (css, img, js, lib and templates) in the demo.singlepageapp folder as the image bellow.</p>
+
+<p><a href="/files/applications/APIangularIonic.zip">Download Here</a></p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/copyAngularIonicAPI.jpg" alt="" /></p>
+
+<p>VI. If we refresh the application, we can get a new structure in the viewController.</p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/openJSFile.jpg" alt="" /></p>
+
+<p>VII. In the templates folder we have the first page (Home.html) to show the map. It is using a ng-controller called MapController that has been implemented in controller.js file.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ion-view</span> <span class="na">view-title=</span><span class="s">"Google Maps V3 example"</span><span class="nt">&gt;</span>  
+    
+    <span class="nt">&lt;ion-content</span> <span class="na">ng-controller=</span><span class="s">"MapController"</span><span class="nt">&gt;</span>
+        
+       <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"map"</span> <span class="na">data-tap-disabled=</span><span class="s">"true"</span> <span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="nt">&lt;/ion-content&gt;</span>
+<span class="nt">&lt;/ion-view&gt;</span>
+
+</code></pre></div></div>
+
+<p>VIII. Now we have to define the style of the map in the css folder as the image bellow</p>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">.scroll</span> <span class="p">{</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+ 
+<span class="nf">#map</span> <span class="p">{</span>
+    <span class="nl">width</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+    <span class="nl">height</span><span class="p">:</span> <span class="m">100%</span><span class="p">;</span>
+<span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>IX. In the js folder we have app.js that manages the logic of all the pages. In this case we are defining the Home.html with its controller called HomeCtrl.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Ionic Starter App</span>
+
+<span class="c1">// angular.module is a global place for creating, registering and retrieving Angular modules</span>
+<span class="c1">// 'starter' is the name of this angular module example (also set in a &lt;body&gt; attribute in index.html)</span>
+<span class="c1">// the 2nd parameter is an array of 'requires'</span>
+<span class="c1">// 'starter.controllers' is found in controllers.js</span>
+<span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="dl">'</span><span class="s1">starter</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">ionic</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">starter.controllers</span><span class="dl">'</span><span class="p">])</span>
+
+<span class="p">.</span><span class="nx">run</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$ionicPlatform</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">$ionicPlatform</span><span class="p">.</span><span class="nx">ready</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="p">});</span>
+<span class="p">})</span>
+
+<span class="p">.</span><span class="nx">config</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">$stateProvider</span><span class="p">,</span> <span class="nx">$urlRouterProvider</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">$stateProvider</span>
+    <span class="p">.</span><span class="nx">state</span><span class="p">(</span><span class="dl">'</span><span class="s1">home</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+      <span class="na">url</span><span class="p">:</span> <span class="dl">"</span><span class="s2">/home</span><span class="dl">"</span><span class="p">,</span>
+      <span class="na">templateUrl</span><span class="p">:</span> <span class="dl">"</span><span class="s2">templates/Home.html</span><span class="dl">"</span><span class="p">,</span>
+      <span class="na">controller</span><span class="p">:</span> <span class="dl">'</span><span class="s1">HomeCtrl</span><span class="dl">'</span>
+        
+    <span class="p">})</span>
+
+  <span class="c1">// if none of the above states are matched, use this as the fallback</span>
+  <span class="nx">$urlRouterProvider</span><span class="p">.</span><span class="nx">otherwise</span><span class="p">(</span><span class="dl">'</span><span class="s1">/home</span><span class="dl">'</span><span class="p">);</span>
+<span class="p">});</span>
+
+</code></pre></div></div>
+
+<p>X. In the controllers.js file we have all the controllers defined for the application, one of them is MapController that was defined in Home.html.
+In this part we have to initialize the map and find the geolocation of the mobile.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">angular</span><span class="p">.</span><span class="nx">module</span><span class="p">(</span><span class="dl">'</span><span class="s1">starter.controllers</span><span class="dl">'</span><span class="p">,</span> <span class="p">[])</span>
+
+<span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">AppCtrl</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">)</span> <span class="p">{</span>
+  
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">HomeCtrl</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$http</span><span class="p">)</span> <span class="p">{</span>
+  
+<span class="p">})</span>
+<span class="p">.</span><span class="nx">controller</span><span class="p">(</span><span class="dl">'</span><span class="s1">MapController</span><span class="dl">'</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">$scope</span><span class="p">,</span> <span class="nx">$ionicLoading</span><span class="p">)</span> <span class="p">{</span>
+    
+        <span class="kd">var</span> <span class="nx">myLatlng</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">LatLng</span><span class="p">(</span><span class="mf">37.3000</span><span class="p">,</span> <span class="o">-</span><span class="mf">120.4833</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">mapOptions</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="na">center</span><span class="p">:</span> <span class="nx">myLatlng</span><span class="p">,</span>
+            <span class="na">zoom</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+            <span class="na">mapTypeId</span><span class="p">:</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">MapTypeId</span><span class="p">.</span><span class="nx">ROADMAP</span>
+        <span class="p">};</span>
+        <span class="kd">var</span> <span class="nx">map</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nb">Map</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">map</span><span class="dl">"</span><span class="p">),</span> <span class="nx">mapOptions</span><span class="p">);</span>
+        <span class="nb">navigator</span><span class="p">.</span><span class="nx">geolocation</span><span class="p">.</span><span class="nx">getCurrentPosition</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">pos</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">map</span><span class="p">.</span><span class="nx">setCenter</span><span class="p">(</span><span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">LatLng</span><span class="p">(</span><span class="nx">pos</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">pos</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">));</span>
+            <span class="kd">var</span> <span class="nx">myLocation</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">Marker</span><span class="p">({</span>
+                <span class="na">position</span><span class="p">:</span> <span class="k">new</span> <span class="nx">google</span><span class="p">.</span><span class="nx">maps</span><span class="p">.</span><span class="nx">LatLng</span><span class="p">(</span><span class="nx">pos</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">latitude</span><span class="p">,</span> <span class="nx">pos</span><span class="p">.</span><span class="nx">coords</span><span class="p">.</span><span class="nx">longitude</span><span class="p">),</span>
+                <span class="na">map</span><span class="p">:</span> <span class="nx">map</span><span class="p">,</span>
+                <span class="na">title</span><span class="p">:</span> <span class="dl">"</span><span class="s2">My Location</span><span class="dl">"</span>
+            <span class="p">});</span>
+        <span class="p">});</span>
+        <span class="nx">$scope</span><span class="p">.</span><span class="nx">map</span> <span class="o">=</span> <span class="nx">map</span><span class="p">;</span>
+ 
+<span class="p">})</span>
+<span class="p">;</span>
+
+</code></pre></div></div>
+
+<p>XI. Finally we deploy the application and it looks like the image bellow.</p>
+
+<p><img src="/images/2015-08-19-maf-angular-ionic-maps/mobileAPPdemo.jpg" alt="" /></p>
+
+:ET

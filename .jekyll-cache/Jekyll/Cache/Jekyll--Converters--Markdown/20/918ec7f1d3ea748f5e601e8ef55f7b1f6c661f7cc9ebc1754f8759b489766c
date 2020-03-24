@@ -1,0 +1,573 @@
+I"�<h1 id="motivation-and-target-audience">Motivation and target audience</h1>
+
+<p>This blog post is geared towards developers and administrators who want to setup an on-premise Kubernetes cluster. This post will guide you towards the basics of setting up a multi-node kubernetes cluster on linux servers and will address some of the key concerns during the setup.</p>
+
+<p>Kubernetes is a huge area in itself and this post does not intend to cover all the nitty-gritty setup details. Instead, this blog post aims to provide a convenient starting point.</p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>Kubernetes (K8s) is a container orchestration technology that focuses on easing the efforts required to build, deploy, scale and manage containerized applications. It also provides means to manage complicated and dynamic life cycle of containerized applications. It was first developed at Google, but later on open sourced as a seed technology to Cloud Native Computing Foundation (CNCF).</p>
+
+<p>From Kubernetes  website:</p>
+
+<blockquote>
+  <p>Kubernetes (k8s) is an open-source system for automating deployment, scaling, and management of containerized applications. It groups containers that make up an application into logical units for easy management and discovery. Kubernetes builds upon 15 years of experience of running production workloads at Google, combined with best-of-breed ideas and practices from the community.</p>
+</blockquote>
+
+<p>Some of the distinguished kubernetes features are:</p>
+<ul>
+  <li><strong>Service discovery and load balancing</strong>.</li>
+  <li><strong>Automatic binpacking</strong>.</li>
+  <li><strong>Storage orchestration</strong>.</li>
+  <li><strong>Self-healing</strong>.</li>
+  <li><strong>Automated rollouts and rollbacks</strong>.</li>
+  <li><strong>Secret and configuration management</strong>.</li>
+  <li><strong>Batch execution</strong>.</li>
+  <li><strong>Horizontal scaling</strong>.</li>
+</ul>
+
+<p>You can read more about Kubernetes features <a href="https://kubernetes.io/">here</a>. If you are interested in some case studies you can find them <a href="https://kubernetes.io/case-studies/">here</a>. In the next section we will start with installing the kubernetes cluster on linux.</p>
+
+<h2 id="content">Content:</h2>
+
+<ul>
+  <li>Prerequisites.
+    <ul>
+      <li>Hardware and OS specifications</li>
+      <li>Hostname configurations</li>
+      <li>Configure host files</li>
+      <li>Verify MAC and product_uuid</li>
+      <li>Disable SELinux and Swap</li>
+    </ul>
+  </li>
+  <li>Install software and other dependencies.
+    <ul>
+      <li>Install docker</li>
+      <li>Install Kubernetes components</li>
+    </ul>
+  </li>
+  <li>Configure kubernetes master and initialize cluster.
+    <ul>
+      <li>Initialize master</li>
+      <li>Create kube configuration in home directory</li>
+      <li>Install flannel network</li>
+      <li>Configure correct firewall rules</li>
+    </ul>
+  </li>
+  <li>Add nodes to the cluster.</li>
+  <li>Deploying services and Testing.
+    <ul>
+      <li>Create deployment</li>
+      <li>Expose deployment as service</li>
+      <li>Testing service</li>
+    </ul>
+  </li>
+  <li>Accessing kubernetes cluster from local machine.
+    <ul>
+      <li>Install kubectl on local machine</li>
+      <li>Proxy connections to master using <code class="highlighter-rouge">kubectl proxy</code></li>
+      <li>Connect to master using admin.conf</li>
+    </ul>
+  </li>
+  <li>Where to go from here.</li>
+  <li>Sources and References.</li>
+</ul>
+
+<h2 id="1-prerequisites">1. Prerequisites</h2>
+
+<p>In this example we will set up a kubernetes cluster with one master and 2 nodes.</p>
+
+<h3 id="hardware-and-os-specifications">Hardware and OS specifications.</h3>
+<p>We will use 3 CentOS 7 servers with minimum 2 CPU and 2 GB RAM. You should have root privileges on the servers to install the required software packages.</p>
+
+<p><strong>Note</strong> : The hardware mentioned is to setup basic minimum configuration for kubernetes. Kubernetes comes with lots of bells and whistles and if you are installing all bells and whistles, please refer to <a href="https://kubernetes.io/docs/concepts/overview/components/">this</a> documentation for more details.
+For this example we have provisioned 3 server with below IPs</p>
+<ul>
+  <li>192.168.37.48 - This will act as our Master</li>
+  <li>192.168.37.49 - This will be first node of our cluster</li>
+  <li>192.168.37.50 - This will be the second node of the cluster</li>
+</ul>
+
+<p>It is important to mention here that kubernetes works in accordance with master slave architecture. The pods will never be scheduled on the master, instead master will act as a coordinator to manage different kubernetes services, manage traffic between the pods and manage workload scheduling on the nodes.</p>
+
+<h3 id="hostname-configurations">Hostname configurations</h3>
+<p>Login to each of the server via terminal and change the hostname by following below 2 steps. For example on server 192.168.37.48 we have setup the corresponding host name as <code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code></p>
+<ul>
+  <li>run <code class="highlighter-rouge">hostnamectl set-hostname kubernetes1.oslo.sysco.no</code></li>
+  <li>update host name in the file /etc/hostname to <code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code></li>
+</ul>
+
+<p>Follow same steps for other two servers as well.</p>
+
+<h3 id="configure-host-files">Configure host files</h3>
+
+<p>In order for each of our hosts to communicate with others hosts by hostname, we should modify the host file configurations. We will add the below content to <code class="highlighter-rouge">/etc/host</code> file on <strong>each server</strong>.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>192.168.37.48 kubernetes1.oslo.sysco.no
+192.168.37.49 kubernetes2.oslo.sysco.no
+192.168.37.50 kubernetes3.oslo.sysco.no
+</code></pre></div></div>
+<p><strong>Note</strong> : Its important that you replace above settings with your IP and server alias.</p>
+
+<p>After applying above settings, you should be able to ping other servers from each host. For example, in our case, we can ping <code class="highlighter-rouge">kubernetes2.oslo.sysco.no</code> from the host <code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code></p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# ping kubernetes2.oslo.sysco.no
+PING kubernetes2.oslo.sysco.no (192.168.37.49) 56(84) bytes of data.
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=1 ttl=64 time=0.460 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=2 ttl=64 time=0.229 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=3 ttl=64 time=0.205 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=4 ttl=64 time=0.199 ms
+64 bytes from kubernetes2.oslo.sysco.no (192.168.37.49): icmp_seq=5 ttl=64 time=0.262 ms
+--- kubernetes2.oslo.sysco.no ping statistics ---
+5 packets transmitted, 5 received, 0% packet loss, time 4000ms
+rtt min/avg/max/mdev = 0.199/0.271/0.460/0.097 ms
+</code></pre></div></div>
+
+<p>References:</p>
+<ul>
+  <li><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/#before-you-begin">Hardware and OS requirements</a></li>
+</ul>
+
+<h3 id="verify-mac-and-product_uuid">Verify MAC and product_uuid</h3>
+<p>We need to verifiy that each host in the cluster has unique MAC and product_uuid. Kubernetes uses these values to uniquely identify the nodes in the cluster. If these values are not unique to each node, the installation process may <a href="https://github.com/kubernetes/kubeadm/issues/31">fail</a>.</p>
+
+<ul>
+  <li>You can get the MAC address of the network interfaces using the command <code class="highlighter-rouge">ip link</code> or <code class="highlighter-rouge">ifconfig -a</code>. For example the MAC address in our example are:
+    <ul>
+      <li><code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code> - <code class="highlighter-rouge">00:21:f6:8d:df:0b</code></li>
+      <li><code class="highlighter-rouge">kubernetes2.oslo.sysco.no</code> - <code class="highlighter-rouge">00:21:f6:6a:26:77</code></li>
+      <li><code class="highlighter-rouge">kubernetes3.oslo.sysco.no</code> - <code class="highlighter-rouge">00:21:f6:07:83:83</code></li>
+    </ul>
+  </li>
+  <li>The product_uuid can be checked by using the command <code class="highlighter-rouge">sudo cat /sys/class/dmi/id/product_uuid</code>. For example the unique product ids in our example are
+    <ul>
+      <li><code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code> - <code class="highlighter-rouge">1234EEE2-0002-1000-9481-2C9B3620A4FF</code></li>
+      <li><code class="highlighter-rouge">kubernetes2.oslo.sysco.no</code> - <code class="highlighter-rouge">1234EEE2-0002-1000-A7D1-ACE30E89E55F</code></li>
+      <li><code class="highlighter-rouge">kubernetes3.oslo.sysco.no</code> - <code class="highlighter-rouge">1234EEE2-0002-1000-0ED0-F6750310F8CC</code></li>
+    </ul>
+  </li>
+</ul>
+
+<p><strong>Note</strong> : The product ids are changed in the above example. You should see the similar pattern for your setup. Its important that these value are unique for each node that forms a cluster.</p>
+
+<p>References:</p>
+<ul>
+  <li><a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/#verify-the-mac-address-and-product-uuid-are-unique-for-every-node">MAC and UUID Spec</a></li>
+</ul>
+
+<h3 id="configure-os-level-settings">Configure OS level settings</h3>
+<p>So far we have verified our hardware, now its time to optimize some OS level settings in order to install kubernetes successfully.</p>
+
+<ul>
+  <li><strong>Enable br_netfilter Kernel Module</strong>: The br_netfilter module is required for kubernetes installation. This module is required to enable transparent masquerading and to facilitate VxLAN traffic for communication between Kubernetes pods across the cluster. Run the command below to enable the br_netfilter kernel module.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  modprobe br_netfilter
+  echo '1' &gt; /proc/sys/net/bridge/bridge-nf-call-iptables
+</code></pre></div>    </div>
+    <p>If you are interested in why it is required, checkout <a href="https://github.com/kubernetes/kubernetes/issues/12459">this</a> kubernetes issue.</p>
+  </li>
+  <li><strong>Disable SWAP</strong> : We need to disable swap on the servers in order for kubernetes installation to work properly. One of the important kubernetes component that we will install in the next few steps is <code class="highlighter-rouge">kubelet</code>. In order for kubelet to work properly, the swap should be disabled. Disable the swap on each of the servers by using the following steps.
+    <ul>
+      <li>Login via ssh and run <code class="highlighter-rouge">swapoff -a</code> on each host.</li>
+      <li>Edit the <code class="highlighter-rouge">/etc/fstab</code> file. Run <code class="highlighter-rouge">vim /etc/fstab</code> and comment the swap line UUID
+        <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  # /etc/fstab: static file system information.
+  #
+  # Use 'blkid' to print the universally unique identifier for a
+  # device; this may be used with UUID= as a more robust way to name devices
+  # that works even if disks are added and removed. See fstab(5).
+  #
+  # &lt;file system&gt; &lt;mount point&gt;   &lt;type&gt;  &lt;options&gt;       &lt;dump&gt;  &lt;pass&gt;
+  # / was on /dev/nvme0n1p2 during installation
+  UUID=47371a4c-3cdf-4ecc-b573-f09a029c74f4 /               ext4    errors=remount-ro 0       1
+  # /boot/efi was on /dev/nvme0n1p1 during installation
+  UUID=C176-4947  /boot/efi       vfat    umask=0077      0       1
+  # swap was on /dev/nvme0n1p3 during installation
+  # COMMENT BELOW LINE
+  # UUID=78aeec44-b1af-4720-9316-6af68385b23f none            swap    sw              0       0
+</code></pre></div>        </div>
+        <p>References</p>
+      </li>
+      <li><a href="https://serverfault.com/questions/881517/why-disable-swap-on-kubernetes">why-disable-swap-on-kubernetes</a></li>
+      <li><a href="https://github.com/kubernetes/kubernetes/issues/7294">kubernetes-issue-7294</a></li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="2-install-docker-kubernetes-and-other-dependencies">2. Install docker, kubernetes and other dependencies.</h2>
+<p>Now that we have successfully completed Hardware and OS level checks. Its time now to install the required software on our servers. Please go through the instructions below in order to complete software installation.</p>
+
+<h3 id="install-docker">Install Docker</h3>
+<p>We will install docker-ce (community version) for this example. You can check for the various available versions of docker <a href="https://docs.docker.com/install/overview/">here</a>. Also the steps to install docker on different operations systems are described in details <a href="https://docs.docker.com/install/linux/docker-ce/centos/">here</a>. You need to run the below scripts on each of the servers participating in the kubernetes cluster.</p>
+
+<ul>
+  <li><strong>Uninstall old version</strong>: Older versions of Docker were called docker or docker-engine. If these are installed, uninstall them, along with associated dependencies.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  sudo yum remove docker \
+          docker-client \
+          docker-client-latest \
+          docker-common \
+          docker-latest \
+          docker-latest-logrotate \
+          docker-logrotate \
+          docker-selinux \
+          docker-engine-selinux \
+          docker-engine
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Install docker-ce</strong>: Run the below commands in sequence to install the docker-ce
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+  sudo yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+  sudo yum install docker-ce
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Start docker daemon</strong>: This command will start the docker daemon if it is stopped.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  sudo systemctl start docker
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="install-kubernetes-components">Install Kubernetes components</h3>
+<p>We will use <a href="https://kubernetes.io/docs/setup/independent/install-kubeadm/">kubeadm</a> to bootstrap kubernetes cluster for our example. We will start with installing basic kubernetes components namely kubectl, kubeadm and kubelet. We need to run the below scripts on each of our servers.</p>
+
+<ul>
+  <li><strong>Add PPA repository for kubernetes</strong>: We will first add the ppa repository on each of our servers by running below command
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  cat &lt;&lt;EOF &gt; /etc/yum.repos.d/kubernetes.repo
+  [kubernetes]
+  name=Kubernetes
+  baseurl=https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+  enabled=1
+  gpgcheck=1
+  repo_gpgcheck=1
+  gpgkey=https://packages.cloud.google.com/yum/doc/yum-key.gpg
+      https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg
+  EOF
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Install kubernetes components</strong> : Install the kubernetes binaries kubeadm, kubectl and kubelet using the yum command.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  yum update -y
+  yum install -y kubelet kubeadm kubectl
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Restart servers</strong> : Reboot the servers by issuing the below command. This is required to apply and persist all the settings we have done so far.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  reboot
+</code></pre></div>    </div>
+  </li>
+  <li><strong>Restart services</strong>: Login to each of the server and start docker and kubelet services by running the below commands.
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  systemctl start docker &amp;&amp; systemctl enable docker
+  systemctl start kubelet &amp;&amp; systemctl enable kubelet
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p><strong>Change cgroup drivers</strong>: It is important that docker-ce and kubernetes belong to the same cgroup. We can check the docker c-group by issuing the  command <code class="highlighter-rouge">docker info | grep -i cgroup</code>.</p>
+
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  kubernetes1 ~]# docker info | grep -i cgroup
+  Cgroup Driver: cgroupfs
+</code></pre></div>    </div>
+    <p>And change the kubernetes cgroup to cgroupfs by issuing the command below</p>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  sed -i 's/cgroup-driver=systemd/cgroup-driver=cgroupfs/g' /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+</code></pre></div>    </div>
+    <p>Once these steps are complete, reload the systemd service and restart the kubelet service by using the command below. After these services restarted, we are ready to initialize our cluster.</p>
+    <div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl daemon-reload
+systemctl restart kubelet
+</code></pre></div>    </div>
+    <h2 id="3-configure-kubernetes-master-and-initialize-cluster">3. Configure kubernetes master and initialize cluster.</h2>
+  </li>
+</ul>
+
+<h3 id="initialize-master">Initialize master</h3>
+<p>Login to the server which you have decided to make the master. In our case we want kubernetes1.oslo.sysco.no to act as master so we do an ssh login and run the below command.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubeadm init --apiserver-advertise-address=&lt;server_ip&gt; --pod-network-cidr=10.244.0.0/16
+</code></pre></div></div>
+<p>Replace the <strong>server_ip</strong> above with the IP of your master. The other supporting cluster services/nodes will connect to this IP while forming the cluster. For example in our case the it looks like</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# kubeadm init --apiserver-advertise-address=192.168.37.48 --pod-network-cidr=10.244.0.0/16
+</code></pre></div></div>
+
+<p>Once the command is successful, you will get a token which other nodes will use to join to the cluster. This will be displayed on your terminal and will look something like</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
+</code></pre></div></div>
+<p>You should carefully save this token. Your Kubernetes master should be initialized successfully by now.</p>
+
+<h3 id="create-kube-configuration-in-home-directory">Create kube configuration in home directory</h3>
+<p>To start using your cluster, you need to run the following as a regular user.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre></div></div>
+
+<h3 id="install-flannel-network">Install flannel network</h3>
+<p>You must deploy a pod network before anything will actually function properly. We will next, deploy the flannel network to the kubernetes cluster using the kubectl command. To check other networking options that can be used with kubernetes, please have a look <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">here</a>.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml
+</code></pre></div></div>
+<p>Check if all the components are deployed properly</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# kubectl get nodes
+NAME                        STATUS     ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready      master   7m18s   v1.13.1
+</code></pre></div></div>
+<p>Also check if all required pods are running properly.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-86c58d9df4-kjmxn                            1/1     Running   0          63m
+kube-system   coredns-86c58d9df4-lfx4p                            1/1     Running   0          63m
+kube-system   etcd-kubernetes1.oslo.sysco.no                      1/1     Running   0          62m
+kube-system   kube-apiserver-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+kube-system   kube-controller-manager-kubernetes1.oslo.sysco.no   1/1     Running   0          63m
+kube-system   kube-flannel-ds-amd64-mjn4j                         1/1     Running   0          55m
+kube-system   kube-proxy-w8rfz                                    1/1     Running   0          55m
+kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+</code></pre></div></div>
+
+<h3 id="configure-correct-firewall-rules">Configure correct firewall rules</h3>
+<p>In order to enable efficient communication between the nodes, we need to configure a few firewall rules on each node.</p>
+
+<p>Run below commands to bridge IP traffic to iptables</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat &lt;&lt;EOF &gt;  /etc/sysctl.d/k8s.conf
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+EOF
+</code></pre></div></div>
+<p>And apply these settings by running the below command</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sysctl --system
+</code></pre></div></div>
+
+<p>You should see your latest k8s.conf being applied in the output</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# sysctl --system
+* Applying /usr/lib/sysctl.d/00-system.conf ...
+net.bridge.bridge-nf-call-ip6tables = 0
+net.bridge.bridge-nf-call-iptables = 0
+net.bridge.bridge-nf-call-arptables = 0
+* Applying /usr/lib/sysctl.d/10-default-yama-scope.conf ...
+* Applying /usr/lib/sysctl.d/50-default.conf ...
+kernel.sysrq = 16
+kernel.core_uses_pid = 1
+net.ipv4.conf.default.rp_filter = 1
+net.ipv4.conf.all.rp_filter = 1
+net.ipv4.conf.default.accept_source_route = 0
+net.ipv4.conf.all.accept_source_route = 0
+net.ipv4.conf.default.promote_secondaries = 1
+net.ipv4.conf.all.promote_secondaries = 1
+fs.protected_hardlinks = 1
+fs.protected_symlinks = 1
+* Applying /etc/sysctl.d/99-sysctl.conf ...
+* Applying /etc/sysctl.d/k8s.conf ...
+net.bridge.bridge-nf-call-ip6tables = 1
+net.bridge.bridge-nf-call-iptables = 1
+* Applying /etc/sysctl.conf ...
+</code></pre></div></div>
+
+<p>Once these settings are applied, create rules to allow traffic on few ports that are used by kubernetes.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>firewall-cmd --zone=public --add-port=6443/tcp --permanent
+firewall-cmd --zone=public --add-port=80/tcp --permanent
+firewall-cmd --zone=public --add-port=443/tcp --permanent
+firewall-cmd --zone=public --add-port=18080/tcp --permanent
+firewall-cmd --zone=public --add-port=10254/tcp --permanent
+firewall-cmd --reload
+</code></pre></div></div>
+<p>Run above commands on each of the nodes. To get a better understanding of how networking works in kubernetes, please refer to the below links:</p>
+<ul>
+  <li><a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">cluster-networking</a></li>
+  <li><a href="https://itnext.io/kubernetes-networking-behind-the-scenes-39a1ab1792bb">kubernetes-networking-behind-the-scenes</a></li>
+  <li><a href="https://cloud.google.com/kubernetes-engine/docs/concepts/network-overview">gcp-kubernets-networking-overview</a></li>
+  <li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_atomic_host/7/html/getting_started_with_kubernetes/troubleshooting_kubernetes#troubleshooting_kubernetes_systemd_services">k8s-troubleshooting-systemd-issues</a></li>
+</ul>
+
+<p><strong>Alternate work around</strong> : Use the below steps only if you are setting up a demo cluster OR using the cluster in the controlled lab environment. Do not use below alternative in production settings.</p>
+
+<p>In a controlled lab environment, you can skip the above steps by simply disabling the firewalls on each node. To do this login to each server and run below commands in sequence</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>systemctl stop firewalld
+systemctl disable firewalld
+</code></pre></div></div>
+
+<p>You should see and output similar to below on each of the node</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# systemctl stop firewalld
+[root@kubernetes1 ~]# systemctl disable firewalld
+Removed symlink /etc/systemd/system/dbus-org.fedoraproject.FirewallD1.service.
+Removed symlink /etc/systemd/system/basic.target.wants/firewalld.service.
+</code></pre></div></div>
+<p>Once again, please note that firewalls should never be disabled on production clusters.</p>
+
+<h2 id="4-add-nodes-to-the-cluster">4. Add nodes to the cluster</h2>
+<p>We have successfully initialized our cluster and in the previous section we have verified that the master node is up and running. It time now to add the nodes <code class="highlighter-rouge">kubernetes2.oslo.sysco.no</code> and <code class="highlighter-rouge">kubernetes3.oslo.sysco.no</code> to our cluster. In order to do that, ssh to each of the nodes and run the <code class="highlighter-rouge">kubeadm join</code> command that we copied earlier.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes2 ~]#  kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
+[root@kubernetes3 ~]#  kubeadm join 192.168.37.48:6443 --token 8hp10q.i4ln2b1ogof374aj --discovery-token-ca-cert-hash sha256:6a59c9b03fa971aef94d61a4f4c1a6b085308f88aab4db1a4affda8d65987867
+</code></pre></div></div>
+<p>Wait for some minutes and login to the master node. Run the below command again to verify if the nodes have joined the cluster.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl get nodes
+kubectl get pods --all-namespaces
+
+[root@kubernetes1 ~]# kubectl get nodes
+NAME                        STATUS   ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready    master   12m     v1.13.1
+kubernetes2.oslo.sysco.no   Ready    &lt;none&gt;   5m37s   v1.13.1
+kubernetes3.oslo.sysco.no   Ready    &lt;none&gt;   4m4s    v1.13.1
+
+[root@kubernetes1 ~]# kubectl get pods --all-namespaces
+NAMESPACE     NAME                                                READY   STATUS    RESTARTS   AGE
+kube-system   coredns-86c58d9df4-kjmxn                            1/1     Running   0          63m
+kube-system   coredns-86c58d9df4-lfx4p                            1/1     Running   0          63m
+kube-system   etcd-kubernetes1.oslo.sysco.no                      1/1     Running   0          62m
+kube-system   kube-apiserver-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+kube-system   kube-controller-manager-kubernetes1.oslo.sysco.no   1/1     Running   0          63m
+kube-system   kube-flannel-ds-amd64-gm72r                         1/1     Running   0          56m
+kube-system   kube-flannel-ds-amd64-mjn4j                         1/1     Running   0          55m
+kube-system   kube-flannel-ds-amd64-nhz9b                         1/1     Running   0          58m
+kube-system   kube-proxy-2qqjc                                    1/1     Running   0          56m
+kube-system   kube-proxy-l69ld                                    1/1     Running   0          63m
+kube-system   kube-proxy-w8rfz                                    1/1     Running   0          55m
+kube-system   kube-scheduler-kubernetes1.oslo.sysco.no            1/1     Running   0          62m
+
+</code></pre></div></div>
+<p>kubernetes2 and kubernetes3 have been added to the kubernetes cluster.</p>
+
+<p><strong>Note</strong> : Please note again that no application will be deployed onto master node <code class="highlighter-rouge">kubernetes1.oslo.sysco.no</code>. The master will only be utilized for coordination between nodes.</p>
+
+<h2 id="5-deploying-and-testing-services">5. Deploying and Testing services.</h2>
+<p>Now we have successfully setup our kubernetes cluster, its time to deploy some application and test them.</p>
+
+<p><strong>Note</strong> :</p>
+<ul>
+  <li>Before we proceed, its important to understand that for on-premise kubernetes cluster, service-type = “LoadBalancer” will not assign a static IP address. That option is only available for Cloud providers like AWS and GCP which can easily hook on the events generated and create a LoadBalancer to provide an external IP. For more details check out the details provided <a href="https://kubernetes.io/docs/tasks/access-application-cluster/create-external-load-balancer/#external-load-balancer-providers">here</a>.</li>
+  <li>All the kubernetes command would be run on master node. The pods, deployments and services can only be created via <code class="highlighter-rouge">kubectl</code> on the master node.</li>
+</ul>
+
+<p>In this example, we will create a simple nginx deployment, expose the deployments as service of type=”NodePort”. This will schedule our pods on kubernetes nodes and give them a random port, we will be able to access the services scheduled on the different nodes.</p>
+
+<p>Before starting login to the master node via ssh. We will operate from the master node to deploy and test.</p>
+
+<h3 id="create-deployments">Create deployments</h3>
+<p>From the master node, run below command to create a standalone nginx deployment on kubernetes:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create deployment nginx --image=nginx
+</code></pre></div></div>
+<p>This will create a single deployment on the cluster. What we want is to have atleast 2 replicas for this deployment so that we can test the deployment on both nodes. In order to do this, we need to change the existing deployment configuration and change replica from 1 to 2. Run the command below and change “spec.replicas” property to 2.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl edit deployment nginx
+</code></pre></div></div>
+
+<p>kubectl will give you a confirmation that deployment configuration is edited. You can also confirm the number of running pods as 2.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# kubectl edit deployment nginx
+deployment.extensions/nginx edited
+
+[root@kubernetes1 ~]# kubectl get pods
+NAME                   READY   STATUS    RESTARTS   AGE
+nginx-5c7588df-bhgvl   1/1     Running   0          22m
+nginx-5c7588df-vvs55   1/1     Running   0          23m
+</code></pre></div></div>
+
+<h3 id="expose-deployement-as-service">Expose deployement as service</h3>
+<p>In order to access the nginx pods, we need to expose them as a service. Use the following command to expose nginx deployment as service.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl create service nodeport nginx --tcp=80:80
+</code></pre></div></div>
+<p>This will expose our deployments as service available on the 2 nodes. The port will be a random port (default: 30000-32767), and each Node will proxy that port (the same port number on every Node) into your Service.</p>
+
+<p>You can check the status of your service as below.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[root@kubernetes1 ~]# kubectl get svc
+NAME         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+kubernetes   ClusterIP   10.96.0.1      &lt;none&gt;        443/TCP        3d22h
+nginx        NodePort    10.98.240.53   &lt;none&gt;        80:32701/TCP   21m
+</code></pre></div></div>
+
+<h3 id="testing-the-services">Testing the services</h3>
+<p>The service nginx is now available on both the nodes. From the master node run the below commands to send http request on port 32701.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl kubernetes2.oslo.sysco.no:32701
+curl kubernetes3.oslo.sysco.no:32701
+</code></pre></div></div>
+<p>In both the cases you will get a response like below:</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html&gt;</span>
+<span class="nt">&lt;head&gt;</span>
+<span class="nt">&lt;title&gt;</span>Welcome to nginx!<span class="nt">&lt;/title&gt;</span>
+<span class="nt">&lt;style&gt;</span>
+    <span class="nt">body</span> <span class="p">{</span>
+        <span class="nl">width</span><span class="p">:</span> <span class="m">35em</span><span class="p">;</span>
+        <span class="nl">margin</span><span class="p">:</span> <span class="m">0</span> <span class="nb">auto</span><span class="p">;</span>
+        <span class="nl">font-family</span><span class="p">:</span> <span class="n">Tahoma</span><span class="p">,</span> <span class="n">Verdana</span><span class="p">,</span> <span class="n">Arial</span><span class="p">,</span> <span class="nb">sans-serif</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+<span class="nt">&lt;/head&gt;</span>
+<span class="nt">&lt;body&gt;</span>
+<span class="nt">&lt;h1&gt;</span>Welcome to nginx!<span class="nt">&lt;/h1&gt;</span>
+<span class="nt">&lt;p&gt;</span>If you see this page, the nginx web server is successfully installed and
+working. Further configuration is required.<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;p&gt;</span>For online documentation and support please refer to
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://nginx.org/"</span><span class="nt">&gt;</span>nginx.org<span class="nt">&lt;/a&gt;</span>.<span class="nt">&lt;br/&gt;</span>
+Commercial support is available at
+<span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">"http://nginx.com/"</span><span class="nt">&gt;</span>nginx.com<span class="nt">&lt;/a&gt;</span>.<span class="nt">&lt;/p&gt;</span>
+
+<span class="nt">&lt;p&gt;&lt;em&gt;</span>Thank you for using nginx.<span class="nt">&lt;/em&gt;&lt;/p&gt;</span>
+<span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>These service can also be accessed from outside using browser or terminal. To quickly test, we can use the terminal on our local machine and run below command.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prakhar@tardis:~|⇒  curl 192.168.37.49:32701
+prakhar@tardis:~|⇒  curl 192.168.37.50:32701
+</code></pre></div></div>
+<p>In both the cases, we will get an output similar to above. On accessing the urls via browser, you should see an output like below</p>
+
+<p><img src="/images/2019-01-01-install-kubernetes-kubeadm/nginx.png" alt="nginx-on-k8s" /></p>
+
+<p>Our kubernetes setup is ready to be used.</p>
+
+<h2 id="6-accessing-kubernetes-cluster-from-local-machine">6. Accessing kubernetes cluster from local machine</h2>
+<p>So far we have configured our cluster and we can make deployements via kubectl. But to do that we need to login to our master node. It is actually possible to proxy connections to master from local machine run administer master from localhost. We need to perform below steps in order to enable that configuration.</p>
+
+<h3 id="install-kubectl-on-local-machine">Install kubectl on local machine</h3>
+<p>If you are using a debian based local machine like me, you can use the below steps to install kubectl on your local machine.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>sudo apt-get update &amp;&amp; sudo apt-get install -y apt-transport-https
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+sudo apt-get update
+sudo apt-get install -y kubectl
+</code></pre></div></div>
+<p>If you are using other operating system, the steps to install kubectl for your OS are defined <a href="https://kubernetes.io/docs/tasks/tools/install-kubectl/">here</a>.</p>
+
+<h3 id="copy-kubernetes-configuration-from-the-master">Copy kubernetes configuration from the master</h3>
+<p>You can manually copy the config file <code class="highlighter-rouge">$HOME/.kube/config</code> on your master node and save it locally. If you are using linux based system, you could run the below command to copy the file from master locally.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>scp root@192.168.37.48:/etc/kubernetes/admin.conf .
+</code></pre></div></div>
+<p>This will copy the admin.conf file from remote master to your current directory. Make sure to replace the IP above with IP of your master node. You would be prompted to enter the password.</p>
+
+<h3 id="proxy-connections-to-master-using-kubectl-proxy">Proxy connections to master using <code class="highlighter-rouge">kubectl proxy</code></h3>
+
+<p>Now that we have the config file, we can connect to the master by following below steps.</p>
+
+<p>Open a terminal and proxy the kubectl connections to master. Remember to point to the admin.conf file that we have downloded in previous step.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kubectl --kubeconfig ./admin.conf proxy
+</code></pre></div></div>
+<p>You should get an output like below</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf proxy
+Starting to serve on 127.0.0.1:8001
+</code></pre></div></div>
+
+<h3 id="connect-to-master-using-adminconf">Connect to master using admin.conf</h3>
+<p>Now you can connect to the master node using kubectl like below.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf  get pods                           
+NAME                   READY   STATUS    RESTARTS   AGE
+nginx-5c7588df-bhgvl   1/1     Running   0          45h
+nginx-5c7588df-vvs55   1/1     Running   0          46h
+
+prakhar@tardis:~|⇒  kubectl --kubeconfig ./admin.conf  get nodes
+NAME                        STATUS   ROLES    AGE     VERSION
+kubernetes1.oslo.sysco.no   Ready    master   4d20h   v1.13.1
+kubernetes2.oslo.sysco.no   Ready    &lt;none&gt;   4d20h   v1.13.1
+kubernetes3.oslo.sysco.no   Ready    &lt;none&gt;   4d20h   v1.13.1
+</code></pre></div></div>
+
+<p>Now you will be able to connect and deploy applications from localhost.</p>
+
+<h2 id="7-where-to-go-from-here">7. Where to go from here</h2>
+<p>In this blog post we have only touched the surface of setting up kubernetes. As mentioned before, kubernetes provides varities of services which we have not focussed on here. Some of good to have features include load balancing an on-permise kubernetes cluster, security considerations, optimizing cluster for DevOps and many more.</p>
+
+<p>We will cover these concepts in upcoming blogs. For those of you who are interested to read further here are some quick links from <a href="https://kubernetes.io/docs/setup/independent/create-cluster-kubeadm/#whats-next">kubernetes</a> website that might help:</p>
+<ul>
+  <li>Verify that your cluster is running properly with <a href="https://github.com/heptio/sonobuoy">Sonobuoy</a>.</li>
+  <li>Learn about kubeadm’s advanced usage in the <a href="https://kubernetes.io/docs/reference/setup-tools/kubeadm/kubeadm/">kubeadm reference documentation</a>.</li>
+  <li>Learn more about Kubernetes concepts and <a href="https://kubernetes.io/docs/reference/kubectl/overview/">kubectl</a>.</li>
+  <li>Configure log rotation. You can use logrotate for that. When using Docker, you can specify log rotation options for Docker daemon, for example <code class="highlighter-rouge">--log-driver=json-file --log-opt=max-size=10m --log-opt=max-file=5</code>. See <a href="https://docs.docker.com/config/daemon/">Configure and troubleshoot the Docker daemon</a> for more details.</li>
+</ul>
+
+<h2 id="8-sources-and-references">8. Sources and References.</h2>
+
+<ul>
+  <li>kubernetes website : <a href="https://kubernetes.io/">kubernetes.io</a></li>
+  <li>kubernetes with ansible : <a href="https://www.digitalocean.com/community/tutorials/how-to-create-a-kubernetes-1-10-cluster-using-kubeadm-on-centos-7">k8s-ansible</a></li>
+  <li>kubernetes configuration best practices : <a href="https://kubernetes.io/docs/concepts/configuration/overview/">best-practices</a></li>
+  <li>using flannel with kubernetes: <a href="https://coreos.com/flannel/docs/latest/kubernetes.html">k8s-flannel</a></li>
+  <li>this blog post : <a href="https://www.howtoforge.com/tutorial/centos-kubernetes-docker-cluster/#step-kubernetes-cluster-initialization">centos-k8s</a></li>
+</ul>
+:ET

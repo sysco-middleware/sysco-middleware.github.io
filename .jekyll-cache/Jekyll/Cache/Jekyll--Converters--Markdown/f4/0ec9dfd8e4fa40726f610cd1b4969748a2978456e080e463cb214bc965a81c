@@ -1,0 +1,46 @@
+I"0<p>Weblogic server FTP JCA adapter can be used to connect to both FTP and SFTP servers from Java, SOA and OSB applications. Therefore it is important to understand how it is working and how it can be properly tuned.</p>
+
+<p>In this short tutorial we are going to explain how to retrieve files from FTP/SFTP server in the right order based on the file timestamp, by using Weblogic server FTP JCA adapter. This is a common problem when we have to assure ourselves that file with most recent content comes last. Especially is that problem important when files are having exactly the same content that has to be written to the e.g. database, but with no sequence marker or timestamp information within the file.</p>
+
+<h1 id="configuring-adapter">Configuring adapter</h1>
+
+<p>Beauty of using JCA adapters is that they are easily configurable without requiring any special programing from the client side. Many tools (e.g. JDeveloper tools for SOA/OSB development) have nice wizards to configure them. However not all of the adapter options are available in wizards and some of the options are available only on the server side.</p>
+
+<p>Let’s have a look what we need to do on the server side and than on the client side in order to configure adapter properly so that it can download files in the right order</p>
+
+<h2 id="server-side-adapter-configuration-for-timestamp-based-file-retrieval">Server side adapter configuration for timestamp based file retrieval</h2>
+
+<p>One important thing to mention is that successful timestamp based retrieval will not be done in clustered environment without doing this step. So first thing we have to do is to log in into Weblogic console as administrators and than from <strong>Domain Structure-&gt;Deployments</strong> menu we have to choose <strong>FtpAdapter</strong> in the list of available deployments. On the <strong>Settings for FtpAdapter</strong> page we have to click on <strong>Configuration</strong> and then <strong>Outbound Connection Pools</strong> tab. From that tab we will click on the configuration that we have created to connect to our server.</p>
+
+<p>Now on the very first page of the adapter configuration options, as seen on the picture bellow, we have to replace <strong>ControlDir</strong> option value <strong>${user.dir}</strong> with the value that points to the directory found on the shared mounted drive that is accessible by all cluster members</p>
+
+<p><img src="/images/2017-08-17-Reading_files_with_JCA_adapter/ControlDir.PNG" alt="" /></p>
+
+<p>Fig. 1. FTP JCA adapter Control directory configuration option</p>
+
+<p>To this directory copy of each file downloaded from server is made. Therefore it is important that server administrators create purging script that will periodically remove this files. This files are consulted by each cluster node in order to see which file has been already downloaded. This is important for example when the files form FTP server are not removed. But this files can be used by adapter to check and compare timestamps with files that are still on the server and not downloaded yet.</p>
+
+<h2 id="client-side-adapter-configuration-for-timestamp-based-file-retrieval">Client side adapter configuration for timestamp based file retrieval</h2>
+
+<p>When we have configured server side Control directory we can proceed with client side JCA adapter configuration. This is done by modifiying <strong>*.jca</strong> files which are main configuration files for JCA adapters. To retrieve files based on timestamp we have to add this two important properties:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"ListSorter"</span> <span class="na">value=</span><span class="s">"oracle.tip.adapter.file.inbound.listing.TimestampSorterAscending"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;property</span> <span class="na">name=</span><span class="s">"SingleThreadModel"</span> <span class="na">value=</span><span class="s">"true"</span><span class="nt">/&gt;</span>
+</code></pre></div></div>
+
+<p>First property assures that retrieving of files will be done in right timestamp order (for descending order TimestampSorterDescending class has to be used). Second option suppresses parallelism thus avoiding that potentially one file can be read faster and thus come to the client earlier.</p>
+
+<p>Options can be inserted into the file as seen on the picture bellow.</p>
+
+<p><img src="/images/2017-08-17-Reading_files_with_JCA_adapter/OrderProperties.PNG" alt="" /></p>
+
+<p>Fig. 2. Setting right FTP JCA adapter properties for timestamp based file retreival</p>
+
+<h1 id="testing-the-concept">Testing the concept</h1>
+
+<p>To test the configured functionality we have created several files with alphabetic names sorted in descendant order while timestamp value has been sorted ascending. All files had the same size. After logging the downloaded files we have observed that server is providing us files in right timestamp based order.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>By using <strong>ListSortorder</strong> property we can configure many other sorting capabilities including custom ones, but possibility to retrieve files from FTP server based on the file timestamp value is extremely useful especially when we can not deduce from the content of the file the right data order.</p>
+:ET

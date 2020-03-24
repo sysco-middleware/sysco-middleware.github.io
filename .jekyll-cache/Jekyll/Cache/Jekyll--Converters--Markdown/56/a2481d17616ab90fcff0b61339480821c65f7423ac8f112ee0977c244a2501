@@ -1,0 +1,441 @@
+I"��<p>Oracle SOA Suite includes a component to handle user interactions into a SCA application:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0840-610x210.png" alt="SOA Composite with Human Task" /></p>
+
+<p>When you have completed Human Task definition, JDeveloper gives you the option to implement this tasks using Oracle ADF. This could be the easiest way if you have developers trained to use this framework. In this case you can go ahead and start implementing your task flows and pages. As this option is shown by default, you may think this is the only option to implement a Human Task.</p>
+
+<p><a href="http://redstack.wordpress.com/2012/02/10/writing-a-human-task-ui-in-net-casp-net-or-in-fact-anything-other-than-adf/">As Mark Nelson published a couple of years ago</a>, you can implement these Human Tasks with .Net and any other technology capable to consume SOAP web services.</p>
+
+<p>In this post, I will explain how to implement Human Tasks with any Java EE framework (including ADF).</p>
+
+<p>This post will include two steps:</p>
+
+<p>How to call your application from Oracle Business Process Workspace
+How to integrate your application with Human Task services
+Let’s started with one simple business process: <a href="https://github.com/jeqo/htjavaee/tree/base_bpm_project">https://github.com/jeqo/htjavaee/tree/base_bpm_project</a></p>
+
+<p>This project includes:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904-610x237.png" alt="SCA Application" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0904_001.png" alt="BPMN Process" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0907-610x278.png" alt="Human Task Definition" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0914.png" alt="XML Schema" /></p>
+
+<p>This project was created with <a href="http://www.oracle.com/technetwork/developer-tools/jdev/downloads/jdeveloper11117-1917330.html">JDeveloper 11g (11.1.1.7)</a></p>
+
+<p>We could deploy and test this process from Enterprise Manager application.</p>
+
+<h2 id="invoke-my-application-from-workspace">Invoke my application from Workspace</h2>
+
+<p>Now, how my application would be invoked from Workspace application? As ADF does: adding an URI on Human Task configuration.</p>
+
+<ol>
+  <li>Go to Enterprise Manager application.</li>
+  <li>Go to the Composite Application deployed and select the Human Task component:</li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0925-610x387.png" alt="Composite on EM" /></p>
+
+<ol>
+  <li>Go to the Administration tab and add a new URI:</li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0927.png" alt="Human Task configuration" /></p>
+
+<p>This form ask for your application name (only descriptive), and the URL parameters: host, port and context.</p>
+
+<ol>
+  <li>To test your configuration, let’s start a new process instance to create a new task on Workspace application:</li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0934-610x280.png" alt="Human Task configuration" /></p>
+
+<p>And this should be the result:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0936-610x248.png" alt="Oracle BPM Workspace" /></p>
+
+<p>This is because obviously we don’t deploy an application with this URL (yet).</p>
+
+<ol>
+  <li>Let’s create a new Java EE web application. I’m using NetBeans and Glassfish, you can use your favorite IDE and Java EE application server. Then I will add some JavaScript code to print the request parameters sent by Workspace application:</li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0940-610x422.png" alt="NetBeans project - 1" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0941-610x302.png" alt="NetBeans project - 2" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0942-610x195.png" alt="NetBeans project - 3" /></p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_0944.png" alt="NetBeans project - 4" /></p>
+
+<p>Now, try to open your task again:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/Captura.png" alt="NetBeans project - 5" /></p>
+
+<p>Let’s add this code to your HTML page to print the parameters:</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="cp">&lt;!DOCTYPE html&gt;</span>
+    <span class="nt">&lt;html&gt;</span>
+        <span class="nt">&lt;head&gt;</span>
+            <span class="nt">&lt;title&gt;</span>Start Page<span class="nt">&lt;/title&gt;</span>
+            <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"Content-Type"</span> <span class="na">content=</span><span class="s">"text/html; charset=UTF-8"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;/head&gt;</span>
+        <span class="nt">&lt;body&gt;</span>
+            <span class="nt">&lt;h1&gt;</span>Hello World!<span class="nt">&lt;/h1&gt;</span>
+            <span class="nt">&lt;script&gt;</span>
+                <span class="c1">// get the current URL</span>
+                <span class="kd">var</span> <span class="nx">url</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">location</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span>
+                <span class="c1">//get the parameters</span>
+                <span class="nx">url</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/</span><span class="se">\?(</span><span class="sr">.+</span><span class="se">)</span><span class="sr">$/</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="nb">RegExp</span><span class="p">.</span><span class="nx">$1</span><span class="p">;</span>
+                <span class="c1">// split up the query string and store in an</span>
+                <span class="c1">// associative array</span>
+                <span class="kd">var</span> <span class="nx">params</span> <span class="o">=</span> <span class="nx">params</span><span class="p">.</span><span class="nx">split</span><span class="p">(</span><span class="dl">"</span><span class="s2">&amp;</span><span class="dl">"</span><span class="p">);</span>
+                <span class="kd">var</span> <span class="nx">queryStringList</span> <span class="o">=</span> <span class="p">{};</span>
+
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">params</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span>
+                <span class="p">{</span>
+                    <span class="kd">var</span> <span class="nx">tmp</span> <span class="o">=</span> <span class="nx">params</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">split</span><span class="p">(</span><span class="dl">"</span><span class="s2">=</span><span class="dl">"</span><span class="p">);</span>
+                    <span class="nx">queryStringList</span><span class="p">[</span><span class="nx">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="nx">unescape</span><span class="p">(</span><span class="nx">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+                <span class="p">}</span>
+
+                <span class="c1">// print all querystring in key value pairs</span>
+                <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">queryStringList</span><span class="p">)</span>
+                    <span class="nb">document</span><span class="p">.</span><span class="nx">write</span><span class="p">(</span><span class="nx">i</span> <span class="o">+</span> <span class="dl">"</span><span class="s2"> = </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">queryStringList</span><span class="p">[</span><span class="nx">i</span><span class="p">]</span> <span class="o">+</span> <span class="dl">"</span><span class="s2">&lt;br/&gt;</span><span class="dl">"</span><span class="p">);</span>
+            <span class="nt">&lt;/script&gt;</span>
+        <span class="nt">&lt;/body&gt;</span>
+    <span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p>Now, you can refresh your task to see all the parameters:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1001-610x366.png" alt="Human Task parameters" /></p>
+
+<p>The most important parameters here are: <strong>bpmWorklistTaskId (Task ID)</strong> and <strong>bpmWorklistContent (Security token)</strong>.</p>
+
+<p>Source code: <a href="https://github.com/jeqo/htjavaee/tree/base_java_ee">https://github.com/jeqo/htjavaee/tree/base_java_ee</a></p>
+
+<h2 id="integrating-my-java-ee-application-with-human-task-engine">Integrating my Java EE application with Human Task engine</h2>
+
+<p>Now that I know how to invoke my application, how can I get the task details (payload, attachments, comments, task metadata)?</p>
+
+<p>There are two basic Web Services available to ask for this information:</p>
+
+<ul>
+  <li><strong>TaskQueryService</strong>: to get the task details by ID. <em>http(s)://[host]:[port]/integration/services/TaskQueryService/TaskQueryService?wsdl</em></li>
+  <li><strong>TaskService</strong>: to update the task. <em>http(s)://[host]:[port]/integration/services/TaskService/TaskServicePort?wsdl</em></li>
+</ul>
+
+<p>Now we need implement the following steps to implement our Human Task UI with Java EE:</p>
+
+<ol>
+  <li>Create the SOAP web services clients (JAX-WS)</li>
+  <li>Create the Java classes from Human Task XSDs (JAXB)</li>
+  <li>Implement the UI</li>
+</ol>
+
+<h3 id="creating-human-task-web-services-proxies">Creating Human Task Web Services Proxies</h3>
+
+<ol>
+  <li>
+    <p>Create a Java project.</p>
+  </li>
+  <li>
+    <p>Then, create a Web Service Proxy using the URLs mentioned above:</p>
+  </li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1042-610x429.png" alt="Create WS Proxies" /></p>
+
+<p>Validate <em>“Wrapper Style”</em> property is disable on Web Service Reference:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1049-610x409.png" alt="WS Proxies - 2" /></p>
+
+<p>Now we should have access to these services. To test this, you can use the test case below:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">jeqo</span><span class="o">.</span><span class="na">htcore</span><span class="o">;</span>
+ 
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService_Service</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.WorkflowErrorMessage</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Level</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Logger</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.common.model.CredentialType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.common.model.WorkflowContextType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+
+    <span class="cm">/**
+     *
+     * @author Jorge Quilcate
+     */</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ServiceAccessTest</span> <span class="o">{</span>
+
+        <span class="kd">public</span> <span class="nf">ServiceAccessTest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">testAccess</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">TaskQueryService_Service</span> <span class="n">taskQueryServiceClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TaskQueryService_Service</span><span class="o">();</span>
+
+                <span class="nc">TaskQueryService</span> <span class="n">taskQueryService</span> <span class="o">=</span> <span class="n">taskQueryServiceClient</span><span class="o">.</span><span class="na">getTaskQueryServicePort</span><span class="o">();</span>
+
+                <span class="nc">CredentialType</span> <span class="n">credentialType</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CredentialType</span><span class="o">();</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setLogin</span><span class="o">(</span><span class="s">"weblogic"</span><span class="o">);</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="s">"welcome1"</span><span class="o">);</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setIdentityContext</span><span class="o">(</span><span class="s">"jazn.com"</span><span class="o">);</span>
+
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Authenticating..."</span><span class="o">);</span>
+                <span class="nc">WorkflowContextType</span> <span class="n">workflowContextType</span> <span class="o">=</span> <span class="n">taskQueryService</span><span class="o">.</span><span class="na">authenticate</span><span class="o">(</span><span class="n">credentialType</span><span class="o">);</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Authenticated to TaskQueryService"</span><span class="o">);</span>
+
+                <span class="n">assertNotNull</span><span class="o">(</span><span class="n">workflowContextType</span><span class="o">);</span>
+
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">WorkflowErrorMessage</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="nc">ServiceAccessTest</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()).</span><span class="na">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="na">SEVERE</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="creating-java-classes-from-human-task-xsd">Creating Java classes from Human Task XSD</h3>
+
+<ol>
+  <li>Create a JAXB Binding from [Human Task name]Payload.xsd:</li>
+</ol>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1107-610x470.png" alt="XSD to Java - 1" /></p>
+
+<p>Compile the project, and now we should have all the required classes to interact with the Human Task engine.</p>
+
+<p>To test this, we can run the following use case:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">jeqo</span><span class="o">.</span><span class="na">htcore</span><span class="o">;</span>
+
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.task.Humantask1PayloadType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService_Service</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.WorkflowErrorMessage</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.math.BigInteger</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Level</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Logger</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBContext</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBElement</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBException</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.Unmarshaller</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.common.model.CredentialType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.common.model.WorkflowContextType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.query.model.TaskDetailsByNumberRequestType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.task.model.Task</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">org.example.schema.processschema.ProcessType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">org.junit.Test</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">static</span> <span class="n">org</span><span class="o">.</span><span class="na">junit</span><span class="o">.</span><span class="na">Assert</span><span class="o">.*;</span>
+    <span class="kn">import</span> <span class="nn">org.w3c.dom.Node</span><span class="o">;</span>
+
+    <span class="cm">/**
+     *
+     * @author Jorge Quilcate
+     */</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">TaskDetailsAccessTest</span> <span class="o">{</span>
+
+        <span class="kd">public</span> <span class="nf">TaskDetailsAccessTest</span><span class="o">()</span> <span class="o">{</span>
+        <span class="o">}</span>
+
+        <span class="nd">@Test</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">accessTaskDetails</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">TaskQueryService_Service</span> <span class="n">taskQueryServiceClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TaskQueryService_Service</span><span class="o">();</span>
+
+                <span class="nc">TaskQueryService</span> <span class="n">taskQueryService</span> <span class="o">=</span> <span class="n">taskQueryServiceClient</span><span class="o">.</span><span class="na">getTaskQueryServicePort</span><span class="o">();</span>
+
+                <span class="nc">CredentialType</span> <span class="n">credentialType</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">CredentialType</span><span class="o">();</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setLogin</span><span class="o">(</span><span class="s">"weblogic"</span><span class="o">);</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setPassword</span><span class="o">(</span><span class="s">"welcome1"</span><span class="o">);</span>
+                <span class="n">credentialType</span><span class="o">.</span><span class="na">setIdentityContext</span><span class="o">(</span><span class="s">"jazn.com"</span><span class="o">);</span>
+
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Authenticating..."</span><span class="o">);</span>
+                <span class="nc">WorkflowContextType</span> <span class="n">workflowContextType</span> <span class="o">=</span> <span class="n">taskQueryService</span><span class="o">.</span><span class="na">authenticate</span><span class="o">(</span><span class="n">credentialType</span><span class="o">);</span>
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Authenticated to TaskQueryService"</span><span class="o">);</span>
+
+                <span class="nc">TaskDetailsByNumberRequestType</span> <span class="n">taskDetailsRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TaskDetailsByNumberRequestType</span><span class="o">();</span>
+                <span class="c1">//Enter a task number running on Oracle BPM</span>
+                <span class="n">taskDetailsRequest</span><span class="o">.</span><span class="na">setTaskNumber</span><span class="o">(</span><span class="k">new</span> <span class="nc">BigInteger</span><span class="o">(</span><span class="s">"200023"</span><span class="o">));</span>
+                <span class="n">taskDetailsRequest</span><span class="o">.</span><span class="na">setWorkflowContext</span><span class="o">(</span><span class="n">workflowContextType</span><span class="o">);</span>
+
+                <span class="nc">Task</span> <span class="n">task</span> <span class="o">=</span> <span class="n">taskQueryService</span><span class="o">.</span><span class="na">getTaskDetailsByNumber</span><span class="o">(</span><span class="n">taskDetailsRequest</span><span class="o">);</span>
+
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Task: "</span> <span class="o">+</span> <span class="n">task</span><span class="o">.</span><span class="na">getSystemAttributes</span><span class="o">().</span><span class="na">getTaskId</span><span class="o">());</span>
+
+                <span class="nc">Node</span> <span class="n">payload</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Node</span><span class="o">)</span> <span class="n">task</span><span class="o">.</span><span class="na">getPayload</span><span class="o">();</span>
+
+                <span class="c1">//JAXB Unmarshalling</span>
+                <span class="nc">JAXBContext</span> <span class="n">context</span> <span class="o">=</span> <span class="nc">JAXBContext</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"com.oracle.xmlns.bpel.workflow.task"</span><span class="o">);</span>
+                <span class="nc">Unmarshaller</span> <span class="n">unmarshaller</span> <span class="o">=</span> <span class="n">context</span><span class="o">.</span><span class="na">createUnmarshaller</span><span class="o">();</span>
+                <span class="nc">JAXBElement</span><span class="o">&lt;</span><span class="nc">Humantask1PayloadType</span><span class="o">&gt;</span> <span class="n">payloadObject</span> <span class="o">=</span> <span class="o">(</span><span class="nc">JAXBElement</span><span class="o">&lt;</span><span class="nc">Humantask1PayloadType</span><span class="o">&gt;)</span> <span class="n">unmarshaller</span><span class="o">.</span><span class="na">unmarshal</span><span class="o">(</span><span class="n">payload</span><span class="o">,</span> <span class="nc">Humantask1PayloadType</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+
+                <span class="nc">ProcessType</span> <span class="n">dataObject</span> <span class="o">=</span> <span class="n">payloadObject</span><span class="o">.</span><span class="na">getValue</span><span class="o">().</span><span class="na">getDataObject</span><span class="o">();</span>
+
+                <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Payload: "</span> <span class="o">+</span> <span class="n">dataObject</span><span class="o">.</span><span class="na">getName</span><span class="o">());</span>
+
+                <span class="n">assertNotNull</span><span class="o">(</span><span class="n">dataObject</span><span class="o">);</span>
+
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">WorkflowErrorMessage</span> <span class="o">|</span> <span class="nc">JAXBException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="nc">TaskDetailsAccessTest</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()).</span><span class="na">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="na">SEVERE</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>To set the task number, we can use the task already assigned. Go to EM and into the running instance you can check the task number:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1123-610x285.png" alt="Instance Number" /></p>
+
+<h3 id="implementing-the-ui">Implementing the UI</h3>
+
+<p>In this case I will use Primefaces 5.0 as JSF implementation.</p>
+
+<p>This is the page flow:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444.png" alt="JSF Page Flow" /></p>
+
+<p>And this is the page code:</p>
+
+<p><img src="/images/2014-06-06-implementing-human-tasks-with-java-ee/2014-06-05_1444_001-610x386.png" alt="JSF Page Code" /></p>
+
+<p>The managed bean is the most important class here:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="kn">package</span> <span class="n">com</span><span class="o">.</span><span class="na">jeqo</span><span class="o">.</span><span class="na">htweb</span><span class="o">.</span><span class="na">view</span><span class="o">;</span>
+
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.task.Humantask1PayloadType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.TaskQueryService_Service</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskqueryservice.WorkflowErrorMessage</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskservice.StaleObjectFaultMessage</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskservice.TaskService</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskservice.TaskServiceContextTaskBaseType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskservice.TaskService_Service</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">com.oracle.xmlns.bpel.workflow.taskservice.UpdateTaskOutcomeType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Level</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">java.util.logging.Logger</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.annotation.PostConstruct</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.faces.bean.ManagedBean</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.faces.bean.ViewScoped</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.faces.context.FacesContext</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.servlet.http.HttpServletRequest</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBContext</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBElement</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.JAXBException</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.Marshaller</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">javax.xml.bind.Unmarshaller</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.common.model.WorkflowContextType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.query.model.TaskDetailsByIdRequestType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.query.model.WorkflowContextRequestType</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">oracle.bpel.services.workflow.task.model.Task</span><span class="o">;</span>
+    <span class="kn">import</span> <span class="nn">org.w3c.dom.Node</span><span class="o">;</span>
+
+    <span class="cm">/**
+     *
+     * @author Jorge Quilcate
+     */</span>
+    <span class="nd">@ManagedBean</span>
+    <span class="nd">@ViewScoped</span>
+    <span class="kd">public</span> <span class="kd">class</span> <span class="nc">ApprovalTaskBean</span> <span class="o">{</span>
+
+        <span class="kd">private</span> <span class="nc">Task</span> <span class="n">task</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">Humantask1PayloadType</span> <span class="n">payload</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">WorkflowContextType</span> <span class="n">workflowContext</span><span class="o">;</span>
+        <span class="kd">private</span> <span class="nc">JAXBElement</span><span class="o">&lt;</span><span class="nc">Humantask1PayloadType</span><span class="o">&gt;</span> <span class="n">payloadObject</span><span class="o">;</span>
+
+        <span class="nd">@PostConstruct</span>
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">init</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nc">HttpServletRequest</span> <span class="n">request</span> <span class="o">=</span> <span class="o">(</span><span class="nc">HttpServletRequest</span><span class="o">)</span> <span class="nc">FacesContext</span><span class="o">.</span><span class="na">getCurrentInstance</span><span class="o">().</span><span class="na">getExternalContext</span><span class="o">().</span><span class="na">getRequest</span><span class="o">();</span>
+
+            <span class="nc">String</span> <span class="n">taskId</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"bpmWorklistTaskId"</span><span class="o">);</span>
+            <span class="nc">String</span> <span class="n">context</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="na">getParameter</span><span class="o">(</span><span class="s">"bpmWorklistContext"</span><span class="o">);</span>
+
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Task ID: "</span> <span class="o">+</span> <span class="n">taskId</span><span class="o">);</span>
+            <span class="nc">System</span><span class="o">.</span><span class="na">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Context: "</span> <span class="o">+</span> <span class="n">context</span><span class="o">);</span>
+
+            <span class="n">TaskQueryService_Service</span> <span class="n">taskQueryServiceClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TaskQueryService_Service</span><span class="o">();</span>
+            <span class="nc">TaskQueryService</span> <span class="n">taskQueryService</span> <span class="o">=</span> <span class="n">taskQueryServiceClient</span><span class="o">.</span><span class="na">getTaskQueryServicePort</span><span class="o">();</span>
+
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="nc">WorkflowContextRequestType</span> <span class="n">getWorkflowContextRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">WorkflowContextRequestType</span><span class="o">();</span>
+                <span class="n">getWorkflowContextRequest</span><span class="o">.</span><span class="na">setToken</span><span class="o">(</span><span class="n">context</span><span class="o">);</span>
+
+                <span class="n">workflowContext</span> <span class="o">=</span> <span class="n">taskQueryService</span><span class="o">.</span><span class="na">getWorkflowContext</span><span class="o">(</span><span class="n">getWorkflowContextRequest</span><span class="o">);</span>
+                <span class="nc">TaskDetailsByIdRequestType</span> <span class="n">getTaskDetailsByIdRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TaskDetailsByIdRequestType</span><span class="o">();</span>
+                <span class="n">getTaskDetailsByIdRequest</span><span class="o">.</span><span class="na">setTaskId</span><span class="o">(</span><span class="n">taskId</span><span class="o">);</span>
+                <span class="n">getTaskDetailsByIdRequest</span><span class="o">.</span><span class="na">setWorkflowContext</span><span class="o">(</span><span class="n">workflowContext</span><span class="o">);</span>
+
+                <span class="n">task</span> <span class="o">=</span> <span class="n">taskQueryService</span><span class="o">.</span><span class="na">getTaskDetailsById</span><span class="o">(</span><span class="n">getTaskDetailsByIdRequest</span><span class="o">);</span>
+
+                <span class="nc">Node</span> <span class="n">payloadNode</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Node</span><span class="o">)</span> <span class="n">task</span><span class="o">.</span><span class="na">getPayload</span><span class="o">();</span>
+
+                <span class="nc">JAXBContext</span> <span class="n">jaxbContext</span> <span class="o">=</span> <span class="nc">JAXBContext</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"com.oracle.xmlns.bpel.workflow.task"</span><span class="o">);</span>
+                <span class="nc">Unmarshaller</span> <span class="n">unmarshaller</span> <span class="o">=</span> <span class="n">jaxbContext</span><span class="o">.</span><span class="na">createUnmarshaller</span><span class="o">();</span>
+                <span class="n">payloadObject</span> <span class="o">=</span> <span class="o">(</span><span class="nc">JAXBElement</span><span class="o">&lt;</span><span class="nc">Humantask1PayloadType</span><span class="o">&gt;)</span> <span class="n">unmarshaller</span><span class="o">.</span><span class="na">unmarshal</span><span class="o">(</span><span class="n">payloadNode</span><span class="o">,</span> <span class="nc">Humantask1PayloadType</span><span class="o">.</span><span class="na">class</span><span class="o">);</span>
+                <span class="n">payload</span> <span class="o">=</span> <span class="n">payloadObject</span><span class="o">.</span><span class="na">getValue</span><span class="o">();</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">WorkflowErrorMessage</span> <span class="o">|</span> <span class="nc">JAXBException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="nc">ApprovalTaskBean</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()).</span><span class="na">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="na">SEVERE</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">approve</span><span class="o">()</span> <span class="o">{</span>
+
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">payloadObject</span><span class="o">.</span><span class="na">setValue</span><span class="o">(</span><span class="n">payload</span><span class="o">);</span>
+
+                <span class="nc">JAXBContext</span> <span class="n">jaxbContext</span> <span class="o">=</span> <span class="nc">JAXBContext</span><span class="o">.</span><span class="na">newInstance</span><span class="o">(</span><span class="s">"com.oracle.xmlns.bpel.workflow.task"</span><span class="o">);</span>
+                <span class="nc">Marshaller</span> <span class="n">marshaller</span> <span class="o">=</span> <span class="n">jaxbContext</span><span class="o">.</span><span class="na">createMarshaller</span><span class="o">();</span>
+
+                <span class="n">marshaller</span><span class="o">.</span><span class="na">marshal</span><span class="o">(</span><span class="n">payloadObject</span><span class="o">,</span> <span class="o">(</span><span class="nc">Node</span><span class="o">)</span> <span class="n">task</span><span class="o">.</span><span class="na">getPayload</span><span class="o">());</span>
+
+                <span class="n">TaskService_Service</span> <span class="n">taskServiceClient</span> <span class="o">=</span> <span class="k">new</span> <span class="n">TaskService_Service</span><span class="o">();</span>
+                <span class="nc">TaskService</span> <span class="n">taskService</span> <span class="o">=</span> <span class="n">taskServiceClient</span><span class="o">.</span><span class="na">getTaskServicePort</span><span class="o">();</span>
+
+                <span class="nc">TaskServiceContextTaskBaseType</span> <span class="n">updateTaskRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">TaskServiceContextTaskBaseType</span><span class="o">();</span>
+                <span class="n">updateTaskRequest</span><span class="o">.</span><span class="na">setTask</span><span class="o">(</span><span class="n">task</span><span class="o">);</span>
+                <span class="n">updateTaskRequest</span><span class="o">.</span><span class="na">setWorkflowContext</span><span class="o">(</span><span class="n">workflowContext</span><span class="o">);</span>
+
+                <span class="n">task</span> <span class="o">=</span> <span class="n">taskService</span><span class="o">.</span><span class="na">updateTask</span><span class="o">(</span><span class="n">updateTaskRequest</span><span class="o">);</span>
+
+                <span class="nc">UpdateTaskOutcomeType</span> <span class="n">updateTaskOutcomeRequest</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">UpdateTaskOutcomeType</span><span class="o">();</span>
+                <span class="n">updateTaskOutcomeRequest</span><span class="o">.</span><span class="na">setOutcome</span><span class="o">(</span><span class="s">"APPROVE"</span><span class="o">);</span>
+                <span class="n">updateTaskOutcomeRequest</span><span class="o">.</span><span class="na">setTask</span><span class="o">(</span><span class="n">task</span><span class="o">);</span>
+                <span class="n">updateTaskOutcomeRequest</span><span class="o">.</span><span class="na">setWorkflowContext</span><span class="o">(</span><span class="n">workflowContext</span><span class="o">);</span>
+
+                <span class="n">taskService</span><span class="o">.</span><span class="na">updateTaskOutcome</span><span class="o">(</span><span class="n">updateTaskOutcomeRequest</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">StaleObjectFaultMessage</span> <span class="o">|</span> <span class="n">com</span><span class="o">.</span><span class="na">oracle</span><span class="o">.</span><span class="na">xmlns</span><span class="o">.</span><span class="na">bpel</span><span class="o">.</span><span class="na">workflow</span><span class="o">.</span><span class="na">taskservice</span><span class="o">.</span><span class="na">WorkflowErrorMessage</span> <span class="o">|</span> <span class="nc">JAXBException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="nc">Logger</span><span class="o">.</span><span class="na">getLogger</span><span class="o">(</span><span class="nc">ApprovalTaskBean</span><span class="o">.</span><span class="na">class</span><span class="o">.</span><span class="na">getName</span><span class="o">()).</span><span class="na">log</span><span class="o">(</span><span class="nc">Level</span><span class="o">.</span><span class="na">SEVERE</span><span class="o">,</span> <span class="kc">null</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+
+            <span class="k">return</span> <span class="s">"completed"</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">String</span> <span class="nf">reject</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="s">"completed"</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="nc">Humantask1PayloadType</span> <span class="nf">getPayload</span><span class="o">()</span> <span class="o">{</span>
+            <span class="k">return</span> <span class="n">payload</span><span class="o">;</span>
+        <span class="o">}</span>
+
+        <span class="kd">public</span> <span class="kt">void</span> <span class="nf">setPayload</span><span class="o">(</span><span class="nc">Humantask1PayloadType</span> <span class="n">payload</span><span class="o">)</span> <span class="o">{</span>
+            <span class="k">this</span><span class="o">.</span><span class="na">payload</span> <span class="o">=</span> <span class="n">payload</span><span class="o">;</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+</code></pre></div></div>
+
+<p>The init method use the security token to authenticate the application with the Human Task service and find the task by ID.</p>
+
+<p>The approve method updates the task and its outcome.</p>
+
+<p>This video shows the Workspace behavior:</p>
+
+<iframe width="560" height="315" src="//www.youtube.com/embed/bR76-9GSkiU" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+:ET

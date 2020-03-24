@@ -1,0 +1,8 @@
+I"V<h2 id="using-jmx-to-monitor-oracle-weblogic-partitions">Using JMX to Monitor Oracle Weblogic Partitions</h2>
+
+<p>In this document a monitor is created using JMX. This monitor is made to show the performance of a Data Source, which is deployed on a partition. Thus, MBeans are used not only to discover managed servers, but also to show partitions. In addition, as the main goal is to show the connection pool’s runtime state (do not forget data sources belong to partitions) MBeans are also used to discover the resource groups related to each partition. Furthermore, the program includes a class that generates JDBC connection leaks to demonstrate how to monitor this kind of problems.</p>
+
+<p>You can download the guide using the following link.</p>
+
+<p><a href="/files/guides/JMXMonitoring.pdf"><strong><em>JMX and partitions</em></strong></a></p>
+:ET

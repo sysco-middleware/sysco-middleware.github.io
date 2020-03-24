@@ -1,0 +1,249 @@
+I"�><p>Ansible is an automation tool that is recognized for be simple and
+powerful at the same time. From my experience, I can say this is mainly
+because of its scripting language: YAML, and its agentless architecture.</p>
+
+<h2 id="yaml-and-ansible-components">YAML and Ansible components</h2>
+
+<blockquote>
+  <p>“YAML is a human friendly data serialization standard for all programming
+  languages” (Source: http://yaml.org/)</p>
+</blockquote>
+
+<p>This means that is actually really easy to understand and start working
+with it. For example:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">webserver</span>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">package</span><span class="pi">:</span> <span class="s">apache</span>
+        <span class="s">state</span><span class="pi">:</span> <span class="s">latest</span>
+</code></pre></div></div>
+
+<p>This <strong>“playbook”</strong> says that a <em>webserver</em> host have 1 task: install latest
+Apache package, using a package <strong>“module”</strong>.</p>
+
+<p>Pretty simple eh?</p>
+
+<p>To check how powerful Ansible can be, take a look on their Module Index:
+http://docs.ansible.com/ansible/modules_by_category.html</p>
+
+<p>To achieve reusability: These tasks can be grouped
+as <strong>“roles”</strong>, that are a compilation of tasks
+to execute a common goal. e.g: a Java role to install Java SDK on your
+node.</p>
+
+<p>Those are the main components of Ansible: Playbooks, Modules, and Roles.</p>
+
+<h2 id="agentless-architecture">Agentless architecture</h2>
+
+<p>This means that you don’t need a “ansible-client” in your node to run
+tasks, you can have a master that says what you need to run on your nodes.
+This is an important feature compared to other tools where
+you need a “***-client” to make your node translate and run commands:
+https://www.ansible.com/benefits-of-agentless-architecture</p>
+
+<p>You don’t need a client but you need some packages. But this packages
+are ssh and python-related and they are very common:
+http://docs.ansible.com/ansible/intro_installation.html#managed-node-requirements</p>
+
+<p>Ansible also have a default “push” approach, where a master sends commands
+to your nodes. This is also different from other tools that are based on a
+“pull” approach, where the node asks for commands, although this is also
+possible with Ansible:
+http://docs.ansible.com/ansible/playbooks_intro.html#ansible-pull</p>
+
+<p>There is a final feature I would like to mention: Connection Type.
+By default Ansible relies on SSH to send commands to your nodes, but
+there are cases where SSH is not an option or you don’t need it:
+local commands, Windows, Docker.</p>
+
+<p>In these cases, connection type option enables your playbook to run
+commands using WinRM in the case of Windows,
+or Docker execute commands on Docker containers, or just run local
+commands in your workstation.</p>
+
+<p>Let’s check some code:</p>
+
+<p>I have implemented a Ansible Role to install Java some time ago:
+https://github.com/jeqo/ansible-role-java</p>
+
+<p>Just to explain what it does, let’s check the main task file:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+  <span class="pi">-</span> <span class="na">debug</span><span class="pi">:</span>
+      <span class="na">msg</span><span class="pi">:</span> <span class="s2">"</span><span class="s">This</span><span class="nv"> </span><span class="s">Java</span><span class="nv"> </span><span class="s">Provider</span><span class="nv"> </span><span class="s">will</span><span class="nv"> </span><span class="s">be</span><span class="nv"> </span><span class="s">installed:</span><span class="nv"> </span><span class="s">"</span>
+
+  <span class="pi">-</span> <span class="na">include</span><span class="pi">:</span> <span class="s">install-.yml</span>
+
+  <span class="pi">-</span> <span class="na">include</span><span class="pi">:</span> <span class="s">set-java-home.yml</span>
+</code></pre></div></div>
+
+<p>It will show a message, include a task depending on “java_provider”
+variable and finally set JAVA_HOME variable.</p>
+
+<p>Also this role has a “tests” directory where you can add playbooks
+to test your role:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">test install openjdk jdk 8 on centos </span><span class="m">7</span>
+  <span class="na">hosts</span><span class="pi">:</span> <span class="s">test01</span>
+  <span class="na">roles</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">role</span><span class="pi">:</span> <span class="s">java</span>
+      <span class="na">java_provider</span><span class="pi">:</span> <span class="s">openjdk</span>
+      <span class="na">java_version</span><span class="pi">:</span> <span class="m">8</span>
+      <span class="na">java_type</span><span class="pi">:</span> <span class="s">jdk</span>
+<span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">test install openjdk jre 8 on centos </span><span class="m">7</span>
+  <span class="na">hosts</span><span class="pi">:</span> <span class="s">test02</span>
+  <span class="na">roles</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">role</span><span class="pi">:</span> <span class="s">java</span>
+      <span class="na">java_provider</span><span class="pi">:</span> <span class="s">openjdk</span>
+      <span class="na">java_version</span><span class="pi">:</span> <span class="m">8</span>
+      <span class="na">java_type</span><span class="pi">:</span> <span class="s">jre</span>
+<span class="c1"># more tests...</span>
+</code></pre></div></div>
+
+<p>And I test this playbooks using Vagrant and VirtualBox:</p>
+
+<div class="language-ruby highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="no">Vagrant</span><span class="p">.</span><span class="nf">configure</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="k">do</span> <span class="o">|</span><span class="n">config</span><span class="o">|</span>
+
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">provision</span> <span class="s2">"ansible"</span> <span class="k">do</span> <span class="o">|</span><span class="n">ansible</span><span class="o">|</span>
+    <span class="n">ansible</span><span class="p">.</span><span class="nf">playbook</span> <span class="o">=</span> <span class="s2">"test.yml"</span>
+    <span class="n">ansible</span><span class="p">.</span><span class="nf">galaxy_role_file</span> <span class="o">=</span> <span class="s2">"roles.yml"</span>
+  <span class="k">end</span>
+
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="s2">"test01"</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+    <span class="n">node</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"jeqo/ansible-centos7"</span>
+  <span class="k">end</span>
+
+  <span class="n">config</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">define</span> <span class="s2">"test02"</span> <span class="k">do</span> <span class="o">|</span><span class="n">node</span><span class="o">|</span>
+    <span class="n">node</span><span class="p">.</span><span class="nf">vm</span><span class="p">.</span><span class="nf">box</span> <span class="o">=</span> <span class="s2">"jeqo/ansible-centos7"</span>
+  <span class="k">end</span>
+
+  <span class="c1"># more test nodes...</span>
+<span class="k">end</span>
+</code></pre></div></div>
+
+<p>So, lets test that OpenJDK 8 is running OK in Centos:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vagrant up test01
+...
+
+PLAY [test install openjdk jdk 8 on centos 7] **********************************
+
+TASK [setup] *******************************************************************
+ok: [test01]
+
+TASK [java : debug] ************************************************************
+ok: [test01] =&gt; {
+    "msg": "This Java Provider will be installed: openjdk"
+}
+
+TASK [java : include] **********************************************************
+included: /home/jeqo/dev/jeqo/ansible-role-java/tests/roles/java/tasks/install-openjdk.yml for test01
+
+TASK [java : set_fact] *********************************************************
+skipping: [test01]
+
+TASK [java : set_fact] *********************************************************
+ok: [test01]
+
+TASK [java : set_fact] *********************************************************
+skipping: [test01]
+
+TASK [java : set_fact] *********************************************************
+ok: [test01]
+
+TASK [java : install openjdk (debian)] *****************************************
+skipping: [test01]
+
+TASK [java : install openjdk (redhat)] *****************************************
+
+</code></pre></div></div>
+
+<p>But one thing I always want is to reuse this roles on Docker containers,
+without prepare a Container with SSH, that is recognized as an
+anti-pattern: https://jpetazzo.github.io/2014/06/23/docker-ssh-considered-evil/</p>
+
+<p>So, since Ansible 2.0 a Docker connection type is included OOTB, and
+I give it a try: https://github.com/jeqo/poc-ansible-docker</p>
+
+<p>I added a playbook to create a container:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+  <span class="na">connection</span><span class="pi">:</span> <span class="s">local</span>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">my container</span>
+      <span class="na">docker</span><span class="pi">:</span>
+        <span class="na">name</span><span class="pi">:</span> <span class="s">poccontainer</span>
+        <span class="na">image</span><span class="pi">:</span> <span class="s">centos</span>
+        <span class="na">command</span><span class="pi">:</span> <span class="s">sleep infinity</span>
+        <span class="na">state</span><span class="pi">:</span> <span class="s">started</span>
+</code></pre></div></div>
+
+<p>Here I’m using “connection: local” to execute commands locally.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ docker ps
+CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
+a5e49bd032be        centos              "sleep infinity"    About an hour ago   Up About an hour                        poccontainer
+</code></pre></div></div>
+
+<p>And once I have a container running, I can run this playbook:</p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">poccontainer</span>
+  <span class="na">connection</span><span class="pi">:</span> <span class="s">docker</span>
+  <span class="na">pre_tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">package</span><span class="pi">:</span> <span class="s">name=sudo</span>
+    <span class="pi">-</span> <span class="na">command</span><span class="pi">:</span> <span class="s2">"</span><span class="s">sed</span><span class="nv"> </span><span class="s">-i</span><span class="nv"> </span><span class="s">-e</span><span class="nv"> </span><span class="se">\"</span><span class="s">s/Defaults</span><span class="nv">    </span><span class="s">requiretty.*/</span><span class="nv"> </span><span class="s">#Defaults</span><span class="nv">    </span><span class="s">requiretty/g</span><span class="se">\"</span><span class="nv"> </span><span class="s">/etc/sudoers"</span>
+  <span class="na">roles</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">role</span><span class="pi">:</span> <span class="s">java</span>
+      <span class="na">java_provider</span><span class="pi">:</span> <span class="s">openjdk</span>
+      <span class="na">java_type</span><span class="pi">:</span> <span class="s">jdk</span>
+      <span class="na">java_version</span><span class="pi">:</span> <span class="m">8</span>
+</code></pre></div></div>
+
+<p>Pre-tasks are required to install sudo package and configure tty. And
+then run role as usual:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>$ ansible-playbook provisioning.yml -vvvv
+Using /home/jeqo/dev/jeqo/poc-ansible-docker/ansible.cfg as config file
+Loaded callback default of type stdout, v2.0
+2 plays in provisioning.yml
+
+PLAY ***************************************************************************
+
+TASK [setup] *******************************************************************
+ESTABLISH DOCKER CONNECTION FOR USER: None
+&lt;poccontainer&gt; EXEC ['/usr/bin/docker', 'exec', '-i', u'poccontainer', '/bin/sh', '-c', '/bin/sh -c \'( umask 22 &amp;&amp; mkdir -p "` echo $HOME/.ansible/tmp/ansible-tmp-1459355431.02-32251179247729 `" &amp;&amp; echo "` echo $HOME/.ansible/tmp/ansible-tmp-1459355431.02-32251179247729 `" )\'']
+&lt;poccontainer&gt; PUT /tmp/tmpNCOaxi TO /root/.ansible/tmp/ansible-tmp-1459355431.02-32251179247729/setup
+&lt;poccontainer&gt; EXEC ['/usr/bin/docker', 'exec', '-i', u'poccontainer', '/bin/sh', '-c', u'/bin/sh -c \'LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 LC_MESSAGES=en_US.UTF-8 /usr/bin/python /root/.ansible/tmp/ansible-tmp-1459355431.02-32251179247729/setup; rm -rf "/root/.ansible/tmp/ansible-tmp-1459355431.02-32251179247729/" &gt; /dev/null 2&gt;&amp;1\'']
+ok: [poccontainer]
+</code></pre></div></div>
+
+<h2 id="conclusions">Conclusions</h2>
+
+<ul>
+  <li>
+    <p>This samples show how versatile Ansible is, using roles and connection
+type. But there are more platforms where Ansible can fit, as with AWS:
+https://aws.amazon.com/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/ and other Cloud platforms: http://docs.ansible.com/ansible/list_of_cloud_modules.html</p>
+  </li>
+  <li>
+    <p>One question can be: Is this a replacement of Dockerfile? Maybe,
+depends on you. Dockerfile are very simple and only works with Docker.
+Dockerfile also has a nice feature to create an image each step, so
+you can distribute images easily. This is missing in Ansible, where
+you execute commands on a running Docker container. Also Ansible
+is missing commit and push tasks to put containers on Docker Hub,
+but you can replace it with local commands as here:</p>
+  </li>
+</ul>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="pi">-</span> <span class="na">hosts</span><span class="pi">:</span> <span class="s">127.0.0.1</span>
+  <span class="na">connection</span><span class="pi">:</span> <span class="s">local</span>
+  <span class="na">tasks</span><span class="pi">:</span>
+    <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">commit</span>
+      <span class="na">command</span><span class="pi">:</span> <span class="s">docker commit poccontainer</span>
+</code></pre></div></div>
+
+<p>Although Ansible also have a module to run Dockerfiles: http://docs.ansible.com/ansible/docker_image_module.html</p>
+
+<p>Hope this helps you to get started with Ansible and Docker.</p>
+:ET

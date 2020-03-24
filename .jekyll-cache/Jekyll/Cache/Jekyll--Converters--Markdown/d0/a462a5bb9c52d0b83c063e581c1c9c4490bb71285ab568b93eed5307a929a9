@@ -1,0 +1,80 @@
+I" <h1 id="introduction">Introduction</h1>
+
+<p>SOA Suite with Service Bus 12.2.1.2 provides a JavaScript action, which can be used in OSB pipelines. JavaScript action allows you to include snippets of JavaScript code to be executed during pipeline processing.</p>
+
+<p>The most common case for using JavaScript is when dealing with JSON objects in REST services. Now you can use JSON object directly by using the JavaScript activity. So rather than converting the payload to XML and using xQuery or XSLT for mapping the data here we can use JavaScript directly to manipulate the JSON object. The JavaScript engine used in Service Bus also allows you to easily reference XML elements, making it easier to handle both JSON and XML-style payloads in JavaScript.</p>
+
+<p>TIP: The JavaScript action is available for any pipeline type, not just Native REST pipelines.</p>
+
+<p>Service Bus binds a globally-scoped object called <strong>process</strong></p>
+
+<p>To access a $body variable in the Service Bus message context, use an expression like the following:</p>
+
+<p><strong>process.body</strong></p>
+
+<p>To create a variable in the Service Bus message context, use an expression like the following:</p>
+
+<p><strong>process.newVar = …;</strong></p>
+
+<p>To delete a variable, use the JavaScript delete operator:</p>
+
+<p><strong>delete process.var;</strong></p>
+
+<p>To access a variable, use below JavaScript:</p>
+
+<p><strong>process.firstName = process.body.employees.firstName;</strong></p>
+
+<p>The following expression returns the value of the inbound HTTP Content-Type header:</p>
+
+<p><strong>process.inbound.ctx::transport.ctx::request.tp::headers.http::[“Content-Type”].text()</strong></p>
+
+<h1 id="demo">Demo</h1>
+<p>In this demo example I will demonstrate how to use JSON as a Request and emphasis on fetching the JSON payload using JavaScript activity.</p>
+
+<p>First we will create a simple HTTP Transport with REST as a request service which we can do like in the next pictures following the create wizard.</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/01_RestTransport.jpg" alt="" /></p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/02_RestProxyCreate.jpg" alt="" /></p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/03_RestProxyCreate.jpg" alt="" /></p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/04_RestProxyCreate.jpg" alt="" /></p>
+
+<p>And this should be result in the project Design view.</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/04_RestProxyFinal.jpg" alt="" /></p>
+
+<p>Now we will open the pipeline view and create Pipeline Pair in which we have Request and Response pipelines. In the Request pipeline we will use JavaScript activity to retrieve the JSON payload data. And in Response pipeline a Replace activity for mapping the JSON data to an XML message as an example.</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/05_PipelineDev.jpg" alt="" /></p>
+
+<p>Below is our JSON Request Payload:</p>
+
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+ </span><span class="nl">"employees"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+  </span><span class="nl">"firstName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"John"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"lastName"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Doe"</span><span class="w">
+ </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+
+<p>For Retrieving <strong>firstName</strong> and <strong>lastName</strong> from JSON Request, below is JavaScript Expressions in the Request Stage:</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/06_JavaScript.jpg" alt="" /></p>
+
+<p>In the Response Stage, in a replace action we will create a simple mapping for an XML Response.</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/07_ReplaceXML.jpg" alt="" /></p>
+
+<h1 id="testing">Testing</h1>
+
+<p>And now we are set to deploy our integration and do a first test. 
+In the Service Bus Test console select Media Type: application/json and paste the JSON payload as in picture below.</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/08_TestingPayload.png" alt="" /></p>
+
+<p>This should be a result of our test:</p>
+
+<p><img src="/images/2019-02-17-Retrieve-data-from-JSON-Using-JavaScript-Expressions-in-Oracle-Service-Bus-12c/09_TestResultRESTJSONJavaScript.jpg" alt="" /></p>
+:ET

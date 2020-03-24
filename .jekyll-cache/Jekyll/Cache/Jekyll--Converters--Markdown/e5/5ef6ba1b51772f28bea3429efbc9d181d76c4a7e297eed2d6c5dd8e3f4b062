@@ -1,0 +1,76 @@
+I"�<p>What do you feel when you hear word “database”? What about “database modelling”? Have you ever thought of spending some “quality” time with creating complex and adequate database model? If you feel eye twitching and sweat is running from your forehead then you are not a stranger to the world of eternal pain.</p>
+
+<ul>
+  <li><em>“It is you again?”</em></li>
+  <li><em>“Are you following us?”</em></li>
+  <li><em>“What do you want?”</em></li>
+</ul>
+
+<p>What I want is to discuss today a tool called SQL Developer Data Modeler (SQL DDM). As always, no 100 pages analysis, only some particular facts from experience. Some time ago, I needed to develop database model and my knowledge in this area at that point was so good.</p>
+
+<p><img src="/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/Planetspic.jpg" alt="" /></p>
+
+<p><a href="http://www.darkroastedblend.com/2007/01/stars-planets-scale-comparison.html">Source</a></p>
+
+<p>So, after some internet surfing I found several options which are available on the market as a free of charge tools. One of them was SQL Developer Data Modeler.</p>
+
+<p><img src="/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/SQLModelerpic.png" alt="" /></p>
+
+<p>Strangely enough that product was a “rare guest” in the data modelling discussions on the different forums. Why strangely? That we will find out very soon. So, I started from preliminary GUI analysis.</p>
+
+<p><img src="/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/BabyPCpic.png" alt="" /></p>
+
+<p><a href="http://www.complex.com/pop-culture/2013/04/gallery-babies-using-technology/9">Source</a></p>
+
+<p>First impression was that it is very intuitive. If you have some basic database knowledge then you will be able to instantly distinguish elements in the browser tree. If no, then set of support links on the start page cover a lot of ground and basically make you able to create some basic database model very quick.</p>
+
+<ul>
+  <li><em>“So what? What about other options?”</em></li>
+  <li><em>“Yeah…is there anything that differentiates it?”</em></li>
+</ul>
+
+<p>Good point. After some experience with other modelling tools and extra analysis of the features with competitors, there are several distinguishing features (and yes, distinguishing feature doesn’t mean that they are not present in other modelling tools, but are rather rare).
+So, point number 1:</p>
+
+<blockquote>
+  <p><strong>“It is free of charge!”</strong></p>
+</blockquote>
+
+<p>Most of the other very good options are actually not free and sometimes even not very cheap. It will all come down to what functionality you really need and how advanced and complex you task is. Because SQL DDM covers an extensive field so what is the point to pay extra if you do not need it?
+Point number 2:</p>
+
+<blockquote>
+  <p><strong>“Runs on all major platforms and as a standalone software”</strong></p>
+</blockquote>
+
+<p>Apparently, there are a lot of software alternatives which are limited to some particular platforms which limits their flexibility. And yes, it is standalone. Yes it is also a part of SQL Developer, which is one of the leading database tools generally.
+Point number 3:</p>
+
+<blockquote>
+  <p><strong>“Combination of reverse and forward engineering, visual query builder, model/schema/Entity Relationship Diagram design and groupboxes”</strong></p>
+</blockquote>
+
+<p>In my humble opinion, combination of these features is what, is distinguishing top-level data modelling tools from others.
+Point number…whatever:</p>
+
+<blockquote>
+  <p><strong>“Multidimentional modelling and teamwork (repository) are available”</strong></p>
+</blockquote>
+
+<p>These features are definitely rare, which brings possibility to construct complex models for enterprise level needs involving several developers and designers at the same time.
+As an extra, there are several very useful features: built in quality check, three different notation types, DDL preview, easy reporting tool, advanced search engine, wide variety of import sources and export targets (yes, it is not only for Oracle databases, but also MS SQL Server and IBM DB2).</p>
+
+<p><img src="/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/NotBadpic.png" alt="" /></p>
+
+<p>I would not say that SQL DDM is absolutely best in all categories rather that for a free of charge tool, with all these features it is very hard to find a better alternative. That’s true, some pretty expensive software products are available and deliver very good performance and have very high flexibility, but again it is crucial to understand what the goals of the particular task are and what you actually need. SQL DDM will also suit very well for wide variety of users, starting from very beginners and up to experienced professional developers.
+For those who as interested, my advice is to read this blog - <a href="http://www.thatjeffsmith.com/data-modeling/">Check here</a>. It helped me to get going with the tool. A lot of good tips and tricks and generally it is a good practice to learn from the best. And, of course, official documentation is pretty well written - <a href="http://docs.oracle.com/cd/E37547_01/tutorials/tut_ide/tut_ide.html">right here</a>.</p>
+
+<p>As I mentioned before, I think…</p>
+
+<p><img src="/images/2016-12-06-SQL_Developer_Data_Modeler_It_is_sexy_but_nobody_knows_it/WhoCarespic.png" alt="" /></p>
+
+<p><a href="http://www.quickmeme.com/meme/3rkpgw">Source</a></p>
+
+<p>…that SQL Developer Data Modeler is a software which is quite underestimated and is actually robust option which can help you to tackle your daily/ad-hoc/fundamental data modelling tasks/issues.</p>
+
+:ET

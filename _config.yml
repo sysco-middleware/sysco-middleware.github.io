@@ -98,6 +98,9 @@ authors:
   AnitaLipsky:
     name: Anita Lipsky
     avatar: /images/avatars/anita.jpg
+  AshishKapoor:
+    name: Ashish Kapoor
+    avatar: /images/avatars/ashish.jpg
 
 # Build settings
 markdown:       kramdown

@@ -1,0 +1,79 @@
+I"�<p>In this post, we will learn how to get the value of some path parameters from the URI of a REST Service using OSB 12C. There we go:</p>
+
+<h3 id="use-case">Use case</h3>
+
+<p>First, lets think that we have to consume a sample REST service to create one employee in a specific organization, so we will have a dynamic path parameter after organizations that we are going to send in the URI.</p>
+
+<p>URI:</p>
+<ul>
+  <li>https://RestServices.com/api/organizations/1/employees</li>
+</ul>
+
+<p>Method:</p>
+<ul>
+  <li>POST</li>
+</ul>
+
+<p>ContentType:</p>
+<ul>
+  <li>application/json</li>
+</ul>
+
+<p>ContentBody</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="p">{</span>         
+   <span class="dl">"</span><span class="s2">employeeNumber</span><span class="dl">"</span><span class="p">:</span><span class="mi">123</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">fullName</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">Christopher Laurente</span><span class="dl">"</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">Age</span><span class="dl">"</span><span class="p">:</span><span class="mi">27</span><span class="p">,</span>
+   <span class="dl">"</span><span class="s2">Country</span><span class="dl">"</span><span class="p">:</span><span class="dl">"</span><span class="s2">Norway</span><span class="dl">"</span>
+   <span class="p">....</span>
+  <span class="p">}</span>
+
+</code></pre></div></div>
+
+<p>Then we start, open JDeveloper (In my case is 12.2.1), create a Service bus project and add a Rest component to External services in the composite as the image below.</p>
+
+<p><img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image1.jpg" alt="" /></p>
+
+<p>Set the name, for instance CompaniesAPI and check the box “Reference will be invoked by components using WSDL interfaces”.</p>
+
+<p><img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image2.jpg" alt="" /></p>
+
+<p>Set the Base URI as https://RestServices.com/api and add a Resource Path as organizations/{organization_id}/employees. See the image below.</p>
+
+<p><img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image3.jpg" alt="" /></p>
+
+<p>Then create a Operation Binding, call it CreateEmployee and select the HTTP Verb as POST.</p>
+
+<p><img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image4.jpg" alt="" /></p>
+
+<p>Now, we need to reference the path param called organization_id, for this we are going to use the variable $property according to oracle documentation
+https://docs.oracle.com/middleware/1213/osb/develop/GUID-C346DF7D-041D-4E10-BE1C-451F50719106.htm#OSBDV88240</p>
+
+<p><img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image5.jpg" alt="" /></p>
+
+<p>The variable called organizationId will be set in the metadata of the outbound request as the following structure:</p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;ctx:transport&gt;</span>
+ <span class="nt">&lt;ctx:request&gt;</span>
+   <span class="nt">&lt;headers</span> <span class="err">…</span><span class="nt">&gt;</span>
+   <span class="nt">&lt;ctx:user-metadata</span> <span class="na">name=</span><span class="s">"organizationId"</span> <span class="na">value=</span><span class="s">"1"</span> <span class="nt">/&gt;</span>
+ <span class="nt">&lt;/ctx:request&gt;</span>
+<span class="nt">&lt;/ctx:transport&gt;</span>
+</code></pre></div></div>
+
+<p>One of the challenges that I got was that I could not insert the metadata directly into the outbound variable, because I got CData error everytime that I tried. So what I did was assigning the whole value of the outbound in an auxiliar variable, insert the metadata into that aux variable and replace the outbound with the value of the auxiliar outbound.</p>
+
+<p>Assign to auxiliar variable
+<img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image6.jpg" alt="" /></p>
+
+<p>Insert metadata
+<img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image7.jpg" alt="" /></p>
+
+<p>Replace Outbound
+<img src="/images/2017-09-18-Rest-connector-Path-params-OSB-12C/Image8.jpg" alt="" /></p>
+
+<h3 id="conclusion">Conclusion</h3>
+
+<p>I’m gonna say that I had to review oracle documentation to understand how to use this REST component correctly and not always will be necessary to use this solution to send dynamic params in the URI (even for query params), because if is possible to use the content body to send these params then it will be straightforward to manage them rather than the solution that I described above.</p>
+:ET

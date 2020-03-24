@@ -1,0 +1,176 @@
+I"3K<h2 id="introduction">Introduction</h2>
+
+<p>Sesam is an integration platform. As any other integration platform, Sesam has a lot of connectors to read data from different sources which could be databases, API’s, streaming platforms such as Apache Kafka, or to send data to them.<br />
+Today we are going to write a simple connector to push data from Sesam datahub to Azure Service Bus. Sesam platform uses Docker to run extensions and every extension is actually a REST service which takes array of JSON objects as input (data sink service), or returns array of JSON objects (data source service), or do both in case of data transformation service.</p>
+
+<p>If you want to test it for youself, you will need to do 3 things:</p>
+<ul>
+  <li>Obtain Sesam account. We explained in <a href="http://blog.sysco.no/data/analysis/Making-data-pipelines-with-Sesam-and-Oslo-City-Bike-public-API-in-5-minutes/">this post</a> how to do that</li>
+  <li>Obtain Azure account <a href="https://azure.microsoft.com/en-us/free/">here</a></li>
+  <li><a href="https://docs.docker.com/install/">Install Docker</a></li>
+</ul>
+
+<p>We are going to use Python in this post, but you may use programming language of your choice.</p>
+
+<h2 id="lets-start">Let’s start</h2>
+<p>We are going to run Azure Service Bus sink service in isolated environment, so we don’t need to deal with things such as authentication. In such a case, all required information needed for service configuration must be provided through environmental variables. You can also use <a href="https://docs.sesam.io/configuration.html#environment-variables">Sesam Environment Variables</a> or <a href="https://docs.sesam.io/security.html#secrets-manager">Sesam vault</a> known as <em>Sesam secret manager</em> to provide for example credentials without exposing them.</p>
+
+<p>To connect to Azure Service Bus using SAS authentication schema we will need:</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">SERVICE_NAMESPACE</span>       <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_NAMESPACE"</span><span class="p">)</span>       <span class="c1"># Azure Service Bus service namespace
+</span><span class="n">SERVICE_SAS_TOKEN_NAME</span>  <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_SAS_TOKEN_NAME"</span><span class="p">)</span>  <span class="c1"># SAS key name
+</span><span class="n">SERVICE_SAS_TOKEN_VALUE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_SAS_TOKEN_VALUE"</span><span class="p">)</span> <span class="c1"># SAS key
+</span></code></pre></div></div>
+
+<p>And to implement a REST service that can communicate with Azure Service Bus in Python we need also 3 things</p>
+<ul>
+  <li>Azure Python library</li>
+  <li>Application server</li>
+  <li>Framework for creating web applications</li>
+</ul>
+
+<p>All these 3 requirements may be simply satisfied by placing them to file <em>requirements.txt</em> and instructing Python packet manager to install them. This will be done later when we build docker image and now you only need to store this file in your project folder.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>azure-servicebus==0.50.0
+waitress==1.2.1
+flask==1.0.2
+</code></pre></div></div>
+
+<p>Now it’s time to implement our service. This service doesn’t contain any built in security or authentication providers and is suitable to run only in isolated environment - inside of Sesam node.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+<span class="kn">import</span> <span class="nn">json</span>
+
+<span class="kn">from</span> <span class="nn">azure.servicebus.control_client</span> <span class="kn">import</span> <span class="n">ServiceBusService</span><span class="p">,</span> <span class="n">Message</span>
+<span class="kn">from</span> <span class="nn">waitress</span> <span class="kn">import</span> <span class="n">serve</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span><span class="p">,</span> <span class="n">Response</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">abort</span>
+
+<span class="n">APP</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">log_level</span> <span class="o">=</span> <span class="n">logging</span><span class="o">.</span><span class="n">getLevelName</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"LOG_LEVEL"</span><span class="p">,</span> <span class="s">"INFO"</span><span class="p">))</span>
+<span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">log_level</span><span class="p">)</span>
+
+<span class="n">SERVICE_NAMESPACE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_NAMESPACE"</span><span class="p">)</span>
+<span class="n">SERVICE_SAS_TOKEN_NAME</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_SAS_TOKEN_NAME"</span><span class="p">)</span>
+<span class="n">SERVICE_SAS_TOKEN_VALUE</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"SERVICE_SAS_TOKEN_VALUE"</span><span class="p">)</span>
+<span class="n">PAYLOAD_KEY</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">"PAYLOAD_KEY"</span><span class="p">)</span>
+
+
+<span class="o">@</span><span class="n">APP</span><span class="o">.</span><span class="n">route</span><span class="p">(</span><span class="s">"/&lt;queue_name&gt;"</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s">'POST'</span><span class="p">])</span>
+<span class="k">def</span> <span class="nf">process_request</span><span class="p">(</span><span class="n">queue_name</span><span class="p">):</span>
+    <span class="s">"""
+    Endpoint to publish messages to Azure service bus
+    :param queue_name: name of queue to publish messages to
+    :return:
+    """</span>
+    <span class="n">input_data</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">get_json</span><span class="p">()</span>
+    <span class="n">bus_service</span> <span class="o">=</span> <span class="n">ServiceBusService</span><span class="p">(</span><span class="n">service_namespace</span><span class="o">=</span><span class="n">SERVICE_NAMESPACE</span><span class="p">,</span>
+                                    <span class="n">shared_access_key_name</span><span class="o">=</span><span class="n">SERVICE_SAS_TOKEN_NAME</span><span class="p">,</span>
+                                    <span class="n">shared_access_key_value</span><span class="o">=</span><span class="n">SERVICE_SAS_TOKEN_VALUE</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="n">input_entity</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_data</span><span class="p">):</span>
+        <span class="n">data</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">input_entity</span><span class="p">[</span><span class="n">PAYLOAD_KEY</span><span class="p">]</span> <span class="k">if</span> <span class="n">PAYLOAD_KEY</span> <span class="k">else</span> <span class="n">input_entity</span><span class="p">)</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span>
+            <span class="s">"utf-8"</span><span class="p">)</span>
+        <span class="n">msg</span> <span class="o">=</span> <span class="n">Message</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">bus_service</span><span class="o">.</span><span class="n">send_queue_message</span><span class="p">(</span><span class="n">queue_name</span><span class="p">,</span> <span class="n">msg</span><span class="p">)</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">"Entity </span><span class="si">%</span><span class="s">s sent successfully"</span><span class="p">,</span> <span class="n">input_entity</span><span class="p">[</span><span class="s">"_id"</span><span class="p">])</span>
+        <span class="k">except</span> <span class="nb">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">logging</span><span class="o">.</span><span class="n">error</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+            <span class="n">abort</span><span class="p">(</span><span class="mi">500</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Response</span><span class="p">()</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">"__main__"</span><span class="p">:</span>
+    <span class="s">"""
+    Program entry point
+    """</span>
+    <span class="n">port</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s">'PORT'</span><span class="p">,</span> <span class="mi">5000</span><span class="p">)</span>
+    <span class="n">logging</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="s">"starting service on port </span><span class="si">%</span><span class="s">d"</span><span class="p">,</span> <span class="n">port</span><span class="p">)</span>
+    <span class="n">serve</span><span class="p">(</span><span class="n">APP</span><span class="p">,</span> <span class="n">host</span><span class="o">=</span><span class="s">'0.0.0.0'</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="n">port</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>This service has one endpoint that serves POST requests and takes queue name as path parameter. Payload must be an array of JSON objects. You may also assign and use environmental variable <em>PAYLOAD_KEY</em> if you don’t need to send a whole Sesam entity with its metadata but only a part of it.</p>
+
+<p>Next thing we need to do to complete our service is to create Docker image of it and push it to a Docker repository where Sesam will be able to pull it. I’m going to use public Dockerhub repository, but images may be placed in any docker repository including private repositories.</p>
+
+<p>Add Dockerfile to your project and build &amp; push image.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>FROM python:3-slim
+
+COPY ./* /service/
+WORKDIR /service
+
+RUN pip install -r requirements.txt
+
+EXPOSE 5000/tcp
+
+ENTRYPOINT ["python3"]
+CMD ["service.py"]
+</code></pre></div></div>
+
+<p>Now it’s time to use our newly created service to send some data from Sesam to Azure Service Bus.</p>
+
+<p>Login in into Sesam portal and join free of charge “Open Sesam” subscription (this subscription is for open data so don’t use it in production or with sensitive data).
+Press “Systems” and create new system using following system definition.</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"azure-sb-sink"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"system:microservice"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"docker"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"environment"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"SERVICE_NAMESPACE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$SECRET(service_namespace)"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"SERVICE_SAS_TOKEN_NAME"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$SECRET(service_sas_token_name)"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"SERVICE_SAS_TOKEN_VALUE"</span><span class="p">:</span><span class="w"> </span><span class="s2">"$SECRET(service_sas_token_value)"</span><span class="w">
+    </span><span class="p">},</span><span class="w">
+    </span><span class="nl">"image"</span><span class="p">:</span><span class="w"> </span><span class="s2">"&lt;location of your image&gt;"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"port"</span><span class="p">:</span><span class="w"> </span><span class="mi">5000</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"verify_ssl"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span><span class="p">}</span><span class="w">
+
+</span></code></pre></div></div>
+<p>Press “Save” - your system is stored. Then open “Secrets” tab and add following items to Sesam vault:</p>
+<ul>
+  <li>service_namespace - with your Azure Service Bus namespace</li>
+  <li>service_sas_token_name - with SAS token name</li>
+  <li>service_sas_token_value - with content of SAS token</li>
+</ul>
+
+<p>Now your system will be able to use them without exposing as plain text to everyone including yourself.</p>
+
+<p>We have now a data sink system ready to receive data, and next step is to send some data to it. Open “Pipes” menu and create new pipe using following pipe definition:</p>
+<div class="language-json highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span><span class="w">
+  </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"azure-sb-sink-pipe"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"pipe"</span><span class="p">,</span><span class="w">
+  </span><span class="nl">"source"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"embedded"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"entities"</span><span class="p">:</span><span class="w"> </span><span class="p">[{</span><span class="w">
+      </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"foo"</span><span class="w">
+    </span><span class="p">},</span><span class="w"> </span><span class="p">{</span><span class="w">
+      </span><span class="nl">"_id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"2"</span><span class="p">,</span><span class="w">
+      </span><span class="nl">"value"</span><span class="p">:</span><span class="w"> </span><span class="s2">"bar"</span><span class="w">
+    </span><span class="p">}]</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"sink"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"type"</span><span class="p">:</span><span class="w"> </span><span class="s2">"json"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"system"</span><span class="p">:</span><span class="w"> </span><span class="s2">"azure-sb-sink"</span><span class="p">,</span><span class="w">
+    </span><span class="nl">"url"</span><span class="p">:</span><span class="w"> </span><span class="s2">"my_queue"</span><span class="w">
+  </span><span class="p">},</span><span class="w">
+  </span><span class="nl">"pump"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w">
+    </span><span class="nl">"schedule_interval"</span><span class="p">:</span><span class="w"> </span><span class="mi">60</span><span class="w">
+  </span><span class="p">}</span><span class="w">
+</span><span class="p">}</span><span class="w">
+</span></code></pre></div></div>
+<p>We will use embedded data set with 2 simple entities.<br />
+That’s all! Now this pipe will send its embedded data to Azure Service Bus every 60 seconds.<br />
+In this post we described how to extend functionality of Sesam integration platform by adding a custom data sink connector with about 50 lines of code. We have achieved this by</p>
+
+<ol>
+  <li>implementing the connector microservice to post data Azure Service Bus, and making it available in DockerHub</li>
+  <li>adding a system in Sesam - which pulls the connecter image</li>
+  <li>adding a pipe to send data - which simply sends data</li>
+</ol>
+
+<p>In the same manner as a data sink service new data sources or data transformation services may be added. All of them could run on Sesam node using Docker, or be deployed somewhere else. Sesam supports basic and digest authentication schemas for such purposes. All communication with Sesam extensions is carried out via HTTP, and all data is transferred in JSON format.</p>
+:ET

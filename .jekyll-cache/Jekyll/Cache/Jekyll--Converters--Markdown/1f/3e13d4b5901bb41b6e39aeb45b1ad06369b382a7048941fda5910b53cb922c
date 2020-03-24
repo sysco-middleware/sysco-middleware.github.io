@@ -1,0 +1,177 @@
+I"9<h1 id="introduction">Introduction</h1>
+
+<p>In SYSCO AS we deal with a lot of data both structured and unstructured, streamed and batch.  <br />
+It comes from different sources and goes to different destinations, and in some situations we want to measure its quality.  <br />
+Data format may evolve over time and we need to have possibility to change rules dynamically without restarting working systems.</p>
+
+<p>In this article we will explain how Drools rule engine may be used to measure data quality,<br />
+where rules are separate from application logic and can be changed at runtime.</p>
+
+<h1 id="tools">Tools</h1>
+
+<p>JDK 7+, Maven, preferred IDE or text editor installed.</p>
+
+<h1 id="problem-description">Problem description</h1>
+
+<p>A system containing data about electrical installations with a lot of data sources from different organizations. <br />
+Data quality problems may occur often in such systems. Date formats, floating point delimiters,<br />
+geodata representation may differ. Typo and incorrect values may occur from time to time. So, let’s gonna fix it!</p>
+
+<p>We wrote a little micro-service application that fetches data from Elasticsearch instance,<br />
+processes it and puts into a Apache Kafka topic.</p>
+
+<p>To be able to load rules at runtime we place them in external folder.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nc">KieServices</span> <span class="n">ks</span> <span class="o">=</span> <span class="nc">KieServices</span><span class="o">.</span><span class="na">Factory</span><span class="o">.</span><span class="na">get</span><span class="o">();</span>
+<span class="nc">KieFileSystem</span> <span class="n">kfs</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="na">newKieFileSystem</span><span class="o">();</span>
+<span class="nc">KieRepository</span> <span class="n">kr</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="na">getRepository</span><span class="o">();</span>
+
+<span class="k">try</span> <span class="o">(</span><span class="nc">Stream</span><span class="o">&lt;</span><span class="nc">Path</span><span class="o">&gt;</span> <span class="n">paths</span> <span class="o">=</span> <span class="nc">Files</span><span class="o">.</span><span class="na">walk</span><span class="o">(</span><span class="nc">Paths</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"&lt;path to folder with rules&gt;"</span><span class="o">)))</span> <span class="o">{</span>
+	<span class="n">paths</span><span class="o">.</span><span class="na">filter</span><span class="o">(</span><span class="nl">Files:</span><span class="o">:</span><span class="n">isRegularFile</span><span class="o">).</span><span class="na">forEach</span><span class="o">((</span><span class="n">path</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+			<span class="nc">Resource</span> <span class="n">resource</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="na">getResources</span><span class="o">().</span><span class="na">newFileSystemResource</span><span class="o">(</span><span class="n">path</span><span class="o">.</span><span class="na">toFile</span><span class="o">())</span>
+					<span class="o">.</span><span class="na">setResourceType</span><span class="o">(</span><span class="nc">ResourceType</span><span class="o">.</span><span class="na">DRL</span><span class="o">);</span>
+			<span class="n">kfs</span><span class="o">.</span><span class="na">write</span><span class="o">(</span><span class="n">resource</span><span class="o">);</span>
+		<span class="o">});</span>
+<span class="o">}</span>
+
+<span class="nc">KieBuilder</span> <span class="n">kb</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="na">newKieBuilder</span><span class="o">(</span><span class="n">kfs</span><span class="o">);</span>
+<span class="n">kb</span><span class="o">.</span><span class="na">buildAll</span><span class="o">();</span>
+
+<span class="nc">KieContainer</span> <span class="n">kContainer</span> <span class="o">=</span> <span class="n">ks</span><span class="o">.</span><span class="na">newKieContainer</span><span class="o">(</span><span class="n">kr</span><span class="o">.</span><span class="na">getDefaultReleaseId</span><span class="o">());</span>
+</code></pre></div></div>
+
+<p>Code that runs batch processing as simple as that</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code>	<span class="k">while</span> <span class="o">(</span><span class="n">elasticService</span><span class="o">.</span><span class="na">hasNextBatch</span><span class="o">())</span> <span class="o">{</span>
+		<span class="nc">Collection</span><span class="o">&lt;</span><span class="nc">Component</span><span class="o">&gt;</span> <span class="n">processedBatch</span> <span class="o">=</span> <span class="n">processBatch</span><span class="o">(</span><span class="n">kContainer</span><span class="o">,</span> <span class="n">elasticService</span><span class="o">.</span><span class="na">getNextBatch</span><span class="o">());</span>
+
+		<span class="n">processedBatch</span><span class="o">.</span><span class="na">forEach</span><span class="o">((</span><span class="n">element</span><span class="o">)</span> <span class="o">-&gt;</span> <span class="o">{</span>
+			<span class="n">kafkaService</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">element</span><span class="o">.</span><span class="na">id</span><span class="o">,</span> <span class="n">objectMapper</span><span class="o">.</span><span class="na">toJson</span><span class="o">(</span><span class="n">element</span><span class="o">));</span>
+		<span class="o">});</span>
+	<span class="o">}</span>
+</code></pre></div></div>
+
+<p>Component is simple POJO containing information about processed piece of data and messages from rule engine.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">public</span> <span class="kd">class</span> <span class="nc">Component</span> <span class="o">{</span>
+    <span class="kd">final</span> <span class="nc">String</span> <span class="n">id</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="nc">String</span> <span class="n">type</span><span class="o">;</span>
+    <span class="nc">List</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">&gt;</span> <span class="n">messages</span><span class="o">;</span>
+    <span class="kd">final</span> <span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;</span> <span class="n">metadata</span><span class="o">;</span>
+	<span class="o">}</span>
+</code></pre></div></div>
+
+<p>and here is function that processes batches</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">private</span> <span class="kd">static</span> <span class="nc">Collection</span><span class="o">&lt;</span><span class="nc">Component</span><span class="o">&gt;</span> <span class="nf">processBatch</span><span class="o">(</span><span class="nc">KieContainer</span> <span class="n">kContainer</span><span class="o">,</span> <span class="nc">SearchHit</span><span class="o">[]</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
+
+	<span class="c1">//create new drools session</span>
+	<span class="nc">KieSession</span> <span class="n">kSession</span> <span class="o">=</span> <span class="n">kContainer</span><span class="o">.</span><span class="na">newKieSession</span><span class="o">();</span>
+	
+	<span class="c1">//insert every object from batch into drools session</span>
+	<span class="k">for</span> <span class="o">(</span><span class="nc">SearchHit</span> <span class="n">hit</span> <span class="o">:</span> <span class="n">batch</span><span class="o">)</span> <span class="o">{</span>
+		<span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">Object</span><span class="o">&gt;</span> <span class="n">sourceMap</span> <span class="o">=</span> <span class="n">hit</span><span class="o">.</span><span class="na">getSourceAsMap</span><span class="o">();</span>
+		<span class="nc">Component</span> <span class="n">c</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Component</span><span class="o">(</span><span class="n">hit</span><span class="o">.</span><span class="na">getId</span><span class="o">(),</span> <span class="o">(</span><span class="nc">String</span><span class="o">)</span> <span class="n">sourceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"type"</span><span class="o">),</span>
+				<span class="o">(</span><span class="nc">Map</span><span class="o">&lt;</span><span class="nc">String</span><span class="o">,</span> <span class="nc">String</span><span class="o">&gt;)</span> <span class="n">sourceMap</span><span class="o">.</span><span class="na">get</span><span class="o">(</span><span class="s">"metadata"</span><span class="o">));</span>
+		<span class="n">kSession</span><span class="o">.</span><span class="na">insert</span><span class="o">(</span><span class="n">c</span><span class="o">);</span>
+	<span class="o">}</span>
+
+	<span class="c1">//fire all rules </span>
+	<span class="n">kSession</span><span class="o">.</span><span class="na">fireAllRules</span><span class="o">();</span>
+
+	<span class="c1">//getting all processed objects from drools session</span>
+	<span class="nc">Collection</span><span class="o">&lt;</span><span class="nc">Component</span><span class="o">&gt;</span> <span class="n">objects</span> <span class="o">=</span> <span class="o">(</span><span class="nc">Collection</span><span class="o">&lt;</span><span class="nc">Component</span><span class="o">&gt;)</span> <span class="n">kSession</span><span class="o">.</span><span class="na">getObjects</span><span class="o">();</span>
+
+	<span class="c1">//marking session for garbage colleciton</span>
+	<span class="n">kSession</span><span class="o">.</span><span class="na">dispose</span><span class="o">();</span>
+
+	<span class="c1">//and returning processed objects</span>
+	<span class="k">return</span> <span class="n">objects</span><span class="o">;</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>That’s all!</p>
+
+<p>Now we can take a look of heart and soul of drools powered applications - rules.<br />
+Rules are made using “native” rule language and placed typically into a file with a .drl extension.</p>
+
+<p>A rule has following structure:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rule "name"
+    attributes
+    when
+        condition 
+    then
+        action
+end
+</code></pre></div></div>
+
+<p>Several rules may be placed into one rule file.</p>
+
+<h3 id="1-check-component-type">1. Check component type.</h3>
+
+<p>Every component we check should belong to one of two types “GENERIC” or “METER”<br />
+however we may find other types in data we get. Let’s check it with one simple drools rule.</p>
+
+<p>this rule will trigger on every object that has something else than “GENERIC” or “METER” in its type property.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rule "Type check"
+    when //condition           
+        $component : Component(type not in ("METER", "GENERIC"))
+    then //action to take
+        $component.messages.add("Type not allowed");
+end
+</code></pre></div></div>
+
+<p>For every object that satisfies condition an action will be taken. That’s all, as simple as it is.</p>
+
+<h3 id="2-find-date-and-fix-date-format">2. Find date and fix date format.</h3>
+
+<p>This rule will be applied to every object that has something that sounds like “installed” in it’s metadata<br />
+(Yeah, drools may find things using <code class="highlighter-rouge">soundslike</code> keyword) and convert value to SQL compliant format.<br />
+This rule uses external function written in Java. To be able to use java functions inside of drl files<br />
+we can import them with “import” keyword, as in Java.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rule "Installed date check"
+    when
+        component : Component($metadata: metadata)
+        entry : Entry() from $metadata.entrySet()
+        key : String() from entry.getKey()
+        value: String() from entry.getValue()
+        Boolean(booleanValue == true) from key soundslike  "installed"
+    then
+        $metadata.put(key, DateUtils.convertDateFormat(value));
+end
+</code></pre></div></div>
+
+<h3 id="3-validate-object-id">3. Validate object id</h3>
+
+<p>In our application every component has an id expressed as string that starts with 111 if component has type “METER”<br />
+or 222 if object has type “GENERIC” and we want find all components that violate this naming schema.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>rule "ID-Type validation"
+    when 
+        $component : Component(
+            (type == "METER" &amp;&amp; id not matches "111*") ||
+            (type == "GENERIC" &amp;&amp; id not matches "222*")
+        )
+    then
+        $component.messages.add("ID invalid");
+end
+</code></pre></div></div>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>In this article we covered only one little bit of functionality provided by Drools rule engine that is still enough<br />
+to make rules for data validation and conversion. More complicated rules can do everything that usual Java code can do<br />
+but with full separation from application logic. Rule files may be loaded from jar file as well as from file system. In<br />
+second case you don’t need to redeploy your application every time when rules changed but simply reload them.</p>
+
+<h1 id="sample-application">Sample application</h1>
+
+<p>You may download complete test application from <a href="https://github.com/sysco-middleware/poc-drools-rules-test-app">here</a></p>
+
+<h1 id="further-reading">Further reading</h1>
+
+<p><a href="https://docs.jboss.org/drools/release/latestFinal/drools-docs/html_single/">Drools documentation site</a></p>
+:ET

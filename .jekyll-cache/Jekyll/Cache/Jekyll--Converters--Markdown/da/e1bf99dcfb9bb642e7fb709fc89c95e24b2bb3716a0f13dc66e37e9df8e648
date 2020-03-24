@@ -1,0 +1,133 @@
+I"M<h1 id="installing-jmvd">Installing JMVD</h1>
+<p>The aim of this guide is to show you how to activate the JVMD on OEM Cloud Control 12C. According to [1] these are the main steps to install JVMD</p>
+
+<ol>
+  <li>
+    <p>Select the option Setup&gt;Middleware Management&gt;Application Performance Management</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/01.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Select this option Add&gt;JVM Diagnostics Engine</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/02.png" alt="" /></p>
+  </li>
+  <li>
+    <p>In this step this information is filled:</p>
+
+    <p>Information about JVM engine, this information will be used to create a new Weblogic managed server where the JVM engine will be deployed. This new managed server will be part of the GC Domain.</p>
+
+    <p>•	Host	
+•	Managed Server Name		
+•	Managed Server Listen Port	
+•	Managed Server SSL Listen Port</p>
+
+    <p>Host credentials, credentials for the host where Oracle Management Services (OMS) is running</p>
+
+    <p>Weblogic domain credentials, to specify the credentials of the GC Domain’s weblogic user.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/03.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Click on Deploy</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/04.png" alt="" /></p>
+  </li>
+  <li>
+    <p>The progress of the deployment is shown in this screen.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/05.png" alt="" /></p>
+  </li>
+</ol>
+
+<h1 id="review-the-jvmd-configuration">Review the JVMD configuration</h1>
+<p>After installing the JVMD we can review the configuration using the steps described in [2].</p>
+
+<ol>
+  <li>
+    <p>Select the option Setup&gt;Middleware Management&gt;Application Performance Management</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/06.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Select the JVM Diagnostic Engine called “jammanagerEMGC_JVMDMANAGER1” and click on Configure.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/07.png" alt="" /></p>
+  </li>
+  <li>
+    <p>We can select the different tabs to review the JVMD configuration, the JVMD Pools, etc. as can be seen in this picture.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/08.png" alt="" /></p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/08_2.png" alt="" /></p>
+  </li>
+</ol>
+
+<h1 id="configuring-diagnostic-agents">Configuring Diagnostic Agents</h1>
+
+<p>With this steps the diagnostic agent will be configured on the weblogic servers within the GCDomain.</p>
+
+<ol>
+  <li>
+    <p>Select the option Setup&gt;Middleware Management&gt;Application Performance Management</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/09.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Click on Manage Diagnostic Agents.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/10.png" alt="" /></p>
+  </li>
+  <li>
+    <p>In this case there are two domains. The first one is the GCDomain, which was configured automatically and the second one is the soadomain12c that was configured manually after installing the OEM Cloud Control 12C. For this example the soadomain12c will be used. Whit this in mind, mark these checkboxes and click on Next.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/11.png" alt="" /></p>
+  </li>
+  <li>
+    <p>In this page the system requests the host and domain credentials. As my OEM installation was made on the same host (it is not a good idea, but it is only a demonstration) where my SOA domain resides, I can reuse the host credentials. However, in the case of the domain, I have to enter their credentials.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/12.png" alt="" /></p>
+
+    <p>In the previous page, the check box “Set As Preferred Credentials” is marked in order to use these weblogic credential for future tasks on the SOA domain.</p>
+  </li>
+  <li>
+    <p>Click on Apply.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/13.png" alt="" /></p>
+
+    <p>After that, the page is updated. Click on Next.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/14.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Keep the default values and click on Apply then click on Next.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/15.png" alt="" /></p>
+  </li>
+  <li>
+    <p>Click on Deploy.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/16.png" alt="" /></p>
+  </li>
+  <li>
+    <p>The progress of the operation can be monitored.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/17.png" alt="" /></p>
+
+    <p>When the status is updated to “Succeeded” the deployment is complete.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/18.png" alt="" /></p>
+
+    <p>Now we can see JVM pools in the target navigation panel.</p>
+
+    <p><img src="/images/2016-05-29-OracleJVMD/19.png" alt="" /></p>
+  </li>
+</ol>
+
+<h1 id="references-list">References list</h1>
+
+<p>[1] Oracle (2015) Installing JVM Diagnostics [Online document] Available from: http://docs.oracle.com/cd/E24628_01/install.121/e22624/jvmd_installation.htm#EMBSC213 (Accessed: 17 May 2016)</p>
+
+<p>[2] Oracle (2015) Using JVM Diagnostics [Online document] Available from: https://docs.oracle.com/cd/E28271_01/install.1111/e24215/ad4j_using.htm (Accessed: 17 May 2016)</p>
+
+:ET

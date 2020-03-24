@@ -1,0 +1,244 @@
+I"eq<h3 id="motivation">Motivation</h3>
+
+<p>This post is created with an intention to provide an example for creating a business process workflow using Camunda platform. 
+Considering the level of details for configuration and runtime of a business process, 
+provided demo process will be used to highlight crucial components.</p>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Camunda is a workflow and decision automation platform. It consists of tools for defining and running business processes 
+(using BPMN 2.0), as well as defining and executing complex decisions during the execution of a business process (using DMN 1.1).</p>
+
+<p>Following components of Camunda platform were used in order to create this business process sample:</p>
+<ul>
+  <li>Modeler</li>
+  <li>BPMN process engine</li>
+  <li>DMN decision engine</li>
+</ul>
+
+<h3 id="demo">Demo</h3>
+<p>The purpose of the demo is to present the basic Camunda functionalities using simple example. The focus of this demo 
+will be on technical capabilities of the BPM framework, mocking the data used in the demo itself. BPMN process engine 
+(the main component for executing business processes) used in this demo is deployed on a Tomcat server, which can 
+be downloaded from <a href="https://camunda.org/release/camunda-bpm/">Camunda.org</a>. The other way of deploying the process engine 
+is to embed it into your own application and execute business processes inside.</p>
+
+<p>Camunda process engine support business processes defined using BPMN2.0 format, so the Camunda platform comes with <a href="https://camunda.com/products/modeler/">Camunda Modeler</a> 
+- desktop application which can be used to visually model and deploy the process definition. The output of the Camunda Modeler is a
+<code class="highlighter-rouge">.bpmn</code> file which will be examined in the following sections.</p>
+
+<p>The demo business process will simulate starting an external RPA process, collect the data and send the data for 
+validation to a user. The process can be defined in BPMN2.0 as:
+<img src="/images/2019-03-20-Setting-up-Camunda-BPMN-workflow-engine/bpm_process.jpeg" alt="Process" /></p>
+
+<h4 id="sending-the-request-to-rpa-system">Sending the request to RPA system</h4>
+<p>In order to execute business tasks performed by machine, <a href="https://docs.camunda.org/manual/7.7/reference/bpmn20/tasks/service-task/">Service task</a>
+type of task is used. Camunda provides Java extension point for integrating a custom code into task execution in form of 
+<a href="https://docs.camunda.org/javadoc/camunda-bpm-platform/7.11/org/camunda/bpm/engine/delegate/JavaDelegate.html">JavaDelegate</a> interface. 
+Also, in the process definition, Camunda provides custom attribute <code class="highlighter-rouge">camunda:class</code> for binding between service task and instance of JavaDelegate.
+Configuration and mock implementation of the “Send request to RPA” task are defined in following manner (together with transition elements):</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"start-send_to_rpa"</span> <span class="na">sourceRef=</span><span class="s">"StartEvent_demo"</span> <span class="na">targetRef=</span><span class="s">"sendRequestToRPATask"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:serviceTask</span> <span class="na">id=</span><span class="s">"sendRequestToRPATask"</span> <span class="na">name=</span><span class="s">"Send request to RPA"</span>
+                  <span class="na">camunda:class=</span><span class="s">"org.sysco.camunda.tasks.SendToRPADelegate"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>start-send_to_rpa<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>send_to_rpa-wait_for_rpa<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:serviceTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"send_to_rpa-wait_for_rpa"</span> <span class="na">sourceRef=</span><span class="s">"sendRequestToRPATask"</span> <span class="na">targetRef=</span><span class="s">"waitForRPA"</span><span class="nt">/&gt;</span>
+</code></pre></div></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.camunda.bpm.engine.delegate.DelegateExecution</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.camunda.bpm.engine.delegate.JavaDelegate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.sysco.camunda.service.RPASystem</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.sysco.camunda.service.impl.RPASystemMock</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">SendToRPADelegate</span> <span class="kd">implements</span> <span class="nc">JavaDelegate</span> <span class="o">{</span>
+
+    <span class="c1">// mock implementation which can be bootstrapped with Spring framework</span>
+    <span class="kd">private</span> <span class="nc">RPASystem</span> <span class="n">rpaSystem</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RPASystemMock</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">DelegateExecution</span> <span class="n">delegateExecution</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">String</span> <span class="n">requestID</span> <span class="o">=</span> <span class="n">rpaSystem</span><span class="o">.</span><span class="na">sendRequest</span><span class="o">();</span>
+        <span class="n">delegateExecution</span><span class="o">.</span><span class="na">setVariable</span><span class="o">(</span><span class="s">"rpaRequestId"</span><span class="o">,</span> <span class="n">requestID</span><span class="o">);</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+<p><a href="https://docs.camunda.org/javadoc/camunda-bpm-platform/7.11/org/camunda/bpm/engine/delegate/DelegateExecution.html">DelegateExecution</a> 
+is a way to get the context of the running business process (from now on <strong>process instance</strong>). This context contains 
+information about process instance and process definition, but most interesting are process variables which are suitable 
+for storing all sort of data necessary during the instance execution.</p>
+<h4 id="checking-the-result-from-rpa-system">Checking the result from RPA system</h4>
+<p>A RPA process can last for some time, so one way to model the fetching of the data from an external system is to 
+pause the execution of running process instance for some time and check the result afterwards. This is accomplished by using an
+<code class="highlighter-rouge">intermediateCatchEvent</code> element with specified waiting time. After waiting for specified time, service task is used 
+to check if the RPA process is finished. If it is finished, execution continues, otherwise execution will wait 
+(30sec in this case) and check the RPA process again. The interesting point is the notation of the timer 
+(<code class="highlighter-rouge">&lt;bpmn:timeDuration&gt;</code> element), which uses the <a href="https://en.wikipedia.org/wiki/ISO_8601">ISO 8601</a> format.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"send_to_rpa-wait_for_rpa"</span> <span class="na">sourceRef=</span><span class="s">"sendRequestToRPATask"</span> <span class="na">targetRef=</span><span class="s">"waitForRPA"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:intermediateCatchEvent</span> <span class="na">id=</span><span class="s">"waitForRPA"</span> <span class="na">name=</span><span class="s">"30 sec RPA wait"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>send_to_rpa-wait_for_rpa<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>check_rpa_gateway-wait_for_rpa<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>wait_for_rpa-check_rpa<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+  <span class="nt">&lt;bpmn:timerEventDefinition&gt;</span>
+    <span class="nt">&lt;bpmn:timeDuration&gt;</span>PT30S<span class="nt">&lt;/bpmn:timeDuration&gt;</span>
+  <span class="nt">&lt;/bpmn:timerEventDefinition&gt;</span>
+<span class="nt">&lt;/bpmn:intermediateCatchEvent&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"wait_for_rpa-check_rpa"</span> <span class="na">sourceRef=</span><span class="s">"waitForRPA"</span> <span class="na">targetRef=</span><span class="s">"checkRPATask"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:serviceTask</span> <span class="na">id=</span><span class="s">"checkRPATask"</span> <span class="na">name=</span><span class="s">"Check RPA"</span> <span class="na">camunda:class=</span><span class="s">"org.sysco.camunda.tasks.CheckRPADelegate"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>wait_for_rpa-check_rpa<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>check_rpa-check_rpa_gateway<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:serviceTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"check_rpa-check_rpa_gateway"</span> <span class="na">sourceRef=</span><span class="s">"checkRPATask"</span> <span class="na">targetRef=</span><span class="s">"checkIfRPAFinishedGateway"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:exclusiveGateway</span> <span class="na">id=</span><span class="s">"checkIfRPAFinishedGateway"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>check_rpa-check_rpa_gateway<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>check_rpa_gateway-wait_for_rpa<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>check_rpa_gateway-determine_parser_rule<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:exclusiveGateway&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"check_rpa_gateway-wait_for_rpa"</span> <span class="na">name=</span><span class="s">"RPA not finished"</span>
+                   <span class="na">sourceRef=</span><span class="s">"checkIfRPAFinishedGateway"</span> <span class="na">targetRef=</span><span class="s">"waitForRPA"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:conditionExpression&gt;</span>${rpaFinished == false}<span class="nt">&lt;/bpmn:conditionExpression&gt;</span>
+<span class="nt">&lt;/bpmn:sequenceFlow&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"check_rpa_gateway-determine_parser_rule"</span> <span class="na">name=</span><span class="s">"RPA finished"</span>
+                   <span class="na">sourceRef=</span><span class="s">"checkIfRPAFinishedGateway"</span> <span class="na">targetRef=</span><span class="s">"determineParserRuleTask"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:conditionExpression&gt;</span>${rpaFinished == true}<span class="nt">&lt;/bpmn:conditionExpression&gt;</span>
+<span class="nt">&lt;/bpmn:sequenceFlow&gt;</span>
+</code></pre></div></div>
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">import</span> <span class="nn">org.camunda.bpm.engine.delegate.DelegateExecution</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.camunda.bpm.engine.delegate.JavaDelegate</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.sysco.camunda.model.CheckRPAResponse</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.sysco.camunda.service.RPASystem</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">org.sysco.camunda.service.impl.RPASystemMock</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">CheckRPADelegate</span> <span class="kd">implements</span> <span class="nc">JavaDelegate</span> <span class="o">{</span>
+
+    <span class="c1">// mock implementation which can be bootstrapped with Spring framework</span>
+    <span class="kd">private</span> <span class="nc">RPASystem</span> <span class="n">rpaSystem</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">RPASystemMock</span><span class="o">();</span>
+
+    <span class="kd">public</span> <span class="kt">void</span> <span class="nf">execute</span><span class="o">(</span><span class="nc">DelegateExecution</span> <span class="n">delegateExecution</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Object</span> <span class="n">requestId</span> <span class="o">=</span> <span class="n">delegateExecution</span><span class="o">.</span><span class="na">getVariable</span><span class="o">(</span><span class="s">"rpaRequestId"</span><span class="o">);</span>
+        <span class="nc">CheckRPAResponse</span> <span class="n">response</span> <span class="o">=</span> <span class="n">rpaSystem</span><span class="o">.</span><span class="na">checkRpa</span><span class="o">((</span><span class="nc">String</span><span class="o">)</span> <span class="n">requestId</span><span class="o">);</span>
+
+        <span class="n">delegateExecution</span><span class="o">.</span><span class="na">setVariable</span><span class="o">(</span><span class="s">"rpaFinished"</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">isFinished</span><span class="o">());</span>
+
+        <span class="k">if</span> <span class="o">(</span><span class="n">response</span><span class="o">.</span><span class="na">isFinished</span><span class="o">())</span> <span class="o">{</span>
+            <span class="n">delegateExecution</span><span class="o">.</span><span class="na">setVariable</span><span class="o">(</span><span class="s">"contentType"</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">getContentType</span><span class="o">());</span>
+            <span class="n">delegateExecution</span><span class="o">.</span><span class="na">setVariable</span><span class="o">(</span><span class="s">"content"</span><span class="o">,</span> <span class="n">response</span><span class="o">.</span><span class="na">getContent</span><span class="o">());</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h4 id="parsing-the-response-from-rpa-system">Parsing the response from RPA system</h4>
+<p>After making sure that the RPA process has finished, requirement for this business process is to parse the response from RPA system.
+Based on a type of the response from RPA, decision model can be created for determining the type of parser required for the specific response. 
+Considering that RPA response contains <code class="highlighter-rouge">contentType</code> field, decision model can be created in form of 
+<a href="https://docs.camunda.org/manual/7.7/reference/dmn11/decision-table/">DMN Decision Table</a>. 
+Using <a href="https://docs.camunda.org/manual/7.7/reference/dmn11/">DMN 1.1</a>, it’s very convenient to integrate into existing 
+process definition by creating <a href="https://docs.camunda.org/manual/7.7/reference/bpmn20/tasks/business-rule-task/">Business rule</a> task.
+Camunda Modeler also supports creation and deployment of DMN Decision Tables.</p>
+
+<p>The following decision table is very simple, with an intention to show capabilities for integrating into process definition, rather than have complex decision model. 
+<img src="/images/2019-03-20-Setting-up-Camunda-BPMN-workflow-engine/dmn_decision_table.png" alt="DecissionTable" /></p>
+
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;decision</span> <span class="na">id=</span><span class="s">"fileFormatDecision"</span> <span class="na">name=</span><span class="s">"FileFormatDecision"</span><span class="nt">&gt;</span>
+<span class="nt">&lt;decisionTable</span> <span class="na">id=</span><span class="s">"fileFormatDecisionTable"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;input</span> <span class="na">id=</span><span class="s">"contentTypeInput"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;inputExpression</span> <span class="na">id=</span><span class="s">"contentTypeExpression"</span> <span class="na">typeRef=</span><span class="s">"string"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text&gt;</span>contentType<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/inputExpression&gt;</span>
+  <span class="nt">&lt;/input&gt;</span>
+  <span class="nt">&lt;output</span> <span class="na">id=</span><span class="s">"fileFormatOutput"</span> <span class="na">name=</span><span class="s">"fileFormat"</span> <span class="na">typeRef=</span><span class="s">"string"</span> <span class="nt">/&gt;</span>
+  <span class="nt">&lt;rule</span> <span class="na">id=</span><span class="s">"jsonRule"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;inputEntry</span> <span class="na">id=</span><span class="s">"jsonContentType"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text&gt;</span>"application/json"<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/inputEntry&gt;</span>
+    <span class="nt">&lt;outputEntry</span> <span class="na">id=</span><span class="s">"jsonFileFormat"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text&gt;</span>"json"<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/outputEntry&gt;</span>
+  <span class="nt">&lt;/rule&gt;</span>
+  <span class="nt">&lt;rule</span> <span class="na">id=</span><span class="s">"csvRule"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;inputEntry</span> <span class="na">id=</span><span class="s">"csvContentType"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text&gt;</span>"text/csv"<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/inputEntry&gt;</span>
+    <span class="nt">&lt;outputEntry</span> <span class="na">id=</span><span class="s">"csvFileFormat"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;text&gt;</span>"comma-separated"<span class="nt">&lt;/text&gt;</span>
+    <span class="nt">&lt;/outputEntry&gt;</span>
+  <span class="nt">&lt;/rule&gt;</span>
+<span class="nt">&lt;/decisionTable&gt;</span>
+<span class="nt">&lt;/decision&gt;</span>
+</code></pre></div></div>
+
+<p>Binding between decision table and process definition is achieved using <a href="https://docs.camunda.org/manual/7.7/reference/bpmn20/tasks/business-rule-task/#camunda-extensions">custom attributes</a>:</p>
+<ul>
+  <li><code class="highlighter-rouge">camunda:decisionRef</code> - the <em>id</em> of deployed decision</li>
+  <li><code class="highlighter-rouge">camunda:mapDecisionResult</code> - mapper between decision result and process instance variable</li>
+  <li><code class="highlighter-rouge">camunda:resultVariable</code> - process instance variable which will contain the decision result</li>
+</ul>
+
+<p><code class="highlighter-rouge">decisionResult</code> is the variable name (hardcoded in Camunda) which is used to map the output to desired process variable.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;bpmn:businessRuleTask</span> <span class="na">id=</span><span class="s">"determineParserRuleTask"</span> <span class="na">name=</span><span class="s">"Determine Parser"</span> <span class="na">camunda:decisionRef=</span><span class="s">"fileFormat"</span> 
+                           <span class="na">camunda:resultVariable=</span><span class="s">"fileFormat"</span> <span class="na">camunda:mapDecisionResult=</span><span class="s">"singleEntry"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:extensionElements&gt;</span>
+    <span class="nt">&lt;camunda:inputOutput&gt;</span>
+      <span class="nt">&lt;camunda:outputParameter</span> <span class="na">name=</span><span class="s">"fileFormat"</span><span class="nt">&gt;</span>${decisionResult.getSingleResult().fileFormat}
+      <span class="nt">&lt;/camunda:outputParameter&gt;</span>
+    <span class="nt">&lt;/camunda:inputOutput&gt;</span>
+  <span class="nt">&lt;/bpmn:extensionElements&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>check_rpa_gateway-determine_parser_rule<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>determine_parser_rule-determine_parser-gateway<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:businessRuleTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"determine_parser_rule-determine_parser-gateway"</span> <span class="na">sourceRef=</span><span class="s">"determineParserRuleTask"</span>
+                       <span class="na">targetRef=</span><span class="s">"determineParserGateway"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:exclusiveGateway</span> <span class="na">id=</span><span class="s">"determineParserGateway"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>determine_parser_rule-determine_parser-gateway<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>determine_parser_gateway-parse_csv<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>determine_parser_gateway-parse_json<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:exclusiveGateway&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"determine_parser_gateway-parse_json"</span> <span class="na">name=</span><span class="s">"json"</span> <span class="na">sourceRef=</span><span class="s">"determineParserGateway"</span>
+                   <span class="na">targetRef=</span><span class="s">"parseJsonTask"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:conditionExpression&gt;</span>${fileFormat == 'json'}<span class="nt">&lt;/bpmn:conditionExpression&gt;</span>
+<span class="nt">&lt;/bpmn:sequenceFlow&gt;</span>
+<span class="nt">&lt;bpmn:serviceTask</span> <span class="na">id=</span><span class="s">"parseJsonTask"</span> <span class="na">name=</span><span class="s">"Parse JSON"</span> <span class="na">camunda:class=</span><span class="s">"org.sysco.camunda.tasks.JsonParserDelegate"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>determine_parser_gateway-parse_json<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>parse_json-parsing_finished<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:serviceTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"determine_parser_gateway-parse_csv"</span> <span class="na">name=</span><span class="s">"csv"</span> <span class="na">sourceRef=</span><span class="s">"determineParserGateway"</span>
+                   <span class="na">targetRef=</span><span class="s">"parseCsvTask"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:conditionExpression&gt;</span>${fileFormat == 'comma-separated'}<span class="nt">&lt;/bpmn:conditionExpression&gt;</span>
+<span class="nt">&lt;/bpmn:sequenceFlow&gt;</span>
+<span class="nt">&lt;bpmn:serviceTask</span> <span class="na">id=</span><span class="s">"parseCsvTask"</span> <span class="na">name=</span><span class="s">"Parse CSV"</span> <span class="na">camunda:class=</span><span class="s">"org.sysco.camunda.tasks.CsvParserDelegate"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>determine_parser_gateway-parse_csv<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>parse_csv-parsing_finished<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:serviceTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"parse_json-parsing_finished"</span> <span class="na">sourceRef=</span><span class="s">"parseJsonTask"</span> <span class="na">targetRef=</span><span class="s">"parsingFinishedGateway"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"parse_csv-parsing_finished"</span> <span class="na">sourceRef=</span><span class="s">"parseCsvTask"</span> <span class="na">targetRef=</span><span class="s">"parsingFinishedGateway"</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:exclusiveGateway</span> <span class="na">id=</span><span class="s">"parsingFinishedGateway"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>parse_json-parsing_finished<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>parse_csv-parsing_finished<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>parsing_finished-validate_data<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:exclusiveGateway&gt;</span>
+</code></pre></div></div>
+
+<p>Beside using DMN for making the decisions in running workflow, Business Rule Management (BRM) tools can also be integrated within <em>Business rule</em> task.
+It does require some configuration tweaking, but it can be used as a powerful way to both descriptively and programmatically define desired set of rules. 
+Great tutorial for using Drools as BRM can be found <a href="http://blog.sysco.no/data/analysis/DroolsDataQualityChecking/">here</a>.</p>
+
+<h4 id="validating-the-data">Validating the data</h4>
+<p>As a last task of this workflow, user has to validate the result of the parsing. Therefore <a href="https://docs.camunda.org/manual/7.7/reference/bpmn20/tasks/user-task/">User task</a> 
+type of task is necessary.</p>
+<div class="language-xml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"parsing_finished-validate_data"</span> <span class="na">sourceRef=</span><span class="s">"parsingFinishedGateway"</span> <span class="na">targetRef=</span><span class="s">"validateDataTask"</span> <span class="nt">/&gt;</span>
+<span class="nt">&lt;bpmn:userTask</span> <span class="na">id=</span><span class="s">"validateDataTask"</span> <span class="na">name=</span><span class="s">"Validate Data"</span> <span class="na">camunda:assignee=</span><span class="s">"john"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;bpmn:incoming&gt;</span>parsing_finished-validate_data<span class="nt">&lt;/bpmn:incoming&gt;</span>
+  <span class="nt">&lt;bpmn:outgoing&gt;</span>validate_data-end<span class="nt">&lt;/bpmn:outgoing&gt;</span>
+<span class="nt">&lt;/bpmn:userTask&gt;</span>
+<span class="nt">&lt;bpmn:sequenceFlow</span> <span class="na">id=</span><span class="s">"validate_data-end"</span> <span class="na">sourceRef=</span><span class="s">"validateDataTask"</span> <span class="na">targetRef=</span><span class="s">"EndEvent_demo"</span> <span class="nt">/&gt;</span>
+</code></pre></div></div>
+<p>In this case custom attribute <code class="highlighter-rouge">camunda:assignee</code> has to be used, in order to define a user (or a group) capable of performing the task. 
+What is interesting is that this type of task is highly extendable, so source of the assignee user (or the group) can be any system.
+For this demo process, user is registered in existing <a href="#demo">Tomcat web application</a>.</p>
+
+<h4 id="conclusion">Conclusion</h4>
+<p>Even though this demo process is not robust as it should be in real life situation, it can be used as a starting point 
+for building complex workflows or generally learning about BPM. Camunda as a product, provides tools for creating, 
+managing and running business processes and decision models, with great integration capabilities. 
+Another huge advantage is that the process engine can be deployed and ready for use within few minutes, 
+so you can execute your first workflow in less than an hour.</p>
+:ET

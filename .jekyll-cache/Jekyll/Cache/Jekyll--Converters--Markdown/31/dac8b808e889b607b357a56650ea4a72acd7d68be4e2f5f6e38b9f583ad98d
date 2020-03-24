@@ -1,0 +1,50 @@
+I"�<p>In this post, we will learn how to send emails using a UMS adapter in OSB 12c. There we go:</p>
+
+<h3 id="configuration-in-the-server-side">Configuration in the server side</h3>
+
+<p>First, we need to verify that we have the UMS adapter and the email driver already working. These configurations are displayed in deployments of weblogic console.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/UMSWeblogicDeployments.jpeg" alt="" /></p>
+
+<p>Also, we need to know the configuration for the outbound connection displayed under Configuration-&gt;Outbound Connections Pools.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/UMSAdapterConnectionPools.jpeg" alt="" /></p>
+
+<p>Now, we have to access to EM and go to usermessagingserver and configure the user messaging driver.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/UMSEmailServerApp.jpeg" alt="" /></p>
+
+<p>Click on the edit button to open the configuration page of the driver. There you have to define the sender addresses and SMTP protocols.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/UMSEmailDriverSettings1.jpeg" alt="" /></p>
+
+<p>Also, we have to set the outgoing mail settings: mailserver host, port, user and password.
+<img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/UMSEmailDriverSettings3.jpeg" alt="" /></p>
+
+<p>If we don’t want to save the mails then mark the checkbox called AutoDelete.</p>
+
+<h3 id="creating-ums-adapter-in-jdeveloper-12c">Creating UMS adapter in JDeveloper 12c</h3>
+
+<p>After we set the configurations in the server side, now we can create the application and add UMS adapters.
+Create a UMS adapter in the external services section as the image bellow.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/JdeveloperUMSAdapter1.jpeg" alt="" /></p>
+
+<p>Then we have to be sure that the connection JNDI Name is eis/ums/UMSAdapterOutbound.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/JdeveloperUMSAdapter2.jpeg" alt="" /></p>
+
+<p>In the next step, set the option Outbound Send Notification.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/JdeveloperUMSAdapter3.jpeg" alt="" /></p>
+
+<p>In the Step 4 we Set Email option and some additional parameters like Subject, From, To, Cc, Bcc and ReplyTo.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/JdeveloperUMSAdapter4.jpeg" alt="" /></p>
+
+<p>Here, if we want to define more than one email then we will get an error message that we only can set one, but for this case we have some workarounds like modifying manually the jca file including more than one email with separate commas. Also we can add more emails in the transport header.</p>
+
+<p><img src="/images/2016-10-21-UMS_Adapter_send_email_OSB_12C/JdeveloperUMSAdapter5.jpeg" alt="" /></p>
+
+<p>Click, next and finish. Then enjoy your UMS adapter to send emails :). I’m checking how to send html DOM objects and some attached emails, so I will create the second part of this post soon!</p>
+:ET

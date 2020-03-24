@@ -1,0 +1,215 @@
+I"�n<h2 id="jdbc-connection-leaks--generation-and-detection-bea-001153">JDBC Connection leaks – Generation and Detection [BEA-001153]</h2>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>Some weeks ago an article about memory leak problems in JVM was posted. Now, it is time to talk about another common problem that affect the performance of the application and even can cause the crash of the server. Before continuing, it is necessary to say that there are different resources, consumed by applications, which are candidates to generate a leak problem. For example, let us say you are using a file properties in order to read some configuration parameters. During the unitary testing, a developer cannot realize the impact of leaving the file descriptor opened. However, during the performance testing this message will must be found “Too many open files” and then process is killed by the operating system (Rafael, 2013). Nevertheless, many projects does not include performance testing for several reasons, such as aggressive schedules compromised with customers, and as a result many leak problems are discovered under the huge load of production systems. With this in mind, the aim of this post is to talk about the JDBC connection leaks, a Weblogic server 12C and 11G will be used as the target of the demonstration. In addition, a little desktop application was generated. This program will allow the generation of leaks and the monitoring of connection pools.</p>
+
+<h3 id="jdbc-connection-leaks">JDBC connection leaks</h3>
+
+<p>Have you ever see an error like this in the Weblogic sever log (serverName.log)?  “Reached maximum capacity of pool “cgDataSource”, making “0” new resource instances instead of “1 “. According to the technical note 1502054.1 (Oracle, 2014) this message appears when there are a connection leak and it happens as a result of applications’ code that not close the connection properly. For example, here there is a section of code I saw some years ago after detecting a memory leak.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla01.png" alt="" /></p>
+
+<p>The question is how could you detect this problem? We had several performance problems on this application and most of them seemed to be related to slower queries, but when the explain plans were got, we realized that the behavior was weird since the explain plan indicated a well-designed query. Thus, we reviewed some indicators on the application server, to be specific the “Leaked Connection Count” that according to Oracle (n.d.) means “The number of leaked connections. A leaked connection is a connection that was reserved from the data source but was not returned to the data source by calling close()”</p>
+
+<p>At that time these metrics were found</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla02.png" alt="" /></p>
+
+<h3 id="how-to-get-these-metrics">How to get these metrics</h3>
+
+<p>These figures mean that a parameter was activated in the connection pool in order to force the release of leak connection. This is a good idea, but this is not the solution of the problem. This is activated here:</p>
+
+<p>Let’s say we have a data source  called cgDataSource, these are the steps:</p>
+
+<ol>
+  <li>Click on Services&gt;Data Sources</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla03.png" alt="" /></p>
+
+<ol>
+  <li>Click on the Data Source you want to configure</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla04.png" alt="" /></p>
+
+<ol>
+  <li>Click on Connection Pool</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla05.png" alt="" /></p>
+
+<ol>
+  <li>Click on Advanced</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla06.png" alt="" /></p>
+
+<ol>
+  <li>You have to set the “Inactive Connection Timeout” in a value greater than zero to force closing those connections that are not closed by the application.</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla07.png" alt="" /></p>
+
+<p>Is that the solution? The answer is not, this is a palliative that is useful and it will help us to afford that situation while the root cause of the problem is investigated. In fact, even though this parameter was activated, the performance of queries were slower and every some weeks the application server where the data source was deployed had to be restarted.</p>
+
+<h3 id="how-to-find-the-root-cause-of-the-problem">How to find the root cause of the problem</h3>
+
+<p>We have two options.</p>
+
+<ol>
+  <li>Reviewing each class that use that data source.</li>
+  <li>Investigating the log files in order to isolate the culprit class</li>
+</ol>
+
+<p>The best option is the number two. Fortunately, something we realized after that activation of that timeout (“Inactive Connection Timeout”) was the log file was written with several entrances that indicated connections closed by the application server.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla08.png" alt="" /></p>
+
+<p>In this kind of cases I recommend you to look for the business class that makes use of the method getConnection. In this case is DataSourceProvider whose code was shown previously.</p>
+
+<h3 id="how-to-generate-a-scenario-like-this">How to generate a scenario like this</h3>
+
+<p>Generating a case like this is easy, we have to open several connections without using the close() method. Since I’m not a developer I made my best to create a desktop application to saturate the connection pool. Beyond the flaws caused by my lack of experience as a programmer, I think it could be interesting because this application also allows me (using JMX) to monitor every data source. It means that pieces of code can be used by you in order to monitor your servers. The bad side is since it is a desktop application, the server log will not generate any trace about the class that generates the leak.</p>
+
+<h3 id="jdbc-leak-generator-and-monitor">JDBC leak generator and monitor</h3>
+
+<p>The application uses this simple form to connect to</p>
+
+<ol>
+  <li>Connect to the Weblogic server.</li>
+  <li>Detect the servers (Admin and Managed) and put them within a combo box.</li>
+  <li>If you select a Server, the data sources that belong to that server will be shown in a combo box.</li>
+  <li>You can enter a number of connection to leak the data source selected</li>
+  <li>You can monitor the status of the connection leak using the Refresh button.</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla09.png" alt="" /></p>
+
+<p>After connecting to the server I can see the AdminServer and its data sources. I will use the cgDataSource</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla10.png" alt="" /></p>
+
+<p>Click on Generate to create the leak scenario</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla11.png" alt="" /></p>
+
+<p>After generating 10 connection the attributes on the Monitoring section change</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla12.png" alt="" /></p>
+
+<p>After 5 minutes (300s) the LeakedConnectionCount will be greater than zero as can be seen in this picture</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla13.png" alt="" /></p>
+
+<p>Now, we can review the AdminServer.log to find traces of this situation.</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">####</span><span class="o">&lt;</span><span class="nc">Jul</span> <span class="mi">20</span><span class="o">,</span> <span class="mi">2015</span> <span class="mi">3</span><span class="o">:</span><span class="mi">46</span><span class="o">:</span><span class="mi">08</span> <span class="no">PM</span> <span class="no">CEST</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">Warning</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="no">JDBC</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">syspwks024</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">AdminServer</span><span class="o">&gt;</span> <span class="o">&lt;[</span><span class="no">ACTIVE</span><span class="o">]</span> <span class="nl">ExecuteThread:</span> <span class="sc">'1'</span> <span class="k">for</span> <span class="nl">queue:</span> <span class="err">'</span><span class="n">weblogic</span><span class="o">.</span><span class="na">kernel</span><span class="o">.</span><span class="na">Default</span> <span class="o">(</span><span class="n">self</span><span class="o">-</span><span class="n">tuning</span><span class="o">)</span><span class="err">'</span><span class="o">&gt;</span> <span class="o">&lt;&lt;</span><span class="no">WLS</span> <span class="nc">Kernel</span><span class="o">&gt;&gt;</span> <span class="o">&lt;&gt;</span> <span class="o">&lt;</span><span class="nl">fa8deb88ab1c3a08:</span><span class="mi">62</span><span class="nl">e0c37b:</span><span class="mi">14</span><span class="nl">eabadb4de:</span><span class="o">-</span><span class="mi">8000</span><span class="o">-</span><span class="mo">0000000000000033</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="mi">1437399968564</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="no">BEA</span><span class="o">-</span><span class="mo">001153</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">Forcibly</span> <span class="n">releasing</span> <span class="n">inactive</span><span class="o">/</span><span class="n">harvested</span> <span class="n">connection</span> <span class="s">"weblogic.jdbc.wrapper.PoolConnection_oracle_jdbc_driver_T4CConnection@8"</span> <span class="n">back</span> <span class="n">into</span> <span class="n">the</span> <span class="n">data</span> <span class="n">source</span> <span class="n">connection</span> <span class="n">pool</span> <span class="s">"cgDataSource"</span><span class="o">,</span> <span class="n">currently</span> <span class="n">reserved</span> <span class="nl">by:</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Exception</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">ConnectionEnv</span><span class="o">.</span><span class="na">setup</span><span class="o">(</span><span class="nc">ConnectionEnv</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">356</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">resourcepool</span><span class="o">.</span><span class="na">ResourcePoolImpl</span><span class="o">.</span><span class="na">reserveResource</span><span class="o">(</span><span class="nc">ResourcePoolImpl</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">364</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">resourcepool</span><span class="o">.</span><span class="na">ResourcePoolImpl</span><span class="o">.</span><span class="na">reserveResource</span><span class="o">(</span><span class="nc">ResourcePoolImpl</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">330</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">ConnectionPool</span><span class="o">.</span><span class="na">reserve</span><span class="o">(</span><span class="nc">ConnectionPool</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">469</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">ConnectionPool</span><span class="o">.</span><span class="na">reserve</span><span class="o">(</span><span class="nc">ConnectionPool</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">363</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">ConnectionPoolManager</span><span class="o">.</span><span class="na">reserve</span><span class="o">(</span><span class="nc">ConnectionPoolManager</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">125</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">ConnectionPoolManager</span><span class="o">.</span><span class="na">reserve</span><span class="o">(</span><span class="nc">ConnectionPoolManager</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">158</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">pool</span><span class="o">.</span><span class="na">Driver</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="nc">Driver</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">132</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">jts</span><span class="o">.</span><span class="na">Driver</span><span class="o">.</span><span class="na">getNonTxConnection</span><span class="o">(</span><span class="nc">Driver</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">658</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">jts</span><span class="o">.</span><span class="na">Driver</span><span class="o">.</span><span class="na">connect</span><span class="o">(</span><span class="nc">Driver</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">127</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">RmiDataSource</span><span class="o">.</span><span class="na">getConnectionInternal</span><span class="o">(</span><span class="nc">RmiDataSource</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">533</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">RmiDataSource</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="nc">RmiDataSource</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">498</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">RmiDataSource</span><span class="o">.</span><span class="na">getConnection</span><span class="o">(</span><span class="nc">RmiDataSource</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">491</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">jdbc</span><span class="o">.</span><span class="na">common</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">RmiDataSource_WLSkel</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="nc">Unknown</span> <span class="nc">Source</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">rmi</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">BasicServerRef</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="nc">BasicServerRef</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">667</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">rmi</span><span class="o">.</span><span class="na">cluster</span><span class="o">.</span><span class="na">ClusterableServerRef</span><span class="o">.</span><span class="na">invoke</span><span class="o">(</span><span class="nc">ClusterableServerRef</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">230</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">rmi</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">BasicServerRef</span><span class="err">$</span><span class="mi">1</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">BasicServerRef</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">522</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">security</span><span class="o">.</span><span class="na">acl</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">AuthenticatedSubject</span><span class="o">.</span><span class="na">doAs</span><span class="o">(</span><span class="nc">AuthenticatedSubject</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">363</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">security</span><span class="o">.</span><span class="na">service</span><span class="o">.</span><span class="na">SecurityManager</span><span class="o">.</span><span class="na">runAs</span><span class="o">(</span><span class="nc">SecurityManager</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">146</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">rmi</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">BasicServerRef</span><span class="o">.</span><span class="na">handleRequest</span><span class="o">(</span><span class="nc">BasicServerRef</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">518</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">rmi</span><span class="o">.</span><span class="na">internal</span><span class="o">.</span><span class="na">wls</span><span class="o">.</span><span class="na">WLSExecuteRequest</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">WLSExecuteRequest</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">118</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">work</span><span class="o">.</span><span class="na">ExecuteThread</span><span class="o">.</span><span class="na">execute</span><span class="o">(</span><span class="nc">ExecuteThread</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">256</span><span class="o">)</span>
+	<span class="n">at</span> <span class="n">weblogic</span><span class="o">.</span><span class="na">work</span><span class="o">.</span><span class="na">ExecuteThread</span><span class="o">.</span><span class="na">run</span><span class="o">(</span><span class="nc">ExecuteThread</span><span class="o">.</span><span class="na">java</span><span class="o">:</span><span class="mi">221</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Unfortunately as my client is a desktop application, I cannot find traces of the culprit class. However, I hope this post can help you to face this kind of problems.</p>
+
+<p>Something interesting I found during this test is that if I user Weblogic Server 12C, it seems to be the attribute “LeakedConnectionCount” is not updated by the system. The previous test was made using a Weblogic Server 11G. Now I will try the 12C.</p>
+
+<p>Now the address of the admin serve is admin12c.sysco.no and the port is 9001 as can be seen in the next picture.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla14.png" alt="" /></p>
+
+<p>These are the servers and data sources configured for each server.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla15.png" alt="" /></p>
+
+<p>I tested the cgDataSource deployed on Pegasus (managed server) and I used use 30 connections.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla16.png" alt="" /></p>
+
+<p>After clicking on Generate we will how the statistics change. Now I have 20 available connections and 30 unavailable</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla17.png" alt="" /></p>
+
+<p>I had to wait for 5 minutes (300 s) before these connections, which do not have a close statement, would be released by the server. As I said before this is because the configuration of the connection pool:</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla18.png" alt="" /></p>
+
+<p>You can use the weblogic console to see the statistics. As you can see it shows the same as the application.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla19.png" alt="" /></p>
+
+<p>After waiting for 5 minutes I got this message in the Pegasus.log file:</p>
+
+<div class="language-java highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="err">####</span><span class="o">&lt;</span><span class="mi">20</span><span class="o">-</span><span class="n">jul</span><span class="o">-</span><span class="mi">2015</span> <span class="mo">00</span><span class="no">H00</span><span class="err">'</span> <span class="no">CEST</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">Warning</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="no">JDBC</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">syspwks024</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">Pegasus</span><span class="o">&gt;</span> <span class="o">&lt;[</span><span class="no">ACTIVE</span><span class="o">]</span> <span class="nl">ExecuteThread:</span> <span class="err">'</span><span class="mi">23</span><span class="err">'</span> <span class="k">for</span> <span class="nl">queue:</span> <span class="err">'</span><span class="n">weblogic</span><span class="o">.</span><span class="na">kernel</span><span class="o">.</span><span class="na">Default</span> <span class="o">(</span><span class="n">self</span><span class="o">-</span><span class="n">tuning</span><span class="o">)</span><span class="err">'</span><span class="o">&gt;</span> <span class="o">&lt;&lt;</span><span class="no">WLS</span> <span class="nc">Kernel</span><span class="o">&gt;&gt;</span> <span class="o">&lt;&gt;</span> <span class="o">&lt;&gt;</span> <span class="o">&lt;</span><span class="mi">1437343228017</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="no">BEA</span><span class="o">-</span><span class="mo">001153</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="nc">Forcibly</span> <span class="n">releasing</span> <span class="n">inactive</span><span class="o">/</span><span class="n">harvested</span> <span class="n">connection</span> <span class="s">"weblogic.jdbc.wrapper.PoolConnection_oracle_jdbc_driver_T4CConnection@324"</span> <span class="n">back</span> <span class="n">into</span> <span class="n">the</span> <span class="n">data</span> <span class="n">source</span> <span class="n">connection</span> <span class="n">pool</span> <span class="s">"cgDataSource"</span><span class="o">,</span> <span class="n">currently</span> <span class="n">reserved</span> <span class="nl">by:</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">Exception</span>
+</code></pre></div></div>
+
+<p>However, the attribute (LeakedConnectionCount) that indicates the presence of the problem did not update its value</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla20.png" alt="" /></p>
+
+<p>I thought it was a problem with my application. However, the Admin Console showed the same value.</p>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla21.png" alt="" /></p>
+
+<p>Does it mean a problem with the Admin Console? I do not think so and I used WLST to review this value.</p>
+
+<ol>
+  <li>I had to connect to the server using WLST</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla22.png" alt="" /></p>
+
+<ol>
+  <li>I used domainRuntime()</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla23.png" alt="" /></p>
+
+<ol>
+  <li>I had to change to</li>
+</ol>
+
+<p>cd(‘ServerRuntimes/Pegasus/JDBCServiceRuntime/Pegasus/JDBCDataSourceRuntimeMBeans/cgDataSource’)</p>
+
+<ol>
+  <li>I used ls() and as you can see I got the same value.</li>
+</ol>
+
+<p><img src="/images/2015-07-23-jdbc-leak/pantalla24.png" alt="" /></p>
+
+<p>I am not sure if this is a problem of the version 12.1.3 or just a problem within the configuration on my laptop and then I encourage you to test this counter.</p>
+
+<p>Let me apologize for my lack of skills on web programming. This example would be more useful if I made a web module. However, I hope this post could be useful for you.</p>
+
+<h3 id="application">Application</h3>
+<p>The application used in this demonstration was made using NetBeans and you can download the project here: <a href="/files/applications/JDBCLeak.zip">Application</a>. Please be careful, it is a demonstration and as I am not a developer, it could have some bugs. It would be nice if you could develop the web version of this little application.</p>
+
+<h3 id="references-list">References list</h3>
+
+<p>Rafael (2013) FIXING FILE DESCRIPTOR LEAKS IN LONG-LIVED SERVERS  [Online document] Available from: http://oroboro.com/file-handle-leaks-server/ (Accessed: July 20, 2015)</p>
+
+<p>Oracle (2014) How To Detect a Connection Leak Using Diagnostic JDBC Dumps (Doc ID 1502054.1) [Online document] Available from: https://support.oracle.com (Accessed: July 20, 2015)</p>
+
+<p>Oracle (n.d.) JDBC Data Source: Monitoring: Statistics [Online document] Available from http://docs.oracle.com/cd/E13222_01/wls/docs100/ConsoleHelp/pagehelp/JDBCjdbcdatasourcesjdbcdatasourcemonitorstatisticstitle.html (Accessed: July 20, 2015)</p>
+:ET

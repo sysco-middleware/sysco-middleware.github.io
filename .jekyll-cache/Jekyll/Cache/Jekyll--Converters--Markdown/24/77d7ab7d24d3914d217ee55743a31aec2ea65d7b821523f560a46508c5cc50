@@ -1,0 +1,240 @@
+I"'b<h1 id="introduction">Introduction</h1>
+
+<p>At <a href="https://sysco.no/">Sysco AS</a>, we are developing a serverless integration platform on GCP. Being the integration provider between third parties, a common requirement is to securely save user secrets (eg API-keys) so that we can call the third-party services on behalf of users. In order to securely save these credentials with us, we have a few requirements:</p>
+
+<ul>
+  <li>Save customer secrets securely.(Encryption)</li>
+  <li>Use the saved secrets and call third party services as required. (Decryption)</li>
+  <li>Use managed services for PKI infrastructure. We did not want to manage the keys and the key-pairs ourselves.</li>
+</ul>
+
+<p>In this post, I will explain, how Google Cloud <a href="https://cloud.google.com/kms/">Key Management Service</a> enabled us to achieve this. All the code used in this post is available <a href="https://github.com/sysco-middleware/post-gcp-kms">here</a>.</p>
+
+<h1 id="architecture">Architecture</h1>
+
+<p>The figure below provides an extremely simplified version of our application.</p>
+
+<p><img src="/images/2019-08-21-gcp-kms-encryption/KMS-secret.png" alt="kms secret" position="center" style="border-radius: 2px;margin-top:5px;" /></p>
+
+<ol>
+  <li>We have a write application, that saves user credentials in the datastore. It does below operations.
+    <ol>
+      <li>Accepts user input.</li>
+      <li>Encrypts the user input using Google Cloud KMS - Encryption.</li>
+      <li>Stores the results in datastore.</li>
+    </ol>
+  </li>
+  <li>At several other places in our application, we have read functionality that
+    <ol>
+      <li>Reads the encrypted secrets from datastore.</li>
+      <li>Decrypts them using Google Cloud KMS - Decryption.</li>
+      <li>Uses the secrets as needed.</li>
+    </ol>
+  </li>
+</ol>
+
+<h1 id="setup">Setup</h1>
+
+<p>In order to start with KMS, we should understand the object hierarchy used in the Google Cloud KMS ecosystem.</p>
+
+<ul>
+  <li><strong>Projects</strong>: All the objects in the hierarchy belong to a project.</li>
+  <li><strong>Location</strong>: It defines the geographical location (data center) where the keys will be stored and served from.</li>
+  <li><strong>Key Ring</strong>: Represents a set of keys. This is a logical way to group keys (for example specific department, functional domain, user group, etc).</li>
+  <li><strong>Key</strong>: The cryptographic key used for encryption and decryption.</li>
+  <li><strong>Key Version</strong> : Numerical version linked to a key.</li>
+</ul>
+
+<p>In order to set these objects, we need to follow below steps:</p>
+
+<ol>
+  <li>Enable Cloud KMS API.</li>
+  <li>Provision two service-accounts. First to create KeyRing and Keys, and another to allow encryption and decryption operations.</li>
+  <li>Create a “key-ring” in a specific “project” and “location”.</li>
+  <li>We then create the required “key” under the “key-ring”.</li>
+</ol>
+
+<p>We additionally create one more service account for <a href="https://cloud.google.com/datastore/">Cloud Datastore</a> to save user data. In the next few sections, we will get into the implementation details of these steps.</p>
+
+<h2 id="enable-kms-api">Enable KMS API</h2>
+
+<p>Go to the Google Cloud Console. Chose a correct project and enable the <a href="https://console.developers.google.com/apis/api/cloudkms.googleapis.com/overview">Cloud KMS API</a>.</p>
+
+<h2 id="creating-required-service-accounts-for-kms-and-datastore">Creating required service accounts for KMS and Datastore.</h2>
+
+<p>We start by creating three service accounts.</p>
+
+<ul>
+  <li>kms-admin with role Cloud KMS Admin.</li>
+  <li>kms-enc-dec with a role Cloud KMS CryptoKey Encrypter/Decrypter.</li>
+  <li>datastore-user with a role Cloud Datastore User.</li>
+</ul>
+
+<p>If you are following the code in the <a href="https://github.com/sysco-middleware/post-gcp-kms">github</a>, you should create these service-accounts and save the three credential files under the project root.</p>
+
+<h4 id="kms---admin-service-account">KMS - Admin service account</h4>
+
+<p>Create a service account with role Cloud KMS Admin. Download the service account json file. Save it as <code class="highlighter-rouge">kms-admin.json</code> under the project root.</p>
+
+<p><img src="/images/2019-08-21-gcp-kms-encryption/kms-admin-2.png" alt="Cloud KMS Admin - add role" style="border-radius: 2px;margin-top:5px;" /></p>
+
+<h4 id="kms---encrpytdecrypt-service-account">KMS - Encrpyt/Decrypt service account</h4>
+
+<p>Create a service account with role Cloud KMS CryptoKey Encrypter/Decrypter. Download the service account json file. Save it as <code class="highlighter-rouge">kms-enc-dec.json</code> under the project root.</p>
+
+<p><img src="/images/2019-08-21-gcp-kms-encryption/kms-encdec-2.png" alt="Cloud KMS Enc/Dec - add role" style="border-radius: 2px;margin-top:5px;" /></p>
+
+<h4 id="cloud-datastore-user-service-account">Cloud Datastore User service account</h4>
+
+<p>Create a service account with role Cloud Datastore User. Download the service account json file. Save it as <code class="highlighter-rouge">datastore-user.json</code> under the project root.</p>
+
+<p><img src="/images/2019-08-21-gcp-kms-encryption/datastore-user.png" alt="Datastore USer - add role" style="border-radius: 2px;margin-top:5px;" /></p>
+
+<h1 id="creating-key-and-key-ring">Creating key and key-ring</h1>
+
+<p>We first create a key-ring using KMS client and then add a key to it. Note that we provide the purpose of the key as <code class="highlighter-rouge">CryptoKey_ENCRYPT_DECRYPT</code> and use the encryption algorithm as <code class="highlighter-rouge">CryptoKeyVersion_GOOGLE_SYMMETRIC_ENCRYPTION</code>.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// create KMS client</span>
+<span class="k">if</span> <span class="n">client</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">cloudkms</span><span class="o">.</span><span class="n">NewKeyManagementClient</span><span class="p">(</span>
+   <span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span>
+   <span class="n">option</span><span class="o">.</span><span class="n">WithCredentialsFile</span><span class="p">(</span><span class="s">"../kms-admin.json"</span><span class="p">));</span><span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">defer</span> <span class="n">client</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+
+<span class="c">// first create a key ring. Provide project-name and location</span>
+<span class="n">pKeyRing</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"projects/%s/locations/%s"</span><span class="p">,</span><span class="s">"gcp-project-name"</span><span class="p">,</span> <span class="s">"global"</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">result</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">CreateKeyRing</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">CreateKeyRingRequest</span><span class="p">{</span>
+   <span class="n">Parent</span><span class="o">:</span><span class="n">pKeyRing</span><span class="p">,</span>
+   <span class="n">KeyRingId</span><span class="o">:</span> <span class="s">"key-ring-name"</span><span class="p">});</span><span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"error creating keyring %s"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// prepare a request for creating a symmetric key</span>
+<span class="n">pKey</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"projects/%s/locations/%s/keyRings/%s"</span><span class="p">,</span> <span class="s">"gcp-project-name"</span><span class="p">,</span> <span class="s">"global"</span><span class="p">,</span> <span class="s">"key-ring-name"</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">CreateCryptoKeyRequest</span><span class="p">{</span>
+  <span class="n">Parent</span><span class="o">:</span>       <span class="n">pKey</span><span class="p">,</span>
+  <span class="n">CryptoKeyId</span><span class="o">:</span> <span class="s">"key-name"</span><span class="p">,</span>
+  <span class="n">CryptoKey</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">CryptoKey</span><span class="p">{</span>
+    <span class="n">Purpose</span><span class="o">:</span>         <span class="n">kmspb</span><span class="o">.</span><span class="n">CryptoKey_ENCRYPT_DECRYPT</span><span class="p">,</span> <span class="c">// Provide the purpose for the key</span>
+    <span class="n">VersionTemplate</span><span class="o">:</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">CryptoKeyVersionTemplate</span><span class="p">{</span>
+      <span class="n">Algorithm</span><span class="o">:</span> <span class="n">kmspb</span><span class="o">.</span><span class="n">CryptoKeyVersion_GOOGLE_SYMMETRIC_ENCRYPTION</span>
+    <span class="p">},</span>
+  <span class="p">},</span>
+<span class="p">}</span>
+
+<span class="c">// finally create the key</span>
+<span class="k">if</span> <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">client</span><span class="o">.</span><span class="n">CreateCryptoKey</span><span class="p">(</span><span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">(),</span> <span class="n">r</span><span class="p">);</span><span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">log</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"created crypto key %s"</span><span class="p">,</span> <span class="n">res</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h1 id="encrypting-password-and-storing-it-in-the-datastore">Encrypting password and storing it in the datastore</h1>
+
+<p>Before starting with the encryption and decryption, Let us define our entity that we want to store in the database. The structure for our user entity is.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">User</span> <span class="k">struct</span> <span class="p">{</span>
+  <span class="n">Username</span> <span class="kt">string</span> <span class="s">`json:"username"`</span>
+  <span class="n">Password</span> <span class="p">[]</span><span class="kt">byte</span> <span class="s">`json:"password"`</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>We store the password as sequence of bytes as bytes (after encryption) and decrypt them using KMS key in order to call third parties. To encrypt the credentials, we use the service account kms-enc-dec, which has a limited scope to encrypt or decrypt the password. The following code snippet shows how to encrypt the password and store it as a datastore entity.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">// create kms client</span>
+<span class="n">ctx</span> <span class="o">:=</span> <span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">kms</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">cloudkms</span><span class="o">.</span><span class="n">NewKeyManagementClient</span><span class="p">(</span>
+  <span class="n">ctx</span><span class="p">,</span>
+  <span class="n">option</span><span class="o">.</span><span class="n">WithCredentialsFile</span><span class="p">(</span><span class="s">"../kms-enc-dec.json"</span><span class="p">));</span><span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">defer</span> <span class="n">kms</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+
+<span class="c">// encrypt the password. Use the project, key-ring and key-name as setup previously</span>
+<span class="n">p</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"projects/%s/locations/%s/keyRings/%s/cryptoKeys/%s"</span><span class="p">,</span>
+  <span class="s">"project-name"</span><span class="p">,</span>
+  <span class="s">"location"</span><span class="p">,</span>
+  <span class="s">"key-ring-name"</span><span class="p">,</span>
+  <span class="s">"key-name"</span><span class="p">)</span>
+<span class="n">req</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">EncryptRequest</span><span class="p">{</span><span class="n">Name</span><span class="o">:</span><span class="n">p</span><span class="p">,</span><span class="n">Plaintext</span><span class="o">:</span> <span class="p">[]</span><span class="kt">byte</span><span class="p">(</span><span class="s">"MySecretPassword"</span><span class="p">)}</span>
+<span class="k">if</span> <span class="n">resp</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">kms</span><span class="o">.</span><span class="n">Encrypt</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">req</span><span class="p">);</span><span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="c">// Use encrypted password to prepare user entity and save it to datastore</span>
+<span class="n">u</span> <span class="o">:=</span> <span class="n">User</span><span class="p">{</span><span class="n">Username</span><span class="o">:</span> <span class="s">"test@test.com"</span><span class="p">,</span> <span class="n">Password</span><span class="o">:</span> <span class="n">resp</span><span class="o">.</span><span class="n">GetCiphertext</span><span class="p">()}</span>
+<span class="k">if</span> <span class="n">ds</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">datastore</span><span class="o">.</span><span class="n">NewClient</span><span class="p">(</span>
+  <span class="n">ctx</span><span class="p">,</span>
+  <span class="s">"gcp-project-name"</span><span class="p">,</span>
+  <span class="n">option</span><span class="o">.</span><span class="n">WithCredentialsFile</span><span class="p">(</span><span class="s">"../datastore-user.json"</span><span class="p">));</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">defer</span> <span class="n">ds</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+<span class="n">key</span> <span class="o">:=</span> <span class="n">datastore</span><span class="o">.</span><span class="n">IDKey</span><span class="p">(</span><span class="s">"users"</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">_</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">Put</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">u</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"ds err %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>You could see the saved password in datastore as</p>
+
+<p><img src="/images/2019-08-21-gcp-kms-encryption/datastore-enc.png" alt="Datastore User - add role" style="border-radius: 2px;margin-top:5px;" /></p>
+
+<h1 id="reading-datastore-and-decrypting-password-before-using">Reading datastore and decrypting password before using</h1>
+
+<p>In the other parts of the application where we use the secrets on behalf of the user, we simply read the byte sequence from the datastore and decrypt them before using.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ctx</span> <span class="o">:=</span> <span class="n">context</span><span class="o">.</span><span class="n">Background</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">ds</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">datastore</span><span class="o">.</span><span class="n">NewClient</span><span class="p">(</span>
+  <span class="n">ctx</span><span class="p">,</span>
+  <span class="s">"gcp-project"</span><span class="p">,</span>
+  <span class="n">option</span><span class="o">.</span><span class="n">WithCredentialsFile</span><span class="p">(</span><span class="s">"../datastore-user.json"</span><span class="p">));</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+   <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">defer</span> <span class="n">ds</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+<span class="n">key</span> <span class="o">:=</span> <span class="n">datastore</span><span class="o">.</span><span class="n">IDKey</span><span class="p">(</span><span class="s">"users"</span><span class="p">,</span> <span class="m">1</span><span class="p">,</span> <span class="no">nil</span><span class="p">)</span>
+
+<span class="n">u</span> <span class="o">:=</span> <span class="n">User</span><span class="p">{}</span>
+<span class="k">if</span> <span class="n">err</span> <span class="o">=</span> <span class="n">ds</span><span class="o">.</span><span class="n">Get</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">u</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatalf</span><span class="p">(</span><span class="s">"ds err %v"</span><span class="p">,</span> <span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">if</span> <span class="n">client</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">cloudkms</span><span class="o">.</span><span class="n">NewKeyManagementClient</span><span class="p">(</span>
+  <span class="n">ctx</span><span class="p">,</span>
+  <span class="n">option</span><span class="o">.</span><span class="n">WithCredentialsFile</span><span class="p">(</span><span class="s">"../kms-enc-dec.json"</span><span class="p">));</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Fatal</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="k">defer</span> <span class="n">client</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+
+<span class="n">p</span> <span class="o">:=</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"projects/%s/locations/%s/keyRings/%s/cryptoKeys/%s"</span><span class="p">,</span>
+  <span class="s">"project-name"</span><span class="p">,</span>
+  <span class="s">"location"</span><span class="p">,</span>
+  <span class="s">"key-ring-name"</span><span class="p">,</span>
+  <span class="s">"key-name"</span><span class="p">)</span>
+<span class="n">r</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">kmspb</span><span class="o">.</span><span class="n">DecryptRequest</span><span class="p">{</span><span class="n">Name</span><span class="o">:</span> <span class="n">p</span><span class="p">,</span><span class="n">Ciphertext</span><span class="o">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Password</span><span class="p">}</span>
+<span class="k">if</span> <span class="n">resp</span><span class="p">,</span> <span class="n">err</span> <span class="o">:=</span> <span class="n">client</span><span class="o">.</span><span class="n">Decrypt</span><span class="p">(</span><span class="n">ctx</span><span class="p">,</span> <span class="n">r</span><span class="p">);</span> <span class="n">err</span> <span class="o">!=</span> <span class="no">nil</span> <span class="p">{</span>
+  <span class="n">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="n">err</span><span class="p">)</span>
+<span class="p">}</span>
+<span class="n">log</span><span class="o">.</span><span class="n">Println</span><span class="p">(</span><span class="kt">string</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">Plaintext</span><span class="p">))</span>
+</code></pre></div></div>
+<p>You should see the output as:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>prakhar@tardis <span class="o">(</span>master<span class="o">)</span>✗ <span class="o">[</span>2] % go run main.go    
+2019/08/19 20:02:42 MySecretPassword
+</code></pre></div></div>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>With Cloud KMS, setting up and maintaining the PKI infrastructure is extremely simple. Cloud KMS, abstracts away all the underlying complexities and provides a set of simple APIs to easily manage cryptographic keys for cloud services as well as for your on-premise applications. You can generate, use, rotate, and destroy AES256, RSA 2048, RSA 3072, RSA 4096, EC P256, and EC P384 cryptographic keys. Cloud KMS is integrated with Cloud IAM and Cloud Audit Logging so that you can manage permissions on individual keys and monitor how these are used.</p>
+
+<p>I encourage the readers of this post to give it a try.</p>
+
+<h1 id="references">References</h1>
+
+<ul>
+  <li><a href="https://cloud.google.com/kms/docs/object-hierarchy">gcp: kms-object-hierarchy</a></li>
+  <li><a href="https://github.com/sysco-middleware/post-gcp-kms">github repository</a></li>
+  <li><a href="https://cloud.google.com/kms/docs/reference/permissions-and-roles#custom_roles">gcp: kms roles</a></li>
+</ul>
+
+<p><small>Note: This content originally appeared <a href="https://www.prakharsrivastav.com/posts/gcp-using-kms-to-manage-secrets/">here</a>. It has been altered at places to suite guidelines of this forum.</small></p>
+:ET

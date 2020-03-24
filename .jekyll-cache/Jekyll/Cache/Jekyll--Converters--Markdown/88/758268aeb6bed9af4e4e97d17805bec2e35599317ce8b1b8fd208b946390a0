@@ -1,0 +1,41 @@
+I"�<h1 id="some-tips-when-debugging-wls-cluster-stability">Some tips when debugging WLS cluster stability</h1>
+<p>In one environment we had problems with cluster stability - and there were unnecessary migrations of JMS Servers.</p>
+
+<p>Here are some settings that gave more info in logs. Set the following for the JVM:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-Dweblogic.debug.DebugServerMigration=true -Dweblogic.debug.DebugSingletonServices=true 
+</code></pre></div></div>
+
+<p>Change the below setting to DEBUG</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Home <span class="o">&gt;</span>Summary of Servers <span class="o">&gt;</span>AdminServer <span class="o">&gt;</span>Logging <span class="o">&gt;</span>General <span class="o">&gt;</span>Advanced <span class="o">&gt;</span>Minimum severity to log: 
+</code></pre></div></div>
+
+<p>enable below debugs from the weblogic admin console.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Debug <span class="o">&gt;</span>weblogic <span class="o">&gt;</span>core 
+</code></pre></div></div>
+
+<p>cluster Collapse Node</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 
+ DebugAsyncQueue 
+ DebugCluster 
+ DebugClusterAnnouncements 
+ DebugClusterFragments 
+ DebugClusterHeartbeats 
+ DebugLeaderElection 
+ DebugReplication 
+ DebugReplicationDetails 
+</code></pre></div></div>
+
+<p>Change the logging severity to Debug</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code> Servers--&gt;Server_name--&gt;Logging--&gt;Advanced--&gt; Standard out :Severity level:Debug 
+ Log file :Severity level:Debug 
+</code></pre></div></div>
+
+<p>Restart.</p>
+
+<p>Also look at Cluster » Monitoring » Summary to see the number of sent / received / retransmitted. For a healthy system sent and received should be almost same - and retransmissions low.</p>
+:ET

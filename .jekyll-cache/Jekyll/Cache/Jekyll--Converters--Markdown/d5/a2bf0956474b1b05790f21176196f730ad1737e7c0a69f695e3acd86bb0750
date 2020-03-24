@@ -1,0 +1,10 @@
+I"<h2 id="deploying-an-application-on-a-cluster">Deploying an application on a cluster</h2>
+
+<h3 id="introduction">Introduction</h3>
+
+<p>This document complement the article created in <a href="http://blog.sysco.no/weblogic/server/high/availability/ArchitectureHA"><strong><em>High Availability</em></strong></a> since it uses the high available architecture created in that post to demonstrate how to deploy an application using a cluster. In addition, the web layer configuration to redirect requests towards the cluster is also included. Furthermore, the file system defined to store applications is used</p>
+
+<p>You can download the guide using the following link.</p>
+
+<p><a href="/files/guides/ClusterDeployment.pdf"><strong><em>Cluster deployment</em></strong></a></p>
+:ET

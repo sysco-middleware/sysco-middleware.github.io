@@ -1,0 +1,83 @@
+I"<p>At Sysco we have recently started using Vue.js. Vue is an amazing, powerfull and fun to work with front-end framework. In this blog post I am describing why we have chosen Vue and why it can also be a great choice for your project(s).</p>
+
+<h2 id="what-did-we-use-before">What did we use before</h2>
+
+<p>Much of our previous work was made in Angular. And although, Angular is a great front-end framework, it has its con’s. One of our main issues with Angular is its slow learning curve. It was very difficult for developers that had little to none front-end experience to make simple changes, corrections or building an additional modules. Therefore we started looking for alternatives. We required a framework that had a short learning curve and could be used for a wide variety of projects. Vue was for us a perfect fit. Its small size (~30kb gzipped) and how it handles code separation meant that any developer with an understanding of JavaScript and HTML could then work on our front-end applications.</p>
+
+<h2 id="learning-curve">Learning curve</h2>
+
+<p>From a business perspective Vue is a great choice. Developers do not need to have extensive knowledge about building systems or a new syntax. Vue would feel natural to any developer that has an understanding of JavaScript and HTML. It also typically takes developers less then a day of reading the guide to learn enough to start working on open tasks/issues. This makes hiring new developer(s) easier. But also allows you to let other developers without any previous framework experience work on front-end tasks when needed.</p>
+
+<p><strong>A Vue single file component</strong></p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;template&gt;</span> <span class="c">&lt;!-- The component template --&gt;</span>
+  <span class="nt">&lt;div&gt;</span>
+    <span class="nt">&lt;ul</span> <span class="na">class=</span><span class="s">"users"</span><span class="nt">&gt;</span> <span class="c">&lt;!-- Print all users --&gt;</span>
+      <span class="nt">&lt;li</span> <span class="na">v-for=</span><span class="s">"user of users"</span><span class="nt">&gt;&lt;/li&gt;</span>
+    <span class="nt">&lt;/ul&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+
+<span class="nt">&lt;script&gt;</span> <span class="c1">// The component logics</span>
+<span class="k">import</span> <span class="p">{</span><span class="nx">mapGetters</span><span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">vuex</span><span class="dl">'</span>
+
+<span class="k">export</span> <span class="k">default</span> <span class="p">{</span>
+  <span class="na">computed</span><span class="p">:</span> <span class="p">{</span>
+    <span class="p">...</span><span class="nx">mapGetters</span><span class="p">({</span>
+      <span class="na">users</span><span class="p">:</span> <span class="dl">'</span><span class="s1">users/active</span><span class="dl">'</span> <span class="c1">// Get all active users</span>
+    <span class="p">})</span>
+  <span class="p">},</span>
+  <span class="k">async</span> <span class="nx">created</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">await</span> <span class="k">this</span><span class="p">.</span><span class="nx">$store</span><span class="p">.</span><span class="nx">dispatch</span><span class="p">(</span><span class="dl">'</span><span class="s1">fetchActiveUsers</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// preform a Vuex action</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+
+<span class="nt">&lt;style </span><span class="na">scoped</span><span class="nt">&gt;</span> <span class="c">/* The scoped component style */</span>
+<span class="nc">.users</span> <span class="o">&gt;</span> <span class="nt">li</span> <span class="p">{</span>
+  <span class="nl">font-size</span><span class="p">:</span> <span class="m">18px</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="nt">&lt;/style&gt;</span>
+</code></pre></div></div>
+
+<h2 id="scaling">Scaling</h2>
+
+<p>While Vue scales up, it also scales down just as well as jQuery. You can start using Vue with a single script tag.</p>
+
+<p><code class="highlighter-rouge">&lt;script src="https://cdn.jsdelivr.net/npm/vue"&gt;&lt;/script&gt;</code></p>
+
+<p>Then you can start writing Vue code and even ship the minified version to production without feeling guilty or having to worry about performance problems. A typical Vue project is also extremely small. A project with Vue and Vue Router included is around 30kb gzipped. Even though that Vue is small in size is it packed with features. This allows you to use Vue in all sorts of applications. From small widgets to big enterprise projects.</p>
+
+<p>Projects generated with the new cli (v3) also support TypeScript. TypeScript has its benefits, static type checking can be very useful for large-scale applications, and can be a big productivity boost for developers with backgrounds in Java and C#.</p>
+
+<h2 id="state-management">State management</h2>
+
+<p>Vue has like React it’s own state manager called <a href="https://github.com/vuejs/vuex">Vuex</a>.</p>
+
+<blockquote>
+  <p>Vuex is a state manager that deeply integrates into Vue. It serves as a centralised store for all components in a application, with rules ensuring that the state can only be mutated in a predictable fashion.</p>
+</blockquote>
+
+<p>When working with a couple of stores or hundreds. Vuex has a well documented <a href="https://vuex.vuejs.org/en/structure.html">application structure</a> that enforces a set of principals. When a new developer joins on a project does it require a minimum amount of time for him/her to understand the projects states, getters, actions and mutations.</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>└── store                 # directory where all stores are located
+    ├── index.js          # where we assemble modules and export the store
+    ├── actions.js        # root actions
+    ├── mutations.js      # root mutations
+    └── modules
+        ├── cart.js       # cart module
+        └── products.js   # products module
+</code></pre></div></div>
+
+<h2 id="upgradable--flexibility">Upgradable &amp; flexibility</h2>
+
+<p>The new Vue cli (v3) allowes you also to easily upgrade the build process of your Vue project. This is huge since previously you were not able to do this with any JavaScript framework once you modified the build process. With the new cli are all build processes treated as modules. You can extend, build or modify them while still keeping the plausibility to upgrade your project once a new version comes out.</p>
+
+<p>Vue is also less opinionated about the used building system. Offering official support for a variety of build systems.</p>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Vue is a framework that is all about simplicity and development speed. When working alone or in a big team Vue gives you a great framework with a set of rules that get’s you started quickly.</p>
+
+<p>If you want to read a detailed comparison between Vue and other frameworks. Then is the <a href="https://vuejs.org/v2/guide/comparison.html">Vue comparison guide</a> is a great place to get started.</p>
+:ET

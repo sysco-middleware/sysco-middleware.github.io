@@ -1,0 +1,154 @@
+I"ˆ9<p>I was invited to test a compression on ZFS storage when datafiles were placed on dnfs.</p>
+
+<p>And now I can prove, that the percent of compression really depends on the type of inserts.</p>
+
+<p>In case of direct inserts we have 10-times compression:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="n">TABLESPACE</span> <span class="n">tbsp1</span> <span class="n">DATAFILE</span> <span class="s1">'/zfs/ss7120/orashare/tbsp1.dbf'</span> 
+	<span class="k">SIZE</span> <span class="mi">1</span><span class="n">M</span> <span class="n">AUTOEXTEND</span> <span class="k">ON</span> <span class="n">MAXSIZE</span> <span class="mi">10</span><span class="k">G</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">TABLESPACE</span> <span class="n">tbsp2</span> <span class="n">DATAFILE</span> <span class="s1">'/zfs/ss7120/orashare/tbsp2.dbf'</span> 
+	<span class="k">SIZE</span> <span class="mi">1</span><span class="n">M</span> <span class="n">AUTOEXTEND</span> <span class="k">ON</span> <span class="n">MAXSIZE</span> <span class="mi">10</span><span class="k">G</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="n">TABLESPACE</span> <span class="n">tbsp3</span> <span class="n">DATAFILE</span> <span class="s1">'/zfs/ss7120/orashare/tbsp3.dbf'</span> 
+	<span class="k">SIZE</span> <span class="mi">1</span><span class="n">M</span> <span class="n">AUTOEXTEND</span> <span class="k">ON</span> <span class="n">MAXSIZE</span> <span class="mi">10</span><span class="k">G</span><span class="p">;</span>
+<span class="k">drop</span> <span class="k">table</span> <span class="n">big_size_table</span><span class="p">;</span>
+<span class="k">drop</span> <span class="k">table</span> <span class="n">medium_size_tab</span><span class="p">;</span>
+<span class="k">drop</span> <span class="k">table</span> <span class="n">small_size_tab</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">big_size_table</span> 
+<span class="n">nocompress</span> 
+<span class="n">tablespace</span> <span class="n">tbsp1</span>
+<span class="k">as</span>  <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+</code></pre></div></div>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DECLARE</span>
+<span class="k">BEGIN</span>
+  <span class="k">FOR</span> <span class="n">i</span> <span class="k">IN</span> <span class="mi">1</span> <span class="p">..</span> <span class="mi">100000</span> <span class="n">LOOP</span>
+    <span class="k">insert</span> <span class="k">into</span> <span class="n">big_size_table</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+    <span class="k">COMMIT</span><span class="p">;</span>
+  <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
+<span class="k">END</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">medium_size_tab</span> 
+<span class="n">compress</span> <span class="k">for</span> <span class="n">query</span> <span class="n">high</span>
+<span class="n">tablespace</span> <span class="n">tbsp2</span>
+<span class="k">as</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">big_size_table</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">small_size_tab</span> 
+<span class="n">compress</span> <span class="k">for</span> <span class="n">archive</span> <span class="n">high</span>
+<span class="n">tablespace</span> <span class="n">tbsp3</span>
+<span class="k">as</span> <span class="k">select</span> <span class="o">*</span> <span class="k">from</span> <span class="n">big_size_table</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>check the sizes of tables:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">COLUMN</span> <span class="n">segment_name</span> <span class="n">FORMAT</span> <span class="n">A30</span>
+<span class="k">SELECT</span> <span class="n">segment_name</span><span class="p">,</span> <span class="n">bytes</span><span class="p">,</span> 
+<span class="n">bytes</span><span class="o">/</span>
+<span class="p">(</span><span class="k">SELECT</span> <span class="n">bytes</span>
+<span class="k">FROM</span>   <span class="n">user_segments</span>
+<span class="k">WHERE</span>  <span class="n">segment_name</span> <span class="o">=</span><span class="s1">'BIG_SIZE_TABLE'</span>
+<span class="p">)</span> <span class="k">as</span> <span class="n">ratio</span>
+<span class="k">FROM</span>   <span class="n">user_segments</span>  
+<span class="k">WHERE</span>  <span class="n">segment_name</span> <span class="k">IN</span> <span class="p">(</span><span class="s1">'BIG_SIZE_TABLE'</span><span class="p">,</span> <span class="s1">'MEDIUM_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'SMALL_SIZE_TAB'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>check the level of compression:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">compress_for</span> 
+<span class="k">from</span> <span class="n">dba_tables</span>
+<span class="k">where</span> <span class="k">table_name</span> <span class="k">in</span> <span class="p">(</span><span class="s1">'BIG_SIZE_TABLE'</span><span class="p">,</span> <span class="s1">'MEDIUM_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'SMALL_SIZE_TAB'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> SEGMENT_NAME                        BYTES      RATIO
+------------------------------   ----------      ----------
+BIG_SIZE_TABLE                   75497472          1
+MEDIUM_SIZE_TAB                   786432          .01042
+SMALL_SIZE_TAB                     393216          .00521
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TABLE_NAME                      COMPRESS        COMPRESS_FOR
+---------------------------     --------        ------------
+BIG_SIZE_TABLE                  DISABLED
+MEDIUM_SIZE_TAB                 ENABLED         QUERY HIGH
+SMALL_SIZE_TAB                  ENABLED         ARCHIVE HIGH
+</code></pre></div></div>
+
+<p>And in case of usual insert we have only 10 percent of compression, so itâ€™s not usual HCC:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">drop</span> <span class="k">table</span> <span class="n">big_size_tab</span><span class="p">;</span>
+<span class="k">drop</span> <span class="k">table</span> <span class="n">medium_size_tab</span><span class="p">;</span>
+<span class="k">drop</span> <span class="k">table</span> <span class="n">small_size_tab</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">big_size_tab</span> 
+<span class="n">nocompress</span> 
+<span class="n">tablespace</span> <span class="n">tbsp1</span>
+<span class="k">as</span>  <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">medium_size_tab</span> 
+<span class="n">nocompress</span> 
+<span class="n">tablespace</span> <span class="n">tbsp2</span>
+<span class="k">as</span> <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">small_size_tab</span> 
+<span class="n">nocompress</span> 
+<span class="n">tablespace</span> <span class="n">tbsp3</span>
+<span class="k">as</span> <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DECLARE</span>
+<span class="k">BEGIN</span>
+  <span class="k">FOR</span> <span class="n">i</span> <span class="k">IN</span> <span class="mi">1</span> <span class="p">..</span> <span class="mi">100000</span> <span class="n">LOOP</span>
+    <span class="k">insert</span> <span class="k">into</span> <span class="n">big_size_tab</span> <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+    <span class="k">COMMIT</span><span class="p">;</span>
+  <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
+  <span class="k">FOR</span> <span class="n">i</span> <span class="k">IN</span> <span class="mi">1</span> <span class="p">..</span> <span class="mi">100000</span> <span class="n">LOOP</span>
+    <span class="k">insert</span> <span class="k">into</span> <span class="n">medium_size_tab</span> <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+    <span class="k">COMMIT</span><span class="p">;</span>
+  <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
+  <span class="k">FOR</span> <span class="n">i</span> <span class="k">IN</span> <span class="mi">1</span> <span class="p">..</span> <span class="mi">100000</span> <span class="n">LOOP</span>
+    <span class="k">insert</span> <span class="k">into</span> <span class="n">small_size_tab</span> <span class="k">select</span> <span class="n">EMPNO</span><span class="p">,</span> <span class="n">ENAME</span><span class="p">,</span> <span class="n">JOB</span> <span class="k">from</span> <span class="n">scott</span><span class="p">.</span><span class="n">emp</span><span class="p">;</span>
+    <span class="k">COMMIT</span><span class="p">;</span>
+  <span class="k">END</span> <span class="n">LOOP</span><span class="p">;</span>
+<span class="k">END</span><span class="p">;</span>
+<span class="o">/</span>
+</code></pre></div></div>
+
+<p>Check the sizes of tables and a level of compression:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">COLUMN</span> <span class="n">segment_name</span> <span class="n">FORMAT</span> <span class="n">A30</span>
+<span class="k">SELECT</span> <span class="n">segment_name</span><span class="p">,</span> <span class="n">bytes</span>
+<span class="k">FROM</span>   <span class="n">user_segments</span>
+<span class="k">WHERE</span>  <span class="n">segment_name</span> <span class="k">IN</span> <span class="p">(</span><span class="s1">'BIG_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'MEDIUM_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'SMALL_SIZE_TAB'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">select</span> <span class="k">table_name</span><span class="p">,</span> <span class="n">compression</span><span class="p">,</span> <span class="n">compress_for</span> 
+<span class="k">from</span> <span class="n">dba_tables</span>
+<span class="k">where</span> <span class="k">table_name</span> <span class="k">in</span> <span class="p">(</span><span class="s1">'BIG_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'MEDIUM_SIZE_TAB'</span><span class="p">,</span> <span class="s1">'SMALL_SIZE_TAB'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code> SEGMENT_NAME                   BYTES          RATIO
+------------------------------ ----------    ----------
+BIG_SIZE_TAB                   75497472         1
+MEDIUM_SIZE_TAB                65664327        .8697
+SMALL_SIZE_TAB                 65664327        .8697
+</code></pre></div></div>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>TABLE_NAME                     COMPRESS        COMPRESS_FOR
+----------------------------   --------        ------------
+BIG_SIZE_TAB                   DISABLED
+MEDIUM_SIZE_TAB                ENABLED         QUERY HIGH
+SMALL_SIZE_TAB                 ENABLED         ARCHIVE HIGH
+</code></pre></div></div>
+
+<p>Of course, the level of HCC compression depends on the quantity of repeatable rows in each HCC block.</p>
+
+<p>As you can see, I have populated the tables with strings from scott.emp.</p>
+
+<p>On real data you might get less percentage. Not 10 times.</p>
+:ET

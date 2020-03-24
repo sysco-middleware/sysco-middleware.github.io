@@ -1,0 +1,80 @@
+I"�<p>Simplifying ssh login to Linux by using Bash on Ubuntu on Windows 10</p>
+
+<p>Earlier you had to install/use third party software in Windows to run ssh. The new Bash on Ubuntu on Windows gives Windows new built in possibilities.  Under is an explanation on howto setup and login into a machine in an organization which is behind a jumphost. Earlier you typically used putty, cygwin, etc.. for this.
+ </p>
+
+<p>The machines in the example are called clienthost, jumphost and serverhost.</p>
+
+<p><strong><em>Clienthost –&gt; your Windows machine</em></strong></p>
+
+<p><strong><em>Jumphost   –&gt; the machine in the middle</em></strong></p>
+
+<p><strong><em>Serverhost –&gt; the machine which you are going to log into</em></strong></p>
+
+<p>Earlier you typically logged into the machines like this:</p>
+
+<p> 
+<strong><em>clienthost –&gt; jumphost –&gt; serverhost</em></strong></p>
+
+<p>Eks (putty)</p>
+
+<p><img src="/images/2016-08-15-Bash_on_Ubuntu_on_Windows/putty_ssh_01.png" alt="" /></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>login as: myuser
+myuser@jumphost<span class="s1">'s password:
+Last login: Thu Aug 15 10:46:27 2016 from clienthost.example.com
+[myuser@jumphost ~]$ 
+
+</span></code></pre></div></div>
+
+<p>Or in one line (cygwin)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>myuser@clienthost /home/myuser <span class="c"># ssh -t myuser@jumphost ssh myuser@serverhost</span>
+myuser@jumphost<span class="s1">'s password:
+myuser@serverhost'</span>s password:
+<span class="o">[</span>myuser@serverhost ~]# 
+
+</code></pre></div></div>
+
+<p>You can also do the last one in Bash on Ubuntu for Windows.</p>
+
+<p> 
+  - The -t option is to force pseudo-tty allocation</p>
+
+<p> 
+So how can we simplify this. This is nothing new in windows bash. Just to exploit the new possibilities. Start the bash shell on Ubuntu on Windows.</p>
+
+<p><img src="/images/2016-08-15-Bash_on_Ubuntu_on_Windows/bash_ssh_01.png" alt="" /></p>
+
+<p>Edit the file config and add info about jumphost and serverhost like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>myuser@clienthost /home/myuser <span class="c"># cd ~/.ssh</span>
+myuser@clienthost /home/myuser/.ssh <span class="c"># vi config</span>
+
+<span class="k">*</span><span class="c"># Jumphost (this is the proxyhost)</span>
+Host jumphost
+User myuser
+Hostname jumphost.example.com
+ 
+Host serverhost
+Hostname serverhost.example.com
+Port 22
+User myuser
+ProxyCommand ssh jumphost <span class="nt">-W</span> %h:%p <span class="k">*</span>
+
+</code></pre></div></div>
+
+<p>Now you are using jumphost as a proxy to log directly into serverhost. Everything behind Host is an alias and you can call it whatever you want. Behind Hostname there must be a dns-name or IP-address. User is the user you want to log in with. Now you log into serverhost like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>myuser@clienthost /home/myuser <span class="c"># ssh el01cn01</span>
+myuser@jumphost<span class="s1">'s password:
+myuser@serverhost'</span>s password:
+<span class="o">[</span>myuser@serverhost ~]#
+
+</code></pre></div></div>
+
+<p>To simplify it even more you create ssh keys on your client and distribute the public-keys to the jumphost and the serverhost.</p>
+
+<p>Now you do all this from Windows without any third party software.</p>
+
+:ET

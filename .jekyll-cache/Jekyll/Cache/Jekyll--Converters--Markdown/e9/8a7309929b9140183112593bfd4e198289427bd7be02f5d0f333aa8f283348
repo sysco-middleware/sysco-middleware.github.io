@@ -1,0 +1,281 @@
+I"R<p>This post is related to our presentations at Oracle OpenWorld 2014 and UKOUG Tech 14. All code/configuration used during the presentations are available here.</p>
+
+<ul>
+  <li>The OOW presentation as a PDF file - <a href="/files/presentations/CON3633_Sysco_Booting_Weblogic.pdf">CON3633_Sysco_Booting_Weblogic</a></li>
+  <li>The Tech 14 presentation as a PDF file - <a href="/files/presentations/Sysco_Booting_Weblogic.pdf">Sysco_Booting_Weblogic</a></li>
+  <li>See also my <a href="http://www.otechmag.com/2014/otech-magazine-winter-2014-2/">article</a> in OTech Magazine</li>
+</ul>
+
+<p>To start and stop AdminServer and the managed servers, we use a Jython (Python) script. It is on purpose made simple, but on production systems there should be more error handling, and also more efficient connection handling (i.e., check if there is a connection to NodeManager and/or AdminServer and reuse the connection if there is one active). Instead of calling the script below once for each server that we want to start, this script and the startall.sh script could be changed to give a list of servers to start, not just one and one as it is now.</p>
+
+<p><em>wls.py</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>import sys
+
+def startAdmin<span class="o">()</span>:
+    print <span class="s1">'Starting AdminServer'</span>
+    nmConnect<span class="o">(</span><span class="nv">userConfigFile</span><span class="o">=</span>nmUserFile, <span class="nv">userKeyFile</span><span class="o">=</span>nmKeyFile, <span class="nv">host</span><span class="o">=</span>nmHost, <span class="nv">port</span><span class="o">=</span>nmPort, <span class="nv">domainName</span><span class="o">=</span>domain, <span class="nv">domainDir</span><span class="o">=</span>domainPath, <span class="nv">nmType</span><span class="o">=</span>nmType<span class="o">)</span>
+    nmStart<span class="o">(</span><span class="s1">'AdminServer'</span><span class="o">)</span>
+    nmDisconnect<span class="o">()</span>
+    <span class="k">return
+
+</span>def stopAdmin<span class="o">()</span>:
+    print <span class="s1">'Stopping AdminServer'</span>
+    connect<span class="o">(</span><span class="nv">userConfigFile</span><span class="o">=</span>wlsUserFile, <span class="nv">userKeyFile</span><span class="o">=</span>wlsKeyFile, <span class="nv">url</span><span class="o">=</span>adminUrl<span class="o">)</span>
+    shutdown<span class="o">(</span><span class="s1">'AdminServer'</span>, <span class="nv">force</span><span class="o">=</span><span class="s1">'true'</span><span class="o">)</span>
+    disconnect<span class="o">()</span>
+    <span class="k">return
+
+</span>def startManaged<span class="o">(</span>managed<span class="o">)</span>:
+    print <span class="s1">'Starting '</span>, managed
+    connect<span class="o">(</span><span class="nv">userConfigFile</span><span class="o">=</span>wlsUserFile, <span class="nv">userKeyFile</span><span class="o">=</span>wlsKeyFile, <span class="nv">url</span><span class="o">=</span>adminUrl<span class="o">)</span>
+    start<span class="o">(</span>managed<span class="o">)</span>
+    disconnect<span class="o">()</span>
+<span class="k">return
+
+</span>def stopManaged<span class="o">(</span>managed<span class="o">)</span>:
+    print <span class="s1">'Stopping '</span>, managed
+    connect<span class="o">(</span><span class="nv">userConfigFile</span><span class="o">=</span>wlsUserFile, <span class="nv">userKeyFile</span><span class="o">=</span>wlsKeyFile, <span class="nv">url</span><span class="o">=</span>adminUrl<span class="o">)</span>
+    shutdown<span class="o">(</span>managed, <span class="nv">force</span><span class="o">=</span><span class="s1">'true'</span><span class="o">)</span>
+    disconnect<span class="o">()</span>
+<span class="k">return
+
+if</span> <span class="o">((</span>len<span class="o">(</span>sys.argv<span class="o">)</span> &lt; 2<span class="o">)</span> | <span class="o">(</span>len<span class="o">(</span>sys.argv<span class="o">)</span> <span class="o">&gt;</span> 3<span class="o">))</span>:
+    print <span class="s1">' Wrong number of arguments'</span>
+<span class="k">elif</span> <span class="o">(</span>sys.argv[1] <span class="o">==</span> <span class="s1">'startadmin'</span><span class="o">)</span>:
+    startAdmin<span class="o">()</span>
+<span class="k">elif</span> <span class="o">(</span>sys.argv[1] <span class="o">==</span> <span class="s1">'stopadmin'</span><span class="o">)</span>:
+    stopAdmin<span class="o">()</span>
+<span class="k">elif</span> <span class="o">(</span>sys.argv[1] <span class="o">==</span> <span class="s1">'start'</span><span class="o">)</span>:
+    startManaged<span class="o">(</span>sys.argv[2]<span class="o">)</span>
+<span class="k">elif</span> <span class="o">(</span>sys.argv[1] <span class="o">==</span> <span class="s1">'stop'</span><span class="o">)</span>:
+    stopManaged<span class="o">(</span>sys.argv[2]<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Full path for wlst.sh (under wlserver/common/bin) and wls.py must be given, unless they are in $PATH</p>
+
+<p><em>startall.sh</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wlst.sh <span class="nt">-loadProperties</span> config.properties <span class="nt">-skipWLSModuleScanning</span> wls.py startadmin
+wlst.sh <span class="nt">-loadProperties</span> config.properties <span class="nt">-skipWLSModuleScanning</span> wls.py start ms1
+</code></pre></div></div>
+
+<p><em>stopall.sh</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wlst.sh <span class="nt">-loadProperties</span> config.properties <span class="nt">-skipWLSModuleScanning</span> wls.py stop ms1
+wlst.sh <span class="nt">-loadProperties</span> config.properties <span class="nt">-skipWLSModuleScanning</span> wls.py stopadmin
+</code></pre></div></div>
+
+<p>adminUrl must point to the AdminServer (often a VIP address) while nmHost points to the local NodeManager.</p>
+
+<p><em>config.properties</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">adminUrl</span><span class="o">=</span>t3://wls12c.dev.sysco.no:7001
+<span class="nv">nmHost</span><span class="o">=</span>wls12c.dev.sysco.no
+<span class="nv">nmPort</span><span class="o">=</span>5556
+<span class="nv">nmUserFile</span><span class="o">=</span>/u01/app/oracle/config/nmUserFile
+<span class="nv">nmKeyFile</span><span class="o">=</span>/u01/app/oracle/config/nmKeyFile
+<span class="nv">nmType</span><span class="o">=</span>plain
+<span class="nv">wlsUserFile</span><span class="o">=</span>/u01/app/oracle/config/wlsUserFile
+<span class="nv">wlsKeyFile</span><span class="o">=</span>/u01/app/oracle/config/wlsKeyFile
+<span class="nv">domain</span><span class="o">=</span>mydomain
+<span class="nv">domainPath</span><span class="o">=</span>/u01/app/oracle/user_projects/domains/mydomain
+</code></pre></div></div>
+
+<p>Before running this command (deprecated in 12c, but still works in 12.1.3), you must source setDomainEnv.sh for the domain you are using.</p>
+
+<p>Encrypt username and password (11g)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java weblogic.Admin <span class="nt">-username</span> nodemanager <span class="nt">-userconfigfile</span> /u01/app/oracle/config/nmUserFile <span class="nt">-userkeyfile</span> /u01/app/oracle/config/nmKeyFile STOREUSERCONFIG
+</code></pre></div></div>
+
+<p>To run this command, you must start WLST in interactive mode. First you have to source setDomainEnv.sh, then start WLST</p>
+
+<p>Encrypt username and password (12c)</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>java weblogic.WLST
+wls:/offline&gt; nmConnect<span class="o">(</span> ‘nodemanager<span class="s1">','</span>welcome1<span class="s1">','</span>localhost<span class="s1">',5556,'</span>mydomain<span class="s1">', '</span>/u01/app/oracle/user_projects/domains/mydomain<span class="s1">', '</span>plain<span class="s1">')
+</span></code></pre></div></div>
+
+<p>Encrypt username and password for Node Manager</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wls:/mydomain/serverConfig&gt; storeUserConfig<span class="o">(</span>
+<span class="s1">'/u01/app/oracle/config/nmUserFile'</span>,<span class="s1">'/u01/app/oracle/config/nmKeyFile'</span>, <span class="s1">'true'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>Encrypt username and password for WebLogic admin user</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wls:/mydomain/serverConfig&gt; connect<span class="o">(</span><span class="s1">'weblogic'</span>, <span class="s1">'welcome1'</span>, <span class="s1">'t3://wls12c.dev.sysco.no:7001'</span><span class="o">)</span>
+wls:/mydomain/serverConfig&gt; storeUserConfig<span class="o">(</span>
+<span class="s1">'/u01/app/oracle/config/wlsUserFile'</span>,<span class="s1">'/u01/app/oracle/config/wlsKeyFile'</span>,<span class="s1">'false'</span><span class="o">)</span>
+</code></pre></div></div>
+
+<p>This is not based on the script from the 12c documentation <a href="http://docs.oracle.com/middleware/1213/wls/NODEM/java_nodemgr.htm#BABJIDFD">http://docs.oracle.com/middleware/1213/wls/NODEM/java_nodemgr.htm#BABJIDFD</a>. One important difference is that this script starts NodeManager with user oracle, while the script in the documentation starts NodeManager as root, which is not recommended.</p>
+
+<p><em>/etc/init.d/nodemanager</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="c">#</span>
+<span class="c"># nodemanager Oracle Weblogic NodeManager service</span>
+<span class="c">#</span>
+<span class="c"># chkconfig:   345 85 15</span>
+<span class="c"># description: Oracle Weblogic NodeManager service</span>
+
+<span class="c">### BEGIN INIT INFO</span>
+<span class="c"># Provides: nodemanager</span>
+<span class="c"># Required-Start: $network $local_fs</span>
+<span class="c"># Required-Stop:</span>
+<span class="c"># Should-Start:</span>
+<span class="c"># Should-Stop:</span>
+<span class="c"># Default-Start: 3 4 5</span>
+<span class="c"># Default-Stop: 0 1 2 6</span>
+<span class="c"># Short-Description: Oracle Weblogic NodeManager service.</span>
+<span class="c"># Description: Starts and stops Oracle Weblogic NodeManager.</span>
+<span class="c">### END INIT INFO</span>
+
+<span class="nb">.</span> /etc/rc.d/init.d/functions
+
+<span class="c"># Your WLS home directory (where wlserver is)</span>
+<span class="nb">export </span><span class="nv">MW_HOME</span><span class="o">=</span><span class="s2">"/u01/app/oracle/middleware/Oracle_Home"</span>
+<span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">"/usr/java/latest"</span>
+<span class="nv">DAEMON_USER</span><span class="o">=</span><span class="s2">"oracle"</span>
+<span class="nv">PROCESS_STRING</span><span class="o">=</span><span class="s2">"^.*weblogic.NodeManager.*"</span>
+
+<span class="nb">source</span> <span class="nv">$MW_HOME</span>/wlserver/server/bin/setWLSEnv.sh &amp;gt<span class="p">;</span> /dev/null
+<span class="nb">export </span><span class="nv">NodeManagerHome</span><span class="o">=</span><span class="s2">"</span><span class="nv">$WL_HOME</span><span class="s2">/common/nodemanager"</span>
+<span class="nv">NodeManagerLockFile</span><span class="o">=</span><span class="s2">"</span><span class="nv">$NodeManagerHome</span><span class="s2">/nodemanager.log.lck"</span>
+
+<span class="nv">PROGRAM</span><span class="o">=</span><span class="s2">"/u01/app/oracle/user_projects/domains/mydomain/bin/startNodeManager.sh"</span>
+<span class="nv">SERVICE_NAME</span><span class="o">=</span><span class="sb">`</span>/bin/basename <span class="nv">$0</span><span class="sb">`</span>
+<span class="nv">LOCKFILE</span><span class="o">=</span><span class="s2">"/var/lock/subsys/</span><span class="nv">$SERVICE_NAME</span><span class="s2">"</span>
+
+<span class="nv">RETVAL</span><span class="o">=</span>0
+
+start<span class="o">()</span> <span class="o">{</span>
+        <span class="nv">OLDPID</span><span class="o">=</span><span class="sb">`</span>/usr/bin/pgrep <span class="nt">-f</span> <span class="nv">$PROCESS_STRING</span><span class="sb">`</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="o">!</span> <span class="nt">-z</span> <span class="s2">"</span><span class="nv">$OLDPID</span><span class="s2">"</span> <span class="o">]</span><span class="p">;</span> <span class="k">then
+            </span><span class="nb">echo</span> <span class="s2">"</span><span class="nv">$SERVICE_NAME</span><span class="s2"> is already running (pid </span><span class="nv">$OLDPID</span><span class="s2">) !"</span>
+            <span class="nb">exit
+        </span><span class="k">fi
+
+        </span><span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">$"Starting </span><span class="nv">$SERVICE_NAME</span><span class="s2">: "</span>
+        /bin/su <span class="nv">$DAEMON_USER</span> <span class="nt">-c</span> <span class="s2">"</span><span class="nv">$PROGRAM</span><span class="s2"> &amp;amp;"</span>
+
+        <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+        <span class="nb">echo</span>
+        <span class="o">[</span> <span class="nv">$RETVAL</span> <span class="nt">-eq</span> 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">touch</span> <span class="nv">$LOCKFILE</span>
+<span class="o">}</span>
+
+stop<span class="o">()</span> <span class="o">{</span>
+        <span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">$"Stopping </span><span class="nv">$SERVICE_NAME</span><span class="s2">: "</span>
+        <span class="nv">OLDPID</span><span class="o">=</span><span class="sb">`</span>/usr/bin/pgrep <span class="nt">-f</span> <span class="nv">$PROCESS_STRING</span><span class="sb">`</span>
+        <span class="k">if</span> <span class="o">[</span> <span class="s2">"</span><span class="nv">$OLDPID</span><span class="s2">"</span> <span class="o">!=</span> <span class="s2">""</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+            /bin/kill <span class="nt">-TERM</span> <span class="nv">$OLDPID</span>
+        <span class="k">else</span>
+            /bin/echo <span class="s2">"</span><span class="nv">$SERVICE_NAME</span><span class="s2"> is stopped"</span>
+        <span class="k">fi
+        </span><span class="nb">echo</span>
+        /bin/rm <span class="nt">-f</span> <span class="nv">$NodeManagerLockFile</span>
+        <span class="o">[</span> <span class="nv">$RETVAL</span> <span class="nt">-eq</span> 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-f</span> <span class="nv">$LOCKFILE</span>
+
+<span class="o">}</span>
+
+restart<span class="o">()</span> <span class="o">{</span>
+        stop
+        <span class="nb">sleep </span>10
+        start
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> <span class="k">in
+  </span>start<span class="p">)</span>
+        start
+        <span class="p">;;</span>
+  stop<span class="p">)</span>
+        stop
+        <span class="p">;;</span>
+  restart|force-reload|reload<span class="p">)</span>
+        restart
+        <span class="p">;;</span>
+  <span class="k">*</span><span class="p">)</span>
+        <span class="nb">echo</span> <span class="s2">$"Usage: </span><span class="nv">$0</span><span class="s2"> {start|stop|restart}"</span>
+        <span class="nb">exit </span>1
+<span class="k">esac
+
+</span><span class="nb">exit</span> <span class="nv">$RETVAL</span>
+</code></pre></div></div>
+
+<p>The weblogic scripts call the startall.sh when the server starts, and stopall.sh when the server stops.</p>
+
+<p><em>/etc/init.d/weblogic</em></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c">#!/bin/sh</span>
+<span class="c">#</span>
+<span class="c"># weblogic Oracle Weblogic start</span>
+<span class="c">#</span>
+<span class="c"># chkconfig: 345 85 15</span>
+<span class="c"># description: Oracle Weblogic service</span>
+
+<span class="c">### BEGIN INIT INFO</span>
+<span class="c"># Provides:</span>
+<span class="c"># Required-Start: $nodemanager</span>
+<span class="c"># Required-Stop:</span>
+<span class="c"># Should-Start:</span>
+<span class="c"># Should-Stop:</span>
+<span class="c"># Default-Start: 3 4 5</span>
+<span class="c"># Default-Stop: 0 1 2 6</span>
+<span class="c"># Short-Description: Oracle Weblogic service.</span>
+<span class="c"># Description: Starts and stops Oracle Weblogic.</span>
+<span class="c">### END INIT INFO</span>
+
+ <span class="nb">.</span> /etc/rc.d/init.d/functions
+
+<span class="c"># Your WLS home directory (where wlserver is)</span>
+<span class="nb">export </span><span class="nv">MW_HOME</span><span class="o">=</span><span class="s2">"/u01/app/oracle/middleware/Oracle_Home"</span>
+<span class="nb">export </span><span class="nv">BOOT_HOME</span><span class="o">=</span><span class="s2">"/u01/app/oracle/bootscripts"</span>
+<span class="nb">export </span><span class="nv">JAVA_HOME</span><span class="o">=</span><span class="s2">"/usr/java/latest"</span>
+<span class="nv">DAEMON_USER</span><span class="o">=</span><span class="s2">"oracle"</span>
+
+<span class="nb">source</span> <span class="nv">$MW_HOME</span>/wlserver/server/bin/setWLSEnv.sh &amp;gt<span class="p">;</span> /dev/null
+<span class="nv">PROGRAM_START</span><span class="o">=</span><span class="s2">"</span><span class="nv">$BOOT_HOME</span><span class="s2">/startall.sh"</span>
+<span class="nv">PROGRAM_STOP</span><span class="o">=</span><span class="s2">"</span><span class="nv">$BOOT_HOME</span><span class="s2">/stopall.sh"</span>
+<span class="nv">SERVICE_NAME</span><span class="o">=</span><span class="sb">`</span>/bin/basename <span class="nv">$0</span><span class="sb">`</span>
+<span class="nv">LOCKFILE</span><span class="o">=</span><span class="s2">"/var/lock/subsys/</span><span class="nv">$SERVICE_NAME</span><span class="s2">"</span>
+<span class="nv">RETVAL</span><span class="o">=</span>0
+
+start<span class="o">()</span> <span class="o">{</span>
+ <span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">$"Starting </span><span class="nv">$SERVICE_NAME</span><span class="s2">: "</span>
+ /bin/su <span class="nv">$DAEMON_USER</span> <span class="nt">-c</span> <span class="s2">"</span><span class="nv">$PROGRAM_START</span><span class="s2"> &amp;amp;"</span> <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+ <span class="nb">echo</span> <span class="o">[</span> <span class="nv">$RETVAL</span> <span class="nt">-eq</span> 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">touch</span> <span class="nv">$LOCKFILE</span>
+<span class="o">}</span>
+
+ stop<span class="o">()</span> <span class="o">{</span>
+ <span class="nb">echo</span> <span class="nt">-n</span> <span class="s2">$"Stopping </span><span class="nv">$SERVICE_NAME</span><span class="s2">: "</span>
+ /bin/su <span class="nv">$DAEMON_USER</span> <span class="nt">-c</span> <span class="s2">"</span><span class="nv">$PROGRAM_STOP</span><span class="s2"> &amp;amp;"</span> <span class="nv">RETVAL</span><span class="o">=</span><span class="nv">$?</span>
+ <span class="o">[</span> <span class="nv">$RETVAL</span> <span class="nt">-eq</span> 0 <span class="o">]</span> <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-f</span> <span class="nv">$LOCKFILE</span>
+ <span class="o">}</span>
+
+ restart<span class="o">()</span> <span class="o">{</span>
+ stop
+ <span class="nb">sleep </span>10
+ start
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span> <span class="k">in
+ </span>start<span class="p">)</span>
+        start
+        <span class="p">;;</span>
+ stop<span class="p">)</span>
+        stop
+        <span class="p">;;</span>
+ restart|force-reload|reload<span class="p">)</span>
+        restart
+        <span class="p">;;</span>
+ <span class="k">*</span><span class="p">)</span>
+        <span class="nb">echo</span> <span class="s2">$"Usage: </span><span class="nv">$0</span><span class="s2"> {start|stop|restart}"</span>
+<span class="k">esac
+
+</span><span class="nb">exit </span>1
+</code></pre></div></div>
+
+<p>For both the nodemanager and the weblogic scripts, they must be made runnable (chmod 0755) and activated (chkconfig –add) before they will be used next time the server starts or stops.</p>
+:ET

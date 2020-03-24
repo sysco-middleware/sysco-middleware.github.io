@@ -1,0 +1,53 @@
+I"<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
+
+<p>After upgrading from WebLogic 12.1.2 to 12.1.3 several of our JAX-WS enabled apps broke with the following message:</p>
+
+<p><i>“Default configuration file [ metro-default.xml ] was not found”.</i></p>
+
+<p>Alrighty then, so off to support.oracle.com we go. Registered a SR to which I got a reply in an instant:</p>
+
+<p><i>
+This is very likely Bug 18416897 : MASM0001: DEFAULT CONFIGURATION FILE [ METRO-DEFAULT.XML ] WAS NOT FOUND</i></p>
+
+<p><strong>Fixed</strong> <strong>in</strong> version <strong>12.1.4</strong>, unfortunately there is <strong>no</strong> other <strong>solution</strong> <strong>for</strong> <strong>12.1.3</strong> 
+&lt;/i&gt;</p>
+
+<p>To keep the story short I used trial and error and a littel bit of help from <a href="http://google.com">god</a> and ended up with the following file which will solve the problem in a <i title="Heartbeat" class="fa fa-heartbeat"></i></p>
+
+<p><em>metro-default.xml</em></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;?xml version="1.0" encoding="UTF-8"?&gt;</span>
+	<span class="nt">&lt;metro</span>  <span class="na">xmlns:xsi=</span><span class="s">'http://www.w3.org/2001/XMLSchema-instance'</span>
+    <span class="na">xmlns=</span><span class="s">'http://java.sun.com/xml/ns/metro/config'</span>
+    <span class="na">version=</span><span class="s">"1.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;tubelines</span> <span class="na">default=</span><span class="s">"#default-metro-tubeline"</span><span class="nt">&gt;</span>
+        <span class="nt">&lt;tubeline</span> <span class="na">name=</span><span class="s">"default-metro-tubeline"</span><span class="nt">&gt;</span>
+            <span class="nt">&lt;client-side&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.TerminalTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.HandlerTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.ValidationTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.MustUnderstandTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.MonitoringTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.AddressingTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.rx.rm.runtime.RmTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.dump.MessageDumpingTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.TransportTubeFactory"</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/client-side&gt;</span>
+            <span class="nt">&lt;endpoint-side&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.TransportTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.dump.MessageDumpingTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.AddressingTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.rx.rm.runtime.RmTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.MonitoringTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.MustUnderstandTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.HandlerTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.ValidationTubeFactory"</span> <span class="nt">/&gt;</span>
+                <span class="nt">&lt;tube-factory</span> <span class="na">className=</span><span class="s">"com.sun.xml.ws.assembler.jaxws.TerminalTubeFactory"</span> <span class="nt">/&gt;</span>
+            <span class="nt">&lt;/endpoint-side&gt;</span>
+        <span class="nt">&lt;/tubeline&gt;</span>
+    <span class="nt">&lt;/tubelines&gt;</span>
+<span class="nt">&lt;/metro&gt;</span>
+</code></pre></div></div>
+
+<p>I know there are some other workarounds out there but then you’ll have to configure classloader filtering and other painful stuff.</p>
+:ET

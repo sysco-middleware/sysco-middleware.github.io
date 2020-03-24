@@ -1,0 +1,19 @@
+I"�<p>Oracle Event Processing is not the most frequently used tool in the Oracle SOA Suite, but more and more people now know about it. With some of the new features in BAM 12c many people will probably use it, without knowing that it is actually OEP behind there. OEP has allways been open and easy to adapt to your needs, but with this version it will be easier to show value fast. My personal favorite in this version is the REST adapter.</p>
+
+<p>For those of you interested in OEP – the following document describes <a href="http://www.oracle.com/technetwork/middleware/complex-event-processing/overview/whatisnewoep12c-2229223.pdf">What’s New in OEP 12c</a>. This is the type of document that I think is really useful for us when a new release is available. The SOA whitepaper on 12c is also excellent.</p>
+
+<p>Here is some of the improvements:</p>
+
+<ul>
+  <li>Quick start installation – like you now know from SOA/BPM</li>
+  <li>JDeveloper instead of Eclipse – better integrated with EDN</li>
+  <li>Better Coherence integration – support for compound keys and indexes</li>
+  <li>Improved CQL Engine – for instance sub-queries</li>
+  <li>Improved Spatial capabilities – for instance  geo-fencing 3D volumes, such as buildings, mountains</li>
+  <li>Quick Development and testing</li>
+  <li>New event node adapters – QuickFix, REST Adapter, Distribution Adapter for out-of-process OEP application
+integration, CSV Adapter</li>
+</ul>
+
+<p>Combination of Fast Data and Big Data is very interesting (and well supported in OEP), and that in combination with embedded OEP on small devices is something I think we will se a lot of in the coming years.</p>
+:ET

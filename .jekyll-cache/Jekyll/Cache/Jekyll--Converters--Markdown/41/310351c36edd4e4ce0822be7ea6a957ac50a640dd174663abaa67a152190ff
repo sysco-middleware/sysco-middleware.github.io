@@ -1,0 +1,156 @@
+I"·<p>This time, we will see some important advantages and disadvantages between these two versions. 
+There we go:</p>
+
+<p>#Overview#
+ADF mobile is a mobile hybrid application development framework that can build mobile applications for two different Operating Systems: <img src="/images/2015-09-21-differences-maf-and-adf-mobile/ios.JPG" alt="" /> <img src="/images/2015-09-21-differences-maf-and-adf-mobile/android.JPG" alt="" /></p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- IOS 7.0+ 
+- Android 4.x+ 
+</code></pre></div></div>
+
+<p>Also, this framework makes use of another technologies like Java, JavaScript, HTML5 and CSS3.  <br />
+Now, there is a new version of ADF Mobile that is called Oracle MAF. These have different licensing model because ADF mobile requires ADF and weblogic license, but Oracle MAF is licensed as an independent product. So we donâ€™t need any specific backend server for Oracle MAF.</p>
+
+<p>#Differences#</p>
+
+<p><strong>I. Oracle MAF can develop using more IDE tools like Eclipse besides JDeveloper.</strong></p>
+
+<p>Developers with little experience in JDeveloper can use Eclipse IDE for development</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- Oracle MAF 
+	-- Jdeveloper 12.1.3      
+	-- Eclipse OEPE       
+- ADF Mobile 
+	-- Jdeveloper 11.2.4    
+</code></pre></div></div>
+
+<p>Creating application in Oracle MAF using Eclipse</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/createMAFApplicationEclipse.JPG" alt="" /></li>
+</ul>
+
+<p>Creating application in Oracle MAF using JDeveloper</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/createMAFApplication.JPG" alt="" /></li>
+</ul>
+
+<p>Creating application in ADF Mobile using Jdeveloper</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/createADFMobileApplication.JPG" alt="" /></li>
+</ul>
+
+<p><strong>II. Oracle MAF has more AMX components to bring a rich look and feel.</strong></p>
+
+<p>In both cases we can create views without AMX components, because we can include several frameworks as AngularJs and Ionic with pure HTML code.
+If we are using amx components, there are 80 in total for MAF.</p>
+
+<p>MAF (General Controls)</p>
+
+<p>There is a new component called OutputHTML to include HTML content in AMX pages.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxGeneralControlsMAF.JPG" alt="" /></li>
+</ul>
+
+<p>ADF Mobile (General Controls)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxGeneralControlsADFMobile.JPG" alt="" /></li>
+</ul>
+
+<p>MAF (Text and selection)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxTextAndSelectionMAF.JPG" alt="" /></li>
+</ul>
+
+<p>ADF Mobile (Text and Selection)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxTextAndSelectionADFMobile.JPG" alt="" /></li>
+</ul>
+
+<p>MAF (Data Views)</p>
+
+<p>There is a film strip to display multiple items arranged into a horizontal or vertical strip.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxDataViewsMAF.JPG" alt="" /></li>
+</ul>
+
+<p>ADF Mobile (Data Views)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxDataViewsADFMobile.JPG" alt="" /></li>
+</ul>
+
+<p>MAF (Layout)</p>
+
+<p>There are Panel stretch layout and Deck as new components in this group. <br />
+Also there is a fragment to keep an entire page inside of it and accepts attributes and methods.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxLayoutMAF.JPG" alt="" /></li>
+</ul>
+
+<p>ADF Mobile (Layout)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxLayoutADFMobile.JPG" alt="" /></li>
+</ul>
+
+<p>MAF (Operations)</p>
+
+<p>There is a new component called Client listener that gives you a declarative way to register a Javascript listener that will be executed when a specific event type is fired.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxOperationsMAF.JPG" alt="" /></li>
+</ul>
+
+<p>ADF Mobile (Operations)</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxOperationsADFMobile.JPG" alt="" /></li>
+</ul>
+
+<p><strong>III. Oracle MAF has new Data visualization objects.</strong></p>
+
+<p>Now we can include a Sunburst to display hierarchical data across two dimensions and a Timeline to display a series of events in chronological order.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/amxDVTMAF.JPG" alt="" /></li>
+</ul>
+
+<p><strong>IV. MAF has more CSS features that makes the UI development easier.</strong></p>
+
+<p>We can use several skins:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>- amx  
+	mobileAlta-1.0  
+		mobileAlta-1.1   
+			mobileAlta-1.2  
+				mobileAlta-1.3  
+	mobileFusionFx-1.0  
+		mobileFusionFx-1.1  
+</code></pre></div></div>
+
+<p>By default a new MAF project uses the latest version of the mobileAlta skin Family. If you want to change the sking just you have to go to maf-config.xml.</p>
+
+<p><strong>V. MAF has additional plugins like barcode integration.</strong></p>
+
+<p>We can use cordova plugins to handle more functionalities in the devices.</p>
+
+<ul>
+  <li><img src="/images/2015-09-21-differences-maf-and-adf-mobile/barCode.JPG" alt="" /></li>
+</ul>
+
+<p>#Conclusion#</p>
+
+<p>A developer who currently works in ADF Mobile can adapt easily to Oracle MAF. <br />
+The migration from ADF mobile project to MAF project is easy, just need to open in Jdeveloper 12.1.3! <br />
+In future, any mobile development using Oracle Technology will be made in MAF and the actual ADF Mobile development will need to be switched.</p>
+
+:ET

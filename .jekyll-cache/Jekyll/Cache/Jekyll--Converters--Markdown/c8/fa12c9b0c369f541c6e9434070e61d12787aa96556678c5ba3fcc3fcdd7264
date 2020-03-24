@@ -1,0 +1,12 @@
+I")<p>In this post, I will show how to create an AWS EC2 Instance with an Oracle BPM 12c Quickstart Domain created. And I will use previous post for related tasks.</p>
+
+<p>Lets see how to achieve this and make this process reusable. These are the steps:</p>
+
+<ul>
+  <li>Create an AWS EC2 instance (with Vagrant)</li>
+  <li>Connect to an NFS instance to get the installer (with Chef)</li>
+  <li>Install Oracle BPM 12c Quickstart and create a Domain (with Chef)</li>
+</ul>
+
+<p><a href="http://jeqo.github.io/blog/cloud/run-bpm-12c-aws/">Read more…</a></p>
+:ET

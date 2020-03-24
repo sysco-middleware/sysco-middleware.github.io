@@ -1,0 +1,7 @@
+I"�<h2 id="using-queues-with-delivery-failure">Using Queues with Delivery Failure</h2>
+<p>Some days ago I realized that when a message is created through the Admin Console the Queue parameters set to use an Error Destination do not override the message’s parameters, it made me lose time because I thought that my application had a problem. However, the problem was caused because the “Redelivery Limit” set on the message by the Admin Console was no overwritten by the “Redelivery Limit” set in the Queue.</p>
+
+<p>You can read the guide using the following link.</p>
+
+<p><a href="/files/guides/JMSErrorDestinationRedeliveryLimit.pdf"><strong><em>JMS, Error Destination and Redelivery Limit</em></strong></a></p>
+:ET
