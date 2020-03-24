@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Setting up email sever using Postfix
+title: Setting up email server using Postfix
 categories: Mail Server Deployment
 tags: [Mail Server, Postfix, Ubuntu]
 author: AshishKapoor
