@@ -20,7 +20,6 @@ For installing Postfix server, your user should have sudo privileges (admin righ
 
 
 # Goal 1: Setting up mail server for receiving mails from local network
-## Background: Selection of Cypress as the test framework
 
 Before start configuring Postfix server, you need to make sure that proper entries in /etc/hosts. As most of programs will not accept an email using just @localhost as domain. 
 ```bash

@@ -1,0 +1,181 @@
+I"'2<h1 id="introduction">Introduction</h1>
+<p>The purpose for this post is to enable you to setup your own email server. For this purpose, we chose Postfix as a mail server. Postfix is a free and open-source mail transfer agent that routes and delivers electronic mail.</p>
+
+<p>In this Post, we will explain how to install and configure Postfix mail server on Ubuntu 18.4 server.</p>
+
+<h1 id="prerequisites">Prerequisites:</h1>
+<p>For installing Postfix server, your user should have sudo privileges (admin rights for installing postfix). If you want to receive emails from internet you should have DNS Records for Your Mail Server. You need to make sure Port 25 is open so that Postfix can receive emails from other SMTP servers.</p>
+
+<h1 id="overview-of-steps">Overview of steps</h1>
+<ul>
+  <li><strong>Goal 1</strong>: Setting up mail server for receiving mails from local network.</li>
+  <li><strong>Goal 2</strong>: Setting up mail server for receiving mails from internet.</li>
+</ul>
+
+<h1 id="goal-1-setting-up-mail-server-for-receiving-mails-from-local-network">Goal 1: Setting up mail server for receiving mails from local network</h1>
+
+<p>Before start configuring Postfix server, you need to make sure that proper entries in /etc/hosts. As most of programs will not accept an email using just @localhost as domain.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 	vi /etc/hosts
+</code></pre></div></div>
+<p>Your host file will look something like this.</p>
+
+<p><img src="/images/2020-03-24-Setting-up-email-sever-using-Postfix/hosts.png" alt="message" /></p>
+
+<h2 id="installing-and-configuring-postfix-server-on-ubuntu-with-command-line-interface">Installing and Configuring Postfix server on ubuntu with Command line interface</h2>
+
+<p>Installing Postfix on Ubutu server is quite simple task, but after installing postfix you need make sure that you configure postfix server properly.</p>
+
+<p>Install the postfix package if it is not installed already.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code> 	<span class="nb">sudo </span>apt-get <span class="nb">install </span>postfix
+</code></pre></div></div>
+<p><strong>Configure a Catch-all Address</strong></p>
+
+<p>Enabling this, you can use any email address ending with “@localhost” or “@localhost.com”.</p>
+
+<p>if not exists, create file /etc/postfix/virtual:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>nano /etc/postfix/virtual
+</code></pre></div></div>
+<p>Add the following 2 lines content, replacing <your-user> with your Unix user account:</your-user></p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    @localhost &lt;your-user&gt;
+    @localhost.com &lt;your-user&gt; 
+</code></pre></div></div>
+<p>Save and close the file.</p>
+
+<p><strong>Configure a Catch-all Address</strong></p>
+
+<p>To Change the configuration of postfixx server we need to read this file:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>vi /etc/postfix/main.cf
+</code></pre></div></div>
+<p>And check if this line is enabled in main.cf, or add it if not exists:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    virtual_alias_maps <span class="o">=</span> <span class="nb">hash</span>:/etc/postfix/virtual
+</code></pre></div></div>
+<p>Save and close this file and to activate these changes by running below commands:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>postfix reload
+    <span class="nb">sudo </span>service postfix restart
+</code></pre></div></div>
+<p><strong>Configure Postfix to use Maildir-style mailboxes and other settings.</strong>
+Open Postfix configuration file</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>vi /etc/postfix/main.cf
+</code></pre></div></div>
+<p>Add below lines after inet_protocoles and save main.cf</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    luser_relay <span class="o">=</span> sysco@localhost
+    local_recipient_maps <span class="o">=</span>
+    home_mailbox <span class="o">=</span> Maildir/
+    disable_mime_output_convesion <span class="o">=</span> <span class="nb">yes
+    </span>strict_8bitmime <span class="o">=</span> <span class="nb">yes
+    </span>strict_7bit_headers <span class="o">=</span> no
+    strict_8bitmime_body <span class="o">=</span> <span class="nb">yes</span>
+</code></pre></div></div>
+
+<p>Reload postfix and restart it:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>postfix reload
+    <span class="nb">sudo </span>service postfix restart
+</code></pre></div></div>
+<p>Your /etc/postfix/main.cf will look like this:</p>
+
+<p><img src="/images/2020-03-24-Setting-up-email-sever-using-Postfix/maincf.png" alt="message" /></p>
+
+<p><strong>Optional steps</strong>
+Let Postfix know about the domains that it should consider local:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>postconf <span class="nt">-e</span> <span class="s2">"mydestination = gitlab.example.com, localhost.localdomain, localhost"</span>
+</code></pre></div></div>
+<p>Let Postfix know about the IPs that it should consider part of the LAN:
+We’ll assume 192.168.1.0/24 is your local LAN. You can safely skip this step if you don’t have other machines in the same local network.</p>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    sudo postconf -e "mynetworks = 127.0.0.0/8, 192.168.1.0/24"
+</code></pre></div></div>
+
+<p>Remember to relaod Postfix configuration and restart it.</p>
+
+<p>Checking Postfix server status.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>service postfix status
+</code></pre></div></div>
+<p>Starting Postfix server.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>service postfix start
+</code></pre></div></div>
+<p>Stoping Postfix server.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>service postfix stop
+</code></pre></div></div>
+
+<p><strong>Testing Postfix sever</strong></p>
+
+<p>For testing postfix server first, we will install mailutils for sending mail to local server</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>apt <span class="nb">install </span>mailutils
+</code></pre></div></div>
+<p>Execute below command to send mail to local mail sever</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>		mail <span class="nt">-s</span> <span class="s2">"Test Subject"</span> 27148485@localhost.com &lt; /dev/null
+</code></pre></div></div>
+<p>and check mail /Maildir/new , if you receive any file in this folder then your postfix server is configured properly and you mail server setup is complete for receiving emails from local network.</p>
+
+<h1 id="goal-2-setting-up-mail-server-for-receiving-mails-from-internet">Goal 2: Setting up mail server for receiving mails from internet</h1>
+
+<p>Postfix requires server’s hostname to identify itself when communicating with other MTAs. Host name can have Single word or Fully Qualified Domain Name(FQDN). FQDN is usually used for internet facing servers. You should setup DNS records for your mail server in your DNS hosting service. In this you have to setup MX record and A record.</p>
+
+<p><strong>MX reco*rd</strong>: An MX record tells other MTAs that your mail server mail. syscotest.com is responsible for email delivery for your domain name.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    MX record    @           mail.syscotest.com
+</code></pre></div></div>
+<p><strong>A record</strong>: An A record maps a FQDN to an IP address.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    mail.syscotest.com        &lt;IP-address&gt;
+</code></pre></div></div>
+<p><strong>Installing Postfix</strong></p>
+
+<p>Run below command in terminal to install Postfix server.</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>apt-get update
+    <span class="nb">sudo </span>apt-get <span class="nb">install </span>postfix <span class="nt">-y</span>
+</code></pre></div></div>
+<p>The installation process will ask you to select mail configuration. You need to select Internet Site for this.</p>
+
+<p><img src="/images/2020-03-24-Setting-up-email-sever-using-Postfix/PostfixInternetSite.png" alt="message" /></p>
+
+<p><strong>No configuration</strong> means the installation process will not configure any parameters.</p>
+
+<p><strong>Internet Site</strong> means using Postfix for sending emails to other MTAs and receiving email from other MTAs.</p>
+
+<p><strong>Internet with smarthost</strong> means using postfix to receive email from other MTAs, but using another smart host to relay emails to the recipient.</p>
+
+<p><strong>Satellite system</strong> means using smart host for sending and receiving email.</p>
+
+<p><strong>Local only</strong> means emails are transmitted only between local user accounts. (For Goal 1 select this option)</p>
+
+<p>In step it will ask you to enter domain name for the system mail name. In our case, we have entered “syscotest.com” as system mail server.</p>
+
+<p><img src="/images/2020-03-24-Setting-up-email-sever-using-Postfix/syscotest.png" alt="message" /></p>
+
+<p>Once installed check Postfix configuration file  “/etc/postfix/main.cf” by opening it in your favourite editor. Your main.cf will look like this:</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    myhostname <span class="o">=</span> syscotest.com
+    mydomain <span class="o">=</span> syscotest.com
+    myorigin <span class="o">=</span> <span class="nv">$mydomain</span>
+    mydestination <span class="o">=</span> <span class="nv">$myhostname</span>, localhost, <span class="nv">$mydomain</span>, localhost.localdomain
+    mynetworks <span class="o">=</span> 127.0.0.0/8, /32
+    relay_domains <span class="o">=</span> <span class="nv">$mydestination</span>
+    inet_interfaces <span class="o">=</span> all
+    inet_protocols <span class="o">=</span> all
+    home_mailbox <span class="o">=</span> Maildir/
+</code></pre></div></div>
+<p>Check Postfix status by executing below command:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="nb">sudo </span>service postfix status
+</code></pre></div></div>
+<p><img src="/images/2020-03-24-Setting-up-email-sever-using-Postfix/status.png" alt="message" /></p>
+
+<p>if this command returns status running, then postfix is up and running.</p>
+
+<p><strong>Testing mail server</strong>
+Before testing this setup make sure you have mapped your mail server user in “/etc/postfix/virtual”. Your virtual file should look like this</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>contact@syscotest.com sysco
+admin@syscotest.com Sysco
+</code></pre></div></div>
+<p>We can apply the mapping by typing:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>		<span class="nb">sudo </span>postmap /etc/postfix/virtual
+</code></pre></div></div>
+<p>Restart the Postfix process to be sure that all our changes have been applied:</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl restart postfix
+</code></pre></div></div>
+<p>Goto you gmail account and send mail to admin@syscotest.com. Mail should be sent successfully, and you should receive mail in “/Maildir/new”.</p>
+
+<h1 id="conclusion">Conclusion</h1>
+
+<p>Configuring and Managing mail servers can be a difficult task for new administrators, but with this configuration, you should have basic MTA email functionality to get you started. Success factor for mail server configuration depends upon how you configure and run your mail server.</p>
+:ET
