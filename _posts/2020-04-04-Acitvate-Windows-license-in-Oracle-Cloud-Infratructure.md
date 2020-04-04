@@ -8,7 +8,7 @@ author: catoaune
 
 # Scenario
 
-In a private subnet, you have one or more Windows servers where you need to activate the Windows licenses. Instead of using Microsofts own licensing servers, you have to use Oracle KMS service. My Oracle Support Knowledge Base document ID 2228641.1 "License Activation For Windows Instances" describes the process, but unfortunately it didn't work for us.
+In a private subnet, you have one or more Windows servers that needs to activate the Windows licenses. Instead of using Microsofts own licensing servers, you have to use Oracle KMS service. My Oracle Support Knowledge Base document ID 2228641.1 "License Activation For Windows Instances" describes the process, but unfortunately that didn't work for us.
 
 What we ended up doing was running the following commands in PowerShell on each server (replace 192.168.1.53 with your servers ip):
 ```
