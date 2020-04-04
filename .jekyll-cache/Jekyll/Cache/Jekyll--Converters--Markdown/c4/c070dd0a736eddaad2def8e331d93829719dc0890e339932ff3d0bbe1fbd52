@@ -1,6 +1,0 @@
-I"k<p>Provisioning tools have change the way we create software environments: How much time we spend installing OS, databases, configuring platforms, applications? Now you can translate this steps into code, getting the software development benefits and challenges into infrastructure: versioning, reuse, continuous improvement.</p>
-
-<p>In this post, I will show you how to provision Oracle SOA Suite 12c using a Chef cookbook that I created and shared it on <a href="http://supermarket.chef.io/">Chef Supermarket</a>.</p>
-
-<p><a href="http://jeqo.github.io/blog/devops/chef-cookbook-oracle-fmw-12c/">Read more…</a></p>
-:ET
