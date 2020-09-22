@@ -9,7 +9,7 @@ author: AnitaLipsky
 # npm VS npx when running Cypress tests
 
 This blog post is about something I stumbled over when figuring out which
-commands to use for running [Cypress.io](cypress.io) tests when setting up a pipeline, in this case Azure DevOps. The pipeline in this post refers to configuring Azure
+commands to use for running [Cypress.io](http://cypress.io) tests when setting up a pipeline, in this case Azure DevOps. The pipeline in this post refers to configuring Azure
 DevOps for running Cypress tests.
 
 This post will run through a use case that leads to the following conclusions:
@@ -18,7 +18,7 @@ command to use the same version the npm package uses
 2. Add a handy generic *npm script command* to package.json that can be
 used when trying out new *npm script commands*
 
-Note: [Cypress.io](Cypress.io) is a test framework that I love using to automate UI tests mainly because of its interactive playback facility after a test run.
+Note: [Cypress.io](http://Cypress.io) is a test framework that I love using to automate UI tests mainly because of its interactive playback facility after a test run.
 
 
 ## What is npm?
