@@ -31,7 +31,7 @@ words if node.js is installed, so is npx (and npm).
 
 
 ## What does npx do and how does it operate on Cypress?
-Cypress is published as a executable program which makes it possible to type
+Cypress is published as an executable program which makes it possible to type
 on the command line
 ```bash
 cypress run --headless
