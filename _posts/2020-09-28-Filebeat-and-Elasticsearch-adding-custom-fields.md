@@ -131,26 +131,25 @@ One way is to type in the new field name in "Search field names" under the index
 
 An option will appear to Add the field
 
-
-[TODO insert image]
+![Add field](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/add searchedField.png)
 
 
 Add the field, which will show this field as a column in the logs view area.
 
-[TODO insert image]
+![Field added to column view](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/field added to column view.png)
 
 
 
 Another way is to type the field name in the Discover search bar at the top...
 
 
-[TODO insert image]
+![Type field name in Discover](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield searchable.png)
 
 
 … and select "equals" and the value should show as a suggestion.
 
 
-[TODO insert image]
+![Value is suggested](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield search value.png)
 
 
 ## Add a searchable version field
