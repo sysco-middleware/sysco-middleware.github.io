@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Filebeat and Elasticsearch: Adding custom fields so ingested logs are more easily searchable
+title: Filebeat and Elasticsearch - Adding custom fields so ingested logs are more easily searchable
 categories: Data analysis
 tags: [Elasticsearch,Filebeat,ingest,logs]
 author: AnitaLipsky 
@@ -20,12 +20,11 @@ This will walk through adding custom fields in filebeat.yml for one log file typ
 
 We will be ingesting the following log files from my laptop in order to simplify this blog post.
 
-The steps are applicable for logs from a test or production environment for one particular version of your app.
-
-
 ```
 - /var/log/*.log
 ```
+
+The steps are applicable for logs from a test or production environment for one particular version of your app.
 
 
 ## The custom fields that will be added
