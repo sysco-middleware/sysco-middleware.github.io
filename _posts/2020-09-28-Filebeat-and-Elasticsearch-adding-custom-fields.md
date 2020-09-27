@@ -104,17 +104,19 @@ Save the file and restart Filebeat if it was already running
 
 Verify the new field is showing as expected in Kibana > Discover
 
-[TODO insert image]
+![New field](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield.png)
+
 
 Notice there is a warning there is no cached mapping for this field
 
-[TODO insert image]
+![No cached mapping warning](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield warning.png)
+
 
 Refresh the index pattern by navigating to Management: Stack Management > Kibana: Index Patterns > select the index pattern, Refresh and Confirm
 
 so the new field has a cached mapping
 
-[TODO insert image]
+![Refresh field list](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield refresh.png)
 
 It should now be easy to search on logs with this field.
 
@@ -124,7 +126,7 @@ The new field should now be easily searchable in Kibana > Discover
 
 One way is to type in the new field name in "Search field names" under the index pattern name
 
-[TODO insert image]
+![Search field names](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/searchFields-leftside.png)
 
 
 An option will appear to Add the field
