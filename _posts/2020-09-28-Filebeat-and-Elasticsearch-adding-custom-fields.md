@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Filebeat and Elasticsearch - Adding custom fields so ingested logs are more easily searchable
-categories: Data analysis
+categories: Data analysis, Observability
 tags: [Elasticsearch,Filebeat,ingest,logs]
 author: AnitaLipsky 
 ---
