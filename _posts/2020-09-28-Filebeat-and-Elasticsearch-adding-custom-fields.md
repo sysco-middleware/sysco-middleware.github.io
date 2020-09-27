@@ -10,9 +10,9 @@ author: AnitaLipsky
 This will walk through adding custom fields in filebeat.yml for one log file type in order to make those logs ingested by Elasticsearch more easily searchable.
 
 ## Terminology
-* Elasticsearch: the search and analytics engine at the heart of the stack - store, search and analyse data, in our case logs
-* Kibana: the visualisation layer and user interface for the Elastic Stack - visualise, navigate and share data, in our case logs
-* Filebeat: single purpose data shippers, in our case used to send logs from the application servers to Elasticsearch
+* [Elasticsearch](https://www.elastic.co/elasticsearch/): the search and analytics engine at the heart of the stack - store, search and analyse data, in our case logs
+* [Kibana](https://www.elastic.co/kibana): the visualisation layer and user interface for the Elastic Stack - visualise, navigate and share data, in our case logs
+* [Filebeat](https://www.elastic.co/beats/filebeat): single purpose data shippers, in our case used to send logs from the application servers to Elasticsearch
 
 
 ## The log files that we will be ingesting
