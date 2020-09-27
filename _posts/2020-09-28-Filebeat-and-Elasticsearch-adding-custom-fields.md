@@ -195,14 +195,14 @@ These custom fields make it simple to search and aggregate data for
 The newly added version fields are shown
 
 
-[TODO insert image]
+![Version added with warning](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version added.png)
 
 
 
 
 Repeat the steps of restarting Filebeat and refreshing the Index Pattern to remove the warnings
 
-[TODO insert image]
+![Version added - no more warnings](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version fields refreshed.png)
 
 
 
@@ -210,7 +210,7 @@ Repeat the steps of restarting Filebeat and refreshing the Index Pattern to remo
 
 Note that it is now easy to search upon specific combinations of versions, as well as less and greater than specific versions
 
-[TODO insert image]
+![Version searchable](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version searchable.png)
 
 
 
@@ -219,14 +219,14 @@ Note that it is now easy to search upon specific combinations of versions, as we
 It is also easy to include the app.log.origin value
 
 
-[TODO insert image]
+![Version and origin](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version and origin.png)
 
 
 
 
 Example: It is easy to filter only logs coming from *major version 2* and *minor version 1*, where the bugfix version does not matter, and *origin fromAnitaLaptop*
 
-
+![Version and origin search results](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version and origin search results.png)
 
 
 
