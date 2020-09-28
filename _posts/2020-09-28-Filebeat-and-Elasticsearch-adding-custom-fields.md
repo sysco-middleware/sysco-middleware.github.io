@@ -2,7 +2,7 @@
 layout: post
 title: Filebeat and Elasticsearch - Adding custom fields so ingested logs are more easily searchable
 categories: Data analysis, Observability
-tags: [Elasticsearch,Filebeat,ingest,logs]
+tags: [Elasticsearch,Filebeat,Kibana,ingest,logs]
 author: AnitaLipsky 
 ---
 
@@ -20,7 +20,7 @@ This will walk through adding custom fields in filebeat.yml for one log file typ
 
 We will be ingesting the following log files from my laptop in order to simplify this blog post.
 
-```
+```bash
 - /var/log/*.log
 ```
 
@@ -59,12 +59,12 @@ Edit filebeat.yml to add the custom field for the log file
 
 
 
-In filebeat.yml add the [fields](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-log.html#filebeat-input-log-fields) and *fields_under_root* as follows below the path for one particular log, in this case the standard */var/log/*.log*
+In filebeat.yml add the [fields](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-log.html#filebeat-input-log-fields) and [fields_under_root](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-log.html#fields-under-root-log) as follows below the path for one particular log, in this case the standard */var/log/*.log*
 
 In this example, the field app.log.origin with the value fromAnitaLaptop will be added to every indexed document in Elasticsearch coming from */var/log/*.log*
 
 
-```
+```bash
 # filebeat.yml --- SNIP ---
 # Add the following fields and fields_under_root underneath the path
 
@@ -86,16 +86,14 @@ In order to simplify this exercise, it assumes there is only one log type with o
 
 In other words, there should be only one input type with one path in the entire filebeat.yml file.
 
-<aside class="warning">
-** Warning **
+### Warning
 .yml files are extremely picky with indentation
 
 Be sure to use spaces for indentation to avoid errors resulting in Filebeat being unable to restart
 
 **Tip: Test your config file first**
-</aside>
 
-```
+```bash
 filebeat test config -c filebeat.yml
 ```
 
@@ -103,10 +101,12 @@ Save the file and restart Filebeat if it was already running
 
 Verify the new field is showing as expected in Kibana > Discover
 
+
 ![New field](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield.png)
 
 
 Notice there is a warning there is no cached mapping for this field
+
 
 ![No cached mapping warning](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield warning.png)
 
@@ -115,7 +115,9 @@ Refresh the index pattern by navigating to Management: Stack Management > Kibana
 
 so the new field has a cached mapping
 
+
 ![Refresh field list](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/firstfield refresh.png)
+
 
 It should now be easy to search on logs with this field.
 
@@ -125,15 +127,18 @@ The new field should now be easily searchable in Kibana > Discover
 
 One way is to type in the new field name in "Search field names" under the index pattern name
 
+
 ![Search field names](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/searchFields-leftside.png)
 
 
 An option will appear to Add the field
 
+
 ![Add field](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/add searchedField.png)
 
 
 Add the field, which will show this field as a column in the logs view area.
+
 
 ![Field added to column view](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/field added to column view.png)
 
@@ -162,18 +167,18 @@ Add the following fields if the version number is explicitly known for a log fil
 * app.version.bugfix
 
 
-Note: app.version.patch would have been more correct as per [semver.org](https://semver.org/ )
+*Note: app.version.patch would have been more correct as per [semver.org](https://semver.org/ )*
 
 
 
 These custom fields make it simple to search and aggregate data for
 
 * an explicit full version number, eg 2.1.0
-* A combination of major and minor, eg major version 2 and minor version 1
-* A combination of logs *“fromAnitaLaptop”* with a particular version combination because we are adding the version fields in addition to the existing custom field app.log.origin
+* a combination of major and minor, eg major version 2 and minor version 1
+* a combination of logs *“fromAnitaLaptop”* with a particular version combination because we are adding the version fields in addition to the existing custom field app.log.origin
 
 
-```
+```bash
 # filebeat.yml --- SNIP ---
 # Add the following fields and fields_under_root underneath the path
 
@@ -197,22 +202,18 @@ The newly added version fields are shown
 ![Version added with warning](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version added.png)
 
 
-
-
 Repeat the steps of restarting Filebeat and refreshing the Index Pattern to remove the warnings
+
+
 
 ![Version added - no more warnings](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version fields refreshed.png)
 
 
 
-
-
 Note that it is now easy to search upon specific combinations of versions, as well as less and greater than specific versions
 
+
 ![Version searchable](/images/2020-09-28-Filebeat-and-Elasticsearch-adding-custom-fields/version searchable.png)
-
-
-
 
 
 It is also easy to include the app.log.origin value
@@ -234,4 +235,4 @@ Example: It is easy to filter only logs coming from *major version 2* and *minor
 
 The custom fields added to the index in Elasticsearch contain useful meta information that give the logs context, and thus the logs can be more easily searchable in that context.
 
-When logs are more easily searchable within a context, visual charts and graphs can easily be made for these different contexts, bringing visibility and into your application, enabling stakeholders to understand and act upon the application behaviour.
+When logs are more easily searchable within a context, visual charts and graphs can easily be made for these different contexts, bringing visibility into your application, enabling stakeholders to understand and act upon the application behaviour.
