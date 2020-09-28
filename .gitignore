@@ -11,3 +11,4 @@ vendor/
 
 # VSCode
 /.vscode
+.jekyll-cache/
