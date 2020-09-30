@@ -122,7 +122,7 @@ This custom command can be refactored to have the username and password as param
 
 ### But what about Two factor authentication (2FA)?
 
-Best practice today is to use 2FA even on non production environments.  In that case there needs to be some authenticator installed on that environment.  This blog post does not address this topic.
+Best practice today is to use 2FA even on non production environments.  In that case there needs to be some authenticator installed on those environments.  This blog post does not address this topic.
 
 
 ## Conclusion
