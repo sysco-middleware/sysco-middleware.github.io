@@ -91,6 +91,13 @@ Cypress.Commands.add("authenticateUsingToken", window => {
 });
 ```
 
+The following configuration setting was also added to avoid ```Referrer Policy: strict-origin-when-cross-origin``` when API responses were expected from the content of pages
+
+### cypress.json
+
+```bash
+"chromeWebSecurity": false
+```
 
 ### Example of usage in a test file
 
