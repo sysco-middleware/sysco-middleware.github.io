@@ -117,7 +117,7 @@ describe("View Products", () => {
 });
 ```
 
-This custom command can be refactored to have the username and password as parameters, so tests can use the appropriate user.
+This custom command can be refactored to have the username and password as parameters so tests can easily specify the appropriate user.
 
 
 ### But what about Two factor authentication (2FA)?
