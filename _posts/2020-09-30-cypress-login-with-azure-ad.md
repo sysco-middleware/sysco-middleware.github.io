@@ -91,7 +91,7 @@ Cypress.Commands.add("authenticateUsingToken", window => {
 });
 ```
 
-The following configuration setting was also added to avoid ```Referrer Policy: strict-origin-when-cross-origin``` when API responses were expected from the content of pages
+The following configuration setting was also added to avoid ```Referrer Policy: strict-origin-when-cross-origin``` when API responses were expected to populate page content
 
 ### cypress.json
 
