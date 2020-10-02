@@ -24,9 +24,9 @@ Note the log file paths already contain meta information that make it easier to 
 
 ```bash
 - /var/log/*.log
-- C:\ProgramData\FinacialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
-- C:\ProgramData\FinacialCustomer\Logs\myConnectorApp\*
-- C:\ProgramData\FinacialCustomer\Logs\myTimeSheetApp_version_1.1\*We will be ingesting the following log files from my laptop in order to simplify this blog post.
+- C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
+- C:\ProgramData\FinancialCustomer\Logs\myConnectorApp\*
+- C:\ProgramData\FinancialCustomer\Logs\myTimeSheetApp_version_1.1\*We will be ingesting the following log files from my laptop in order to simplify this blog post.
 ```
 
 ## The custom fields that will be added
@@ -87,7 +87,7 @@ We need to define multiple input sections.
 
 In filebeat.yml add the second type and its fields and fields_under_root underneath the first type, save and restart filebeat.
 
-In this example, fields indicating the staging server, the name of the app and version will be added to every indexed document in Elasticsearch coming from the logs ```C:\ProgramData\FinacialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*```
+In this example, fields indicating the staging server, the name of the app and version will be added to every indexed document in Elasticsearch coming from the logs ```C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*```
 
 
 ```bash
@@ -105,7 +105,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - C:\ProgramData\FinacialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
+    - C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
   fields:
     app.log.origin: stagingServer
     app.name: myAccountingBackOfficeApp
@@ -140,7 +140,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - C:\ProgramData\FinacialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
+    - C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
   fields:
     app.log.origin: stagingServer
     app.name: myAccountingBackOfficeApp
@@ -152,7 +152,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - C:\ProgramData\FinacialCustomer\performance-logs\myConnectorApp\*
+    - C:\ProgramData\FinancialCustomer\performance-logs\myConnectorApp\*
   fields:
     app.log.origin: stagingServer
     app.name: myConnectorApp
@@ -160,7 +160,7 @@ filebeat.inputs:
 - type: log
   enabled: true
   paths:
-    - C:\ProgramData\FinacialCustomer\performance-logs\myTimeSheetApp_version_1.1\*
+    - C:\ProgramData\FinancialCustomer\performance-logs\myTimeSheetApp_version_1.1\*
   fields:
     app.log.origin: stagingServer
     app.name: myTimeSheetApp_version_1.1
