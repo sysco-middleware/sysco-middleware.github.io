@@ -81,11 +81,11 @@ This makes it easy for me to know which fields have been custom added, and to kn
 
 ### Add custom fields for the second log file path, myAccountingBackOfficeApp_version_1.1
 
-This is done by applying different configuration settings to different files
+This is done by applying [different configuration settings to different files](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-log.html#filebeat-input-log).
 
-We need to define multiple input sections
+We need to define multiple input sections.
 
-In filebeat.yml add the second type and its fields and fields_under_root underneath the first type, save and restart filebeat
+In filebeat.yml add the second type and its fields and fields_under_root underneath the first type, save and restart filebeat.
 
 In this example, fields indicating the staging server, the name of the app and version will be added to every indexed document in Elasticsearch coming from the logs ```C:\ProgramData\FinacialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*```
 
