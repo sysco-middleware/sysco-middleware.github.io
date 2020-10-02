@@ -26,7 +26,7 @@ Note the log file paths already contain meta information that make it easier to 
 - /var/log/*.log
 - C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*
 - C:\ProgramData\FinancialCustomer\Logs\myConnectorApp\*
-- C:\ProgramData\FinancialCustomer\Logs\myTimeSheetApp_version_1.1\*We will be ingesting the following log files from my laptop in order to simplify this blog post.
+- C:\ProgramData\FinancialCustomer\Logs\myTimeSheetApp_version_1.1\*
 ```
 
 ## The custom fields that will be added
