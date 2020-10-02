@@ -79,7 +79,7 @@ The reason I used the field name app.log.origin is I am sure that there are no e
 This makes it easy for me to know which fields have been custom added, and to know that the name I chose is not overwriting an existing field and its value.
 
 
-### Add custom fields for the second log file path, myAccountingBackOfficeApp_version_1.1
+### Add custom fields for the second log file path myAccountingBackOfficeApp_version_1.1
 
 This is done by applying [different configuration settings to different files](https://www.elastic.co/guide/en/beats/filebeat/current/filebeat-input-log.html#filebeat-input-log).
 
@@ -119,7 +119,7 @@ filebeat.inputs:
 Example: It will now be easy to filter only on *myAccountingBackOfficeApp* logs running version 1.1.0 from the staging server
 
 
-### Add custom fields for the last two log file paths, myConnectorApp andmyTimeSheetApp_version_1.1
+### Add custom fields for the last two log file paths myConnectorApp and myTimeSheetApp_version_1.1
 
 
 Repeat the steps for the last two log file types
