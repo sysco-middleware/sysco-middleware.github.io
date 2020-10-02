@@ -87,7 +87,7 @@ We need to define multiple input sections.
 
 In filebeat.yml add the second type and its fields and fields_under_root underneath the first type, save and restart filebeat.
 
-In this example, fields indicating the staging server, the name of the app and version will be added to every indexed document in Elasticsearch coming from the logs ```C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*```
+In this example, fields indicating the staging server, the name of the app and version will be added to every indexed document in Elasticsearch coming from the log files ```C:\ProgramData\FinancialCustomer\performance-logs\myAccountingBackOfficeApp_version_1.1\*```
 
 
 ```bash
@@ -173,6 +173,6 @@ filebeat.inputs:
 
 ## Conclusion
 
-The custom fields added to the index in Elasticsearch contain useful meta information that give the logs context, and thus the logs can be more easily searchable in that context.
+The custom fields added to the index in Elasticsearch contain useful meta information that give the logs context.  Thus the logs can be more easily searchable in that context.
 
-When logs are more easily searchable within a context, visual charts and graphs can easily be made for these different contexts, bringing visibility into your application, enabling stakeholders to understand and act upon the application behaviour.
+When logs are more easily searchable within a context, visual charts and graphs can easily be made for these different contexts bringing visibility into your application and enabling stakeholders to understand and act upon the application behaviour.
