@@ -43,31 +43,17 @@ This functionality was made available from release 334 after the PR was approved
 
 # 3. Making SSL Hostname Verification Configurable for Airlift's Embedded Jetty
 
-Consul Connect is the service-mesh implementation provided by Hashicorp. At its simplest, it allows you to easily secure communication between all services in your ecosystem by using sidecar proxies which handle any inbound / outbound connections, while the services themselves will only talk to their own proxy through the loopback interface.
+- Embedded Jetty allows enabling / disabling SSL hostname verification through config mechanisms; however, within Airlift, the "setEndpointIdentificationAlgorithm" method is hardcoded with an "HTTPS" value, which ensures hostname verification will always be performed. 
 
-![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/connectsidecar.png)
+- As a result of this, any system which uses airlift as a foundation for internal communication won't have any control over this, even if it configures its own trust manager or uses the available JVM property on startup (-Djdk.internal.httpclient.disableHostnameVerification)
 
-When dealing with opinionated services or applications (meaning that they will impose an architectural burden on you), the traditional blueprint can be severely strained, for example because the coordinator will use proprietary methods to differentiate among its different workers / brokers, thus rendering the cluster unable to communicate internally through loopback. 
+- This is a very simple change adding a config property which allows airlift users to leverage embedded Jetty's configuration possibilities.
 
-There's another option though called "Connect Native Integration", which we ended up exploring and adopting when we found ourselves facing a similar challenge with Presto:
+- The justification is that there are use cases which require disabling the hostname verification for SSL (or don't really need it), without bypassing the whole certificate chain trust process. 
 
-![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/consulconnect.png)
+- A good example is a system or application which subscribes to the SPIFFE / SPIRE standard, where certificate chain trust is enforced but vanilla hostname verification (based on certificate CN) is not necessary as the SPIFFE URI in the certificate's SAN is a much more effective and flexible way to prevent the man-in-the-middle attack.
 
-In many cases, the features offered by this kind of "opinionated" application, outweigh by far the architectural shortcomings; Kafka / Zookeper would be another good example of this. 
-
-So, native integration becomes a very viable option for keeping architectural integrity within your Control Plane while still leveraging such technologies as part of your ecosystem.
-
-# 3. Connect-Native integrating Presto
-
-Native integration is basically mutual TLS + an API Authorization call, so we decided to contribute some code to the Presto open-source distribution [prestosql.io](https://prestosql.io), in order to make the Certificate handling functionality pluggable as well. 
-
-![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/contrib.png)
-
-So, there's an open pull-request towards the Presto master (with a quite good outlook) and a ConsulConnect plugin (which does the API call) we have also developed and should be the next merge request.
-
-The resulting architecture is something we really like, because it is a clean and organized way to solve a very challenging problem; also, it works beautifully!!
-
-![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/architecture.png)
+This functionality is available from release 198. 
 
 # 4. Key Takeaways
 
