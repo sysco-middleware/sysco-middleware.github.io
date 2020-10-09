@@ -26,12 +26,20 @@ In my opinion, every time you decide to incorporate an open source component int
 
 The more boxes you check when looking at the codebase, the more trust you can have in the project and its viability to become a vital part of your own system. Furthermore, it is important to make sure that if / when needed: small adjustments can be made, bugs can be corrected, patches can be issued, additional features which make sense can be developed, documentation can be improved and so on in an iterative & agile fashion.
 
+In the case of Airlift & Presto, these are very well-structured Java projects (especially Presto), where most things are highly automated through bots and actions, from signing the CLI to getting your stuff thoroughly tested via pre-baked docker compose scenarios which include not only a single instance topology but also production grade configurations including critical dependencies such as Hive, HDP, etc. All of this makes it super easy to just focus on the task at hand and move along the paces until the code is ready for review and promotion from the maintainers.
+
+The two contributions described on this blogpost were a bit challenging to get on an official release because they meddle with the core functionality of the products, so there was a lot of back and forth to make sure that whatever breaking changes we were introducing could be easily managed through configuration and didn't create major issues for current users of these technologies. 
 
 # 2. Adding a Pluggable Certificate Authenticator to Presto
 
-Presto is a distributed SQL tool which has become a key element in our toolbox because of its flexibility and growing number of plugins.
+Our PR addressed the following concerns:
 
-![](/images/2020-02-20-A-Consul-Service-Mesh-Integration-Case-Study-with-Presto/presto.png)
+- Related to Prestosql issue [2117](https://github.com/prestosql/presto/issues/2117) to some extent
+- Allows customization of the "CERTIFICATE" authentication method by registering plugins (similar to PasswordAuthenticator)
+- This can be useful in many cases, when some additional security checks must be done using the certificate's data (serial number, subject alternative names, etc.) besides only obtaining the principal
+- Our specific use case is service mesh native integration (e.g. Consul Connect), where once mutual TLS is established at a JKS level, the serial number & SPIFFE Id must be obtained and vaildated for authorization by means of an API call to a service agent
+
+This functionality was made available from release 334 after the PR was approved and merged. 
 
 # 3. Making SSL Hostname Verification Configurable for Airlift's Embedded Jetty
 
