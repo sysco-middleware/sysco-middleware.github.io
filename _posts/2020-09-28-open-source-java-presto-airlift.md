@@ -16,6 +16,8 @@ Here I will describe a couple of key contributions we developed and merged into 
 
 # 1. Contributing to an Open Source Project
 
+![](/images/2020-09-28-Presto-Airlift/GitHub-Flow.png)
+
 In my opinion, every time you decide to incorporate an open source component into an enterprise system, it is a very good practice to not only read through the documentation and examples thoroughly, but also look closely into the codebase where you can easily spot a few important things:
 
 - Is the project alive and kicking?, meaning that contributions, commits, resolved issues, merged PRs, etc. are still happening at a decent frequency over the last few months
