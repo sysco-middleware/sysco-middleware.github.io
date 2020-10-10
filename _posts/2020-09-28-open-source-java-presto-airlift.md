@@ -32,6 +32,8 @@ The two contributions described on this blogpost were a bit challenging to get o
 
 # 2. Adding a Pluggable Certificate Authenticator to Presto
 
+[Link to the original PR](https://github.com/prestosql/presto/pull/3804)
+
 Our PR addressed the following concerns:
 
 - Related to Prestosql issue [2117](https://github.com/prestosql/presto/issues/2117) to some extent
@@ -42,6 +44,8 @@ Our PR addressed the following concerns:
 This functionality was made available from release 334 after the PR was approved and merged. 
 
 # 3. Making SSL Hostname Verification Configurable for Airlift's Embedded Jetty
+
+[Link to the original PR](https://github.com/airlift/airlift/pull/858)
 
 - Embedded Jetty allows enabling / disabling SSL hostname verification through config mechanisms; however, within Airlift, the "setEndpointIdentificationAlgorithm" method is hardcoded with an "HTTPS" value, which ensures hostname verification will always be performed. 
 
@@ -57,12 +61,8 @@ This functionality is available from release 198.
 
 # 4. Key Takeaways
 
-All in all, we have learnt a lot of lessons throughout this journey, so these are our 3 main conclusions:
-
-- State-of-the-art should be "simple as that"
-- Refactor to reduce, redesign to refine
-- Fortune favors the bold
-
-All of the latter speak to the importance of simplicity and also the benefits of embracing a mindset which allows our tech initiatives to be iterated upon, improved and re-shaped while striving to deliver top quality & value.
+- We really learnt a lot from doing these contributions and it was very satisfying to see them finally make it into the main codebase and official release
+- Getting involved with the technology we're using in such a way has given us a huge boost in our innovation journey, both because we got the functionality we needed but also because now we have a much better understanding of not only the tools but also our own system
+- On a personal note, I truly believe that this is the right way to go about building modern systems in this day and age; with such a competitive landscape, so many options at our disposal, increasingly challenging requirements and especially the need for dramatically reducing time-to-market, we can hardly afford to get stuck in the old ways and impose constraints on ourselves which will inhibit collaboration and the ability to automate, iterate and improve continuosly.
 
 Thanks for reading!!
