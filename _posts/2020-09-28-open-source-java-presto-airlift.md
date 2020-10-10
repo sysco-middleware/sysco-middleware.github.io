@@ -16,8 +16,6 @@ Here I will describe a couple of key contributions we developed and merged into 
 
 # 1. Contributing to an Open Source Project
 
-![](/images/2020-09-28-Presto-Airlift/GitHub-Flow.png)
-
 In my opinion, every time you decide to incorporate an open source component into an enterprise system, it is a very good practice to not only read through the documentation and examples thoroughly, but also look closely into the codebase where you can easily spot a few important things:
 
 - Is the project alive and kicking?, meaning that contributions, commits, resolved issues, merged PRs, etc. are still happening at a decent frequency over the last few months
@@ -27,6 +25,10 @@ In my opinion, every time you decide to incorporate an open source component int
 - Code owner engagement: Are some of the key developers of the project available for discussions, code review, issue tracking, etc?, is there a way to have a deeper technical conversation with them in case it becomes necessary (e.g. a Slack team)?
 
 The more boxes you check when looking at the codebase, the more trust you can have in the project and its viability to become a vital part of your own system. Furthermore, it is important to make sure that if / when needed: small adjustments can be made, bugs can be corrected, patches can be issued, additional features which make sense can be developed, documentation can be improved and so on in an iterative & agile fashion.
+
+That being said, you can always take the next step and actually contribute to the project. Even the smallest form of collaboration can make a big difference and benefit the whole community, for example: submitting improvements to the documentation, voting up and / or adding to reported issues, reviewing relevant PRs, 
+
+![](/images/2020-09-28-Presto-Airlift/GitHub-Flow.png)
 
 In the case of Airlift & Presto, these are very well-structured Java projects (especially Presto), where most things are highly automated through bots and actions, from signing the CLI to getting your stuff thoroughly tested via pre-baked docker compose scenarios which include not only a single instance topology but also production grade configurations including critical dependencies such as Hive, HDP, etc. All of this makes it super easy to just focus on the task at hand and move along the paces until the code is ready for review and promotion from the maintainers.
 
