@@ -68,7 +68,7 @@ This functionality is available from release 198.
 # 4. Key Takeaways
 
 - We really learnt a lot from doing these contributions and it was very satisfying to see them finally make it into the main codebase and official release
-- Getting involved with the technology we're using in such a way has given us a huge boost in our innovation journey, both because we got the functionality we needed but also because now we have a much better understanding of not only the tools but also our own system
+- Getting involved with the technology we're using in such a way has given us a huge boost in our innovation journey, both because we got the functionality we needed but also because now we have a much better understanding not only of the tools but also of our own system. Furthermore, we were able to incorporate some of the nice development practices we learnt from Presto & Airlift into our own toolset.
 - On a personal note, I truly believe that this is the right way to go about building modern systems in this day and age; with such a competitive landscape, so many options at our disposal, increasingly challenging requirements and especially the need for dramatically reducing time-to-market, we can hardly afford to get stuck in the old ways and impose constraints on ourselves which will inhibit collaboration and the ability to automate, iterate and improve continuosly.
 
 Thanks for reading!!
