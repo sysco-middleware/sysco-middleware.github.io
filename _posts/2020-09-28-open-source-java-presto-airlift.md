@@ -47,6 +47,8 @@ Our PR addressed the following concerns:
 - This can be useful in many cases, when some additional security checks must be done using the certificate's data (serial number, subject alternative names, etc.) besides only obtaining the principal
 - Our specific use case is service mesh native integration (e.g. Consul Connect), where once mutual TLS is established at a JKS level, the serial number & SPIFFE Id must be obtained and vaildated for authorization by means of an API call to a service agent
 
+![](/images/2020-09-28-Presto-Airlift/mutualtls.png)
+
 This functionality was made available from release 334 after the PR was approved and merged. 
 
 # 3. Making SSL Hostname Verification Configurable for Airlift's Embedded Jetty
@@ -61,7 +63,7 @@ This functionality was made available from release 334 after the PR was approved
 
 - The justification is that there are use cases which require disabling the hostname verification for SSL (or don't really need it), without bypassing the whole certificate chain trust process. 
 
-- A good example is a system or application which subscribes to the SPIFFE / SPIRE standard, where certificate chain trust is enforced but vanilla hostname verification (based on certificate CN) is not necessary as the SPIFFE URI in the certificate's SAN is a much more effective and flexible way to prevent the man-in-the-middle attack.
+- A good example is a system or application which subscribes to the [SPIFFE / SPIRE](https://spiffe.io/) standard, where certificate chain trust is enforced but vanilla hostname verification (based on certificate CN) is not necessary as the SPIFFE URI in the certificate's SAN is a much more effective and flexible way to prevent the man-in-the-middle attack.
 
 This functionality is available from release 198. 
 
