@@ -10,7 +10,7 @@ author: gugalnikov
 
 This is a follow-up to a previous post describing the work we are doing towards constructing a state-of-the-art data platform from the ground up:
 
-[Previous post](https://www.youtube.com/watch?v=xV4JnJgOHXE)
+[Previous post](https://blog.sysco.no/hashicorp,/integration,/service/mesh/A-Consul-Service-Mesh-Integration-Case-Study-with-Presto)
 
 Here I will describe a couple of key contributions we developed and merged into the [Presto](https://github.com/prestosql/presto) & [Airlift](https://github.com/airlift/airlift) codebases in order to be able to fully incorporate these technologies into our project.
 
