@@ -26,7 +26,9 @@ In my opinion, every time you decide to incorporate an open source component int
 
 The more boxes you check when looking at the codebase, the more trust you can have in the project and its viability to become a vital part of your own system. Furthermore, it is important to make sure that if / when needed: small adjustments can be made, bugs can be corrected, patches can be issued, additional features which make sense can be developed, documentation can be improved and so on in an iterative & agile fashion.
 
-That being said, you can always take the next step and actually contribute to the project. Even the smallest form of collaboration can make a big difference and benefit the whole community, for example: submitting improvements to the documentation, voting up and / or adding to reported issues, reviewing relevant PRs, 
+That being said, you can always take the next step and actually contribute to the project. Even the smallest form of collaboration can make a big difference and benefit the whole community, for example: submitting improvements to the documentation, voting up and / or commenting on reported issues, reviewing relevant PRs, and of course writing code for new features, bugfixes, patches, etc.
+
+Almost in any case, in order to contribute efficiently it is useful to have a good grip on the Git flow as well as on concepts such as squashing, rebasing and so on.
 
 ![](/images/2020-09-28-Presto-Airlift/GitHub-Flow.png)
 
