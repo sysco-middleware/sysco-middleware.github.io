@@ -30,7 +30,7 @@ That being said, you can always take the next step and actually contribute to th
 
 Almost in any case, in order to contribute efficiently it is useful to have a good grip on the Git flow as well as on concepts such as squashing, rebasing and so on.
 
-![](/images/2020-09-28-Presto-Airlift/GitHub-Flow.png)
+![](/images/2020-09-28-Presto-Airlift/gitflow3.png)
 
 In the case of Airlift & Presto, these are very well-structured Java projects (especially Presto), where most things are highly automated through bots and actions, from signing the CLI to getting your stuff thoroughly tested via pre-baked docker compose scenarios which include not only a single instance topology but also production grade configurations including critical dependencies such as Hive, HDP, etc. All of this makes it super easy to just focus on the task at hand and move along the paces until the code is ready for review and promotion from the maintainers.
 
