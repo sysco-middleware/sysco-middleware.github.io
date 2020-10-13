@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Our Java Open Source Contributions to Presto & Airlift
-categories: Hashicorp, Integration, Service Mesh, Java, Presto
+categories: Integration
 tags: [Consul, Hashicorp, Java, Presto, Service Mesh, Connect, SPIFFE]
 author: gugalnikov
 ---
