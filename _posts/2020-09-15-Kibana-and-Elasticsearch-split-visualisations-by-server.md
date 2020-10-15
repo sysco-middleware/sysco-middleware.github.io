@@ -32,7 +32,7 @@ This blog post will walk through three different solutions based on the followin
 
 The steps are applicable for logs from a test or production environment for one particular version of your app.
 
-###Example: IIS logs sent by Filebeat from staging and production servers to Elasticsearch
+### Example: IIS logs sent by Filebeat from staging and production servers to Elasticsearch
 
 **Pre-conditions**
 1. The same type of logs, in this case IIS logs, are sent using Filebeat to Elasticsearch from two different servers: staging and production.
@@ -49,7 +49,7 @@ The steps are applicable for logs from a test or production environment for one 
 
 Tip: [Ingest from your first data source](https://www.elastic.co/videos/elasticsearch-service-ingest-from-your-first-data-source?token=i2q8mdjxqc)
 
-##Three different solutions
+## Three different solutions
 
 This blog post will walk through some “proof of concept” visualisations (charts) for dashboards that show the staging VS production data in three different ways:
 
@@ -74,13 +74,15 @@ This blog post will walk through some “proof of concept” visualisations (cha
 1. This add browser versions within browser type to each chart
 1. Save the chart.  It can now be added to a dashboard.
 
+
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart.png)
 *Caption: The chart in Visualise*
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart.png)
 
+
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart on dashboard.png)
 *Caption: The chart on the Dashboard*
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart on dashboard.png)
 
-**Solution One Summary: **
+**Solution One Summary**
 
 Splitting the chart is what actually splits the logs by server.  This chart now contains two pie charts within the same container.
 
@@ -91,8 +93,8 @@ Once this is put onto a dashboard, it is not possible to remove the just one of 
 
 Create saved searches
 
-1. Kibana > Discover > select the index pattern
-1. Filter by the staging server by selecting the field and value for the data, eg agent.hostname : "staging-sever-123"
+1. *Kibana > Discover > select the index pattern*
+1. Filter by the staging server by selecting the field and value for the data, eg agent.hostname : "staging-server-123"
 1. Save the search, eg "Staging server logs only"
 1. Repeat these steps for the production server
 
@@ -111,12 +113,12 @@ Create charts
 1. Repeat the same steps for the second server
 1. Add both charts to a dashboard
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/2 - separate charts based on saved search by server.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/2 - separate charts based on saved search by server.png)
 
 *Caption: Both charts added to a dashboard*
 
 
-**Solution Two Summary: **
+**Solution Two Summary**
 
 Each chart contains only data for that one particular server.
 
@@ -128,7 +130,7 @@ Once this is put onto a dashboard, it is possible to remove the just one of thes
 
 Pre-condition: a dashboard exists with each chart containing data from both servers
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - no filter yet.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - no filter yet.png)
 
 *Caption: pre existing dashboard with no filters applied*
 
@@ -140,19 +142,19 @@ Create and apply a filter
 1. *Field: agent.hostname > Operator: is > Value: select a server from the dropdown > Save*
 1. The dashboard will be refreshed based upon the saved filter
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - create filter.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - create filter.png)
 
 
 Adjust an existing filter
 
 1. Navigate to the dashboard and click on the filter
 1. To reverse the value there are several options
-1. *Edit > change the value from is to is not > Save* - this will overwrite the previous filter
+1. *Edit > change the value from "is" to "is not" > Save* - this will overwrite the previous filter
 1. *Edit > Exclude results*
 1. *Edit > Temporarily disable*
-The dashboard will be refreshed based upon the saved filter
+1. The dashboard will be refreshed based upon the saved filter
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - filter options.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - filter options.png)
 
 Click on a chart element to filter
 
@@ -161,15 +163,15 @@ Click on a chart element to filter
 1. The dashboard will be refreshed based upon the filter, and the filter will show at the top
 1. The filter can be edited as per "adjusting exiting filter" or removed altogether by clicking the "x" on the filter itself
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - hostname piechart.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - hostname piechart.png)
 
 *Caption: the hostname piechart*
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard to filter.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard to filter.png)
 
 *Caption: Click the "piece" of the hostname piechart to filter by*
 
-![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard filtered.png)
+![New field](/images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard filtered.png)
 
 *Caption: After clicking on the part of the chart to fitler by, the filter is applied automatically*
 
