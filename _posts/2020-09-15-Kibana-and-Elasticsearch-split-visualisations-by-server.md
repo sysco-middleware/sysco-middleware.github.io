@@ -58,6 +58,69 @@ This blog post will walk through some “proof of concept” visualisations (cha
 2. Each chart is based upon a saved search that is filtered by server, then create charts
 3. Create charts based on an index pattern containing data from both servers, add them to a dashboard, then filter by server on the dashboard
 
+## Solution One: Split data within the chart 
+
+
+1. *Kibana > Create Visualisation > Pie chart > Type > Index pattern > select the index pattern*
+1. Now start creating the visualisation:  Metrics > leave the default as Slice : Count
+1. *Buckets > Split Chart > Aggregation: Terms > Field: agent.hostname > Update*
+1. Note: It is not necessary to update, however I do this as I go to be sure I am on the right track
+1. At this point there should be two charts, one for each server. They are shown one above each other by default
+1. To update the charts to be next to each other, toggle the “columns” button right under “Buckets” and Update
+1. Add more details to the charts using Split Slices as follows
+1. *Buckets > Add > Split Slices > Sub aggregation: Terms > Field: user_agent.os.name > Update*
+1. This adds browser types to each chart
+1. *Buckets > Add > Split Slices > Sub aggregation: Terms > Field: user_agent.os.version > Update*
+1. This add browser versions within browser type to each chart
+1. Save the chart.  It can now be added to a dashboard.
+
+*Caption: The chart in Visualise*
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart.png)
+
+*Caption: The chart on the Dashboard*
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/1 - split chart on dashboard.png)
+
+**Solution One Summary: **
+
+Splitting the chart is what actually splits the logs by server.  This chart now contains two pie charts within the same container.
+
+Once this is put onto a dashboard, it is not possible to remove the just one of these pie charts - the whole container with both pie charts will be shown.
+
+## Solution Two: Chart based on saved search filtered by server 
+
+
+Create saved searches
+
+1. Kibana > Discover > select the index pattern
+1. Filter by the staging server by selecting the field and value for the data, eg agent.hostname : "staging-sever-123"
+1. Save the search, eg "Staging server logs only"
+1. Repeat these steps for the production server
+
+
+Create charts
+
+1. *Kibana > Create Visualisation > Pie chart > Type > Saved search > select one of the saved searches created earlier*
+1. Now start creating the visualisation:  *Metrics > leave the default as Slice : Count*
+1. This time do NOT split chart
+1. Add more details to the charts using Split Slices as follows
+1. *Buckets > Add > Split Slices > Sub aggregation: Terms > Field: user_agent.os.name > Update*
+1. This adds browser types to each chart
+1. *Buckets > Add > Split Slices > Sub aggregation: Terms > Field: user_agent.os.version > Update*
+1. This add browser versions within browser type to each chart
+1. Save the chart
+1. Repeat the same steps for the second server
+1. Add both charts to a dashboard
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/2 - separate charts based on saved search by server.png)
+
+*Caption: Both charts added to a dashboard*
+
+
+**Solution Two Summary: **
+
+Each chart contains only data for that one particular server.
+
+Once this is put onto a dashboard, it is possible to remove the just one of these charts at any time.
 
 [TODO ADD REST OF CONTENT]
 
