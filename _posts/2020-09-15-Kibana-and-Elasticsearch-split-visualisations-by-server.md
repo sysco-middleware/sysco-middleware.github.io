@@ -122,8 +122,66 @@ Each chart contains only data for that one particular server.
 
 Once this is put onto a dashboard, it is possible to remove the just one of these charts at any time.
 
-[TODO ADD REST OF CONTENT]
 
+## Solution 3: Use dashboard filters
+
+
+Pre-condition: a dashboard exists with each chart containing data from both servers
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - no filter yet.png)
+
+*Caption: pre existing dashboard with no filters applied*
+
+
+Create and apply a filter
+
+1. Navigate to the dashboard
+1. Near the top left, Add filter > edit filter open
+1. *Field: agent.hostname > Operator: is > Value: select a server from the dropdown > Save*
+1. The dashboard will be refreshed based upon the saved filter
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - create filter.png)
+
+
+Adjust an existing filter
+
+1. Navigate to the dashboard and click on the filter
+1. To reverse the value there are several options
+1. *Edit > change the value from is to is not > Save* - this will overwrite the previous filter
+1. *Edit > Exclude results*
+1. *Edit > Temporarily disable*
+The dashboard will be refreshed based upon the saved filter
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - filter options.png)
+
+Click on a chart element to filter
+
+1. Pre-condition: One of the charts shows a breakdown of values that you want to filter on, in this case, a chart showing hostnames
+1. Click on one of the hostnames on the hostname chart
+1. The dashboard will be refreshed based upon the filter, and the filter will show at the top
+1. The filter can be edited as per "adjusting exiting filter" or removed altogether by clicking the "x" on the filter itself
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard - hostname piechart.png)
+
+*Caption: the hostname piechart*
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard to filter.png)
+
+*Caption: Click the "piece" of the hostname piechart to filter by*
+
+![New field](images/2020-09-15-Kibana-and-Elasticsearch-split-visualisations-by-server/3 - dashboard filtered.png)
+
+*Caption: After clicking on the part of the chart to fitler by, the filter is applied automatically*
+
+
+
+**Solution Three Summary**
+
+Filters are a quick way to break down the data by categories or particular values from a dashboard
+
+Filters can also be saved and used in Kibana > Discover and Visualise
+
+In addition the filter can be made available by default if click on filter  and select "Pin across all apps"
 
 ## Other solutions
 These are not the only solutions, as for example it is possible to
