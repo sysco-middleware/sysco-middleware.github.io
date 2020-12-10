@@ -101,6 +101,9 @@ authors:
   AshishKapoor:
     name: Ashish Kapoor
     avatar: /images/avatars/ashish.jpg
+  serpro:
+    name: Sergii Prodanov
+    avatar: /images/avatars/serpro.jpg
 
 # Build settings
 markdown:       kramdown
