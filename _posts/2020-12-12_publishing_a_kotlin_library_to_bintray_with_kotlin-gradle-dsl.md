@@ -196,7 +196,7 @@ The rest is pretty much self explanatory, but I've added a few comments in the c
 
 ## Publishing to your Bintray repo
 
-When you're ready to upload a new release just the command: `$ ./gradlew bintrayUpload -PbintrayUser="my_bintray_username" -PbintrayKey="my_bintray_api_key"`
+When you're ready to upload a new release just use the command: `$ ./gradlew bintrayUpload -PbintrayUser="my_bintray_username" -PbintrayKey="my_bintray_api_key"`
 
 This can also be set up with CI, where `bintrayUser` and `bintrayKey` properties will be stored as "secrets".
 
@@ -218,10 +218,12 @@ dependencies {
 }
 ```
 
+Alternatively you can also sync packages from your bintray repo to JCenter and Maven Central.
+
 ## Retrospective
 
 All in all this wasn't actually that hard. I needed to collect some pieces of missing information here and there and understand what’s happening when you publish an artifact and what are the prerequisites for that. After that the process looks quite straightforward.
 
-Gradle is also way superior to Maven when it comes to build configurations, but this shouldn't be a surprise to anyone nowadays. Unfortunately we are sometimes forced to use Maven, especially on legacy projects. But if you're starting a new project I strongly suggest considering gradle.
+You can achieve the same results with Maven if you're using that as a build tool, but Gradle is way superior to Maven when it comes to build configurations. This shouldn't be a surprise to anyone nowadays though. Unfortunately we are sometimes forced to use Maven, especially on legacy projects, but if you're starting a new project I strongly suggest considering gradle.
 
 Having a personal repository on Bintray where you can actually play around and have control over your files helps a lot, and I’m glad I didn't go with Maven Central straight away.
