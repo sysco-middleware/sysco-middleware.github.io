@@ -14,7 +14,7 @@ There are many benefits to working on Open Source Software, both for companies a
 
 While working on OSS within the company, chances are, you probably have all the "infra" already set up - things like where the source code is stored, or where to publish the packages. But if you’re working on a "personal" OSS project you will most likely come to a point where you will want to publish your artifacts to a publicly accessible repository (A Central Maven repository, for example, if you’re working on a java-based project.) For someone who has never published an artifact to be available to others the process can be somewhat unclear, and scarce documentation makes things even more daunting. If on top of that you’re using Gradle Kotlin DSL build scripts then chances are documentation could be even sparser. Even today some plugin maintainers don't always "consider" kotlin dsl support simply because they don't use it themselves, and leave it up to users to ["figure it out"](https://github.com/johnrengelman/shadow/issues/533#issuecomment-573979311). Even though I have to admit the documentation improves constantly and is much better than when Gradle Kotlin DSL was first introduced in 2017.
 
-Until recently I have been working in software test automation, and have been coding for a living for some time now. Software Testing and Quality Assurance is one of my passions at work and naturally my ["OSS pet projects"](https://github.com/serpro69) are also related to this area. Some time ago I’ve gone through the process of publishing my first OSS project, a Kotlin library that generates "fake" data for tests and data anonymization: [kotlin-faker](https://github.com/serpro69/kotlin-faker). The process wasn't entirely clear at first, but I understood the basics of publishing the artifacts to a publicly available repository things got quite simple.
+Until recently I have been working in software test automation, and have been coding for a living for some time now. Software Testing and Quality Assurance is one of my passions at work and naturally my ["OSS pet projects"](https://github.com/serpro69) are also related to this area. Some time ago I’ve gone through the process of publishing my first OSS project, a Kotlin library that generates "fake" data for tests and data anonymization: [kotlin-faker](https://github.com/serpro69/kotlin-faker). The process wasn't entirely clear at first, but when I understood the basics of publishing the artifacts to a publicly available repository things got quite simple.
 
 ## Where to publish?
 
@@ -34,16 +34,16 @@ After publishing to Bintray and verifying that everything is as you want it to b
 
 ## The Setup
 
-### Prerequisites
+### Bintray Prerequisites
 
 These are pretty self explanatory and easy to find, so I won't go into too many details here and will just list what you will need to do.
-* Create a new account (you can also use your existing github, google, or twitter accounts for authentication)
-* Add a new repository (Select the type as ‘Maven’.) - this is the repository where you will publish your packages, and from where others will be able to download them.
-* Get your API key — go to ‘edit profile’, and you will see the ‘API Key’ tab there.
+* [Create a new account](https://bintray.com/signup/oss) (you can also use your existing github, google, or twitter accounts for authentication)
+* Create a new repository (Select the type as 'Maven'.) - this is the repository where you will publish your packages, and from where others will be able to download them.
+* Get your API key — go to 'edit profile', and you will see the 'API Key' tab there.
 
 ### Gradle build file configuration
 
-First we need to add the `maven-publish` and `bintray` plugins added to the `gradle.build.kts` build script file:
+First we need to add the `maven-publish` and `bintray` plugins to the `gradle.build.kts` build script file:
 ```
 plugins {
     `maven-publish`
@@ -184,7 +184,12 @@ bintray {
 ```
 
 A few things to keep in mind:
-* the repo should match with whatever repository name you specified when creating a new repo on Bintray. I simply named it `maven`, but it can be named any way you want.
+* There are four mandatory parameters that you need to set:
+    * `repo` - existing repository in bintray to add the artifacts to
+    * `name` - package name
+    * `licenses` - your package licenses (mandatory if the package doesn't exist yet and must be created, and if the package is an OSS package; optional otherwise)
+    * `vcsUrl` - your VCS URL (mandatory if the package doesn't exist yet and must be created, and if the package is an OSS package; optional otherwise)
+* the `repo` should match with whatever repository name you specified when creating a new repo on Bintray. I simply named it `maven`, but it can be named any way you want.
 * the user and key creation were covered in the **Prerequisites** section of this post. You will need to pass them when uploading the artifacts, i.e. from the command line or from the CI tool.
 
 The rest is pretty much self explanatory, but I've added a few comments in the code just in case.
