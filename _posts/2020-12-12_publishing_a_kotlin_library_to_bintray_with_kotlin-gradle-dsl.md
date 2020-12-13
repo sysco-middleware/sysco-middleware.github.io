@@ -2,27 +2,29 @@
 layout: post
 title: Publishing a Kotlin library to your Bintray repo using Gradle Kotlin DSL and Bintray Gradle Plugin
 categories: OSS
-tags: [kotlin,java,bintray,gradle,maven]
+tags: [kotlin,java,bintray,gradle,maven,oss]
 author: serpro
 ---
 
-<!-- TODO img -->
+![publishing-house](/images/2020-12-12_publishing_a_kotlin_library_to_bintray_with_kotlin-gradle-dsl/publishing_house.jpeg)
 
 *This post was originally posted on [Medium](https://serpro69.medium.com/publishing-a-kotlin-library-to-your-bintray-repo-using-gradle-kotlin-dsl-bdeaed54571a)*
 
-If you’re working on an OSS project you will most likely come to a point where you will want to publish your artifacts to a publicly accessible repository (A Central Maven repository, for example, if you’re working on a java-based project.) For someone who has never published an artifact to be available to others the process can be somewhat unclear, and scarce documentation makes things even more daunting. If on top of that you’re using gradle with kotlin dsl build scripts then chances are documentation could be even sparser, even though the documentation improves constantly.
+There are many benefits to working on Open Source Software, both for companies and individuals. Sharing your work with others just opens so much more possibilities as compared to working in a "closed box". By sharing your code you numerous things literally for free, from code reviews and contributions to your own projects, by contributing to other projects you get a better understanding of the technology you work with, to getting to know your "clients".
 
-Until recently I have been working as a test automation engineer (now working in development) and have been coding for a living for some time now. Software testing and Quality Assurance are one of my passions at work and naturally my "OSS pet projects" are also related to this area. Some time ago I’ve gone through the process of publishing my first OSS project, a Kotlin library for generating fake data for tests: [kotlin-faker](https://github.com/serpro69/kotlin-faker). The process wasn't entirely clear at first, but once you understand the details of publishing your artifacts to a publicly available repository things become quite simple.
+While working on OSS within the company, chances are, you probably have all the "infra" already set up - things like where the source code is stored, or where to publish the packages. But if you’re working on a "personal" OSS project you will most likely come to a point where you will want to publish your artifacts to a publicly accessible repository (A Central Maven repository, for example, if you’re working on a java-based project.) For someone who has never published an artifact to be available to others the process can be somewhat unclear, and scarce documentation makes things even more daunting. If on top of that you’re using Gradle Kotlin DSL build scripts then chances are documentation could be even sparser. Even today some plugin maintainers don't always "consider" kotlin dsl support simply because they don't use it themselves, and leave it up to users to ["figure it out"](https://github.com/johnrengelman/shadow/issues/533). Even though I have to admit the documentation improves constantly and is much better than when Gradle Kotlin DSL was first introduced in 2017.
+
+Until recently I have been working in software test automation, and have been coding for a living for some time now. Software Testing and Quality Assurance is one of my passions at work and naturally my ["OSS pet projects"](https://github.com/serpro69) are also related to this area. Some time ago I’ve gone through the process of publishing my first OSS project, a Kotlin library that generates "fake" data for tests and data anonymization: [kotlin-faker](https://github.com/serpro69/kotlin-faker). The process wasn't entirely clear at first, but I understood the basics of publishing the artifacts to a publicly available repository things got quite simple.
 
 ## Where to publish?
 
-<!-- TODO img -->
+![where-to-publish](/images/2020-12-12_publishing_a_kotlin_library_to_bintray_with_kotlin-gradle-dsl/where_to_publish.jpeg)
 
 At first, I was thinking to publish everything directly to [Maven Central](https://search.maven.org/classic/). This seems like a natural choice since this is one of the most commonly used repos out there and is directly accessible from most Maven and Gradle builds without the need to specify any additional information such as the url to your custom repo.
 
 However, there are some caveats to doing this, and I would generally recommend using a custom repository, for example Bintray (which is what I am using myself and will be using as an example in this article) unless you’re absolutely sure what you’re doing.
 
-#### Why is Bintray preferable to Maven Central (for me)?
+#### Why is Bintray preferable to Maven Central?
 
 First, with Maven Central you have to be sure about your setup. You can play around with your publishing setup and always undo things in Bintray, but not in Maven Central. Second is that you have complete control over your files and if you’re not sure about the quality of your library and want to test things — this would be a good place to do this. In Maven Central you sort of loose all control after you publish something there. Last, Maven Central has more strict requirements when it comes to publishing artifacts. 
 
@@ -215,8 +217,6 @@ dependencies {
 
 All in all this wasn't actually that hard. I needed to collect some pieces of missing information here and there and understand what’s happening when you publish an artifact and what are the prerequisites for that. After that the process looks quite straightforward.
 
-Gradle is also way superior to Maven when it comes to build configurations, but this shouldn't be a surprise to anyone nowadays.
+Gradle is also way superior to Maven when it comes to build configurations, but this shouldn't be a surprise to anyone nowadays. Unfortunately we are sometimes forced to use Maven, especially on legacy projects. But if you're starting a new project I strongly suggest considering gradle.
 
-Having a personal repository on Bintray where you can actually play around and have control over your files helps a lot. I’m glad I didn't go with Maven Central straight away.
-
-You can also check out the complete build file of the project I mentioned in the beginning [here](https://github.com/serpro69/kotlin-faker/blob/master/core/build.gradle.kts). Hopefully it will help you move in the right direction when publishing your artifacts to Bintray.
+Having a personal repository on Bintray where you can actually play around and have control over your files helps a lot, and I’m glad I didn't go with Maven Central straight away.
