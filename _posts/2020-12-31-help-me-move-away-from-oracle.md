@@ -92,12 +92,12 @@ organizational awareness that will stem from this kind of exercise is not trivia
 With all that being said, we can wrap-up this discussion by highlighting a couple of quotes from the article, which in my humble 
 opinion are quite on point:
 
-"Moving away from the problematic state of IT in many organizations makes perfect sense — in order to achieve a situation in 
+*"Moving away from the problematic state of IT in many organizations makes perfect sense — in order to achieve a situation in 
 which IT can propel the business as it used to do decades ago, when the current legacy situation originated. This undoubtedly 
-means shedding some Oracle products. It may very well involve retaining and even adopting new Oracle technology offerings."
+means shedding some Oracle products. It may very well involve retaining and even adopting new Oracle technology offerings."*
 
-"Replacing technologies or existing software solutions should ideally never be exclusively motivated by emotional or technical 
+*"Replacing technologies or existing software solutions should ideally never be exclusively motivated by emotional or technical 
 or business reasons; a middle way should be found which manages to consider not only cost and technology but also the impact 
-this kind of decision might have on organizational culture and the people that are the organization."
+this kind of decision might have on organizational culture and the people that are the organization."*
 
 Thanks for reading!!
