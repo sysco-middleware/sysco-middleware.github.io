@@ -12,6 +12,9 @@ A few weeks ago, our REAL (Red Expert Alliance) colleague and friend Lucas Jelle
 peer review and co-edit a quite thoughtful and comprehensive article which candidly discusses the nuances and dynamics of 
 this kind of scenario, which might sound familiar to many long-time Oracle partners especially in the last few years.
 
+Even though the title is quite suggestive, this is not a rant by any stretch of the imagination, but a rather down-to-earth 
+writeup which is neither an indictment, nor an endorsement of Oracle technology.
+
 [Link to original article](https://medium.com/real-vox/what-if-companies-say-help-me-move-away-from-oracle-ffbbc95afc4f)
 
 The following are some of the most important questions the article poses and tries to answer:
@@ -31,7 +34,7 @@ With the former questions in mind, let's quickly round-up and comment a bit on t
 When an organization expresses a wish to  "move away from Oracle", it is important to pinpoint exactly what this 
 means and where is it coming from; so is it the whole business relationship that is going south?, or is it a specific piece of technology which isn't
 up to expectations?; perhaps the shiny new tools offered by other vendors are looking much more appealing now that the 
-"honeymoon phase" is long gone and old loyalties inevitably dwindle.
+"honeymoon phase" is long gone, and the old loyalties have inevitably dwindled.
 
 Has Oracle itself played a part in all of this?, quite possibly yes. On a personal observation (in addition to what has 
 already been discussed at length throughout the article), I must say that in my own experience companies with high Oracle usage would 
@@ -40,9 +43,9 @@ the frantic journey to try & become a major Cloud player, this perception shifte
 such as: buzzword-happy, error-prone, unreliable, hit-or-miss and so on; the good news nowadays is that Oracle really seems to have 
 turned a corner, steadying the ship at last, and improving their self-awareness together with a much better understanding of their strengths, 
 weaknesses and distinct opportunities in both the Hybrid & Cloud Native landscapes. A couple of good examples of the latter are OCI and 
-Autonomous Database, both of which have all the measurables to be among the cream of the crop.
+Autonomous Database, both of which have more than enough measurables to be among the cream of the crop.
 
-For disenchanted customers it is important to realize that the Oracle train is still going places, and in fact keeps finding 
+For disenchanted customers, it is important to realize that the Oracle train is still going places and in fact keeps finding 
 ways to reinvent itself and stay in position as a key player within the technological ecosystem. So even if the good old days 
 are not likely to come back, existing commercial agreements and technological footprints should be seen as assets which can be 
 leveraged through appropriate communication and diligent analysis, regardless of whether our choices eventually lead to continuity 
@@ -51,7 +54,7 @@ or change.
 ## Consequences
 
 It is important to understand that a technology migration will always have a profound impact on the organization at many 
-levels, some which are apparently easier to measure like for example: time, cost, acceptable downtime, etc., but others 
+levels, some of which are apparently easier to measure like for example: time, cost, acceptable downtime, etc., but others 
 which end up being really hard to gauge and keep under control such as people, processes and culture.
 
 Making sure you're fully ready and equipped to undergo a transition is also paramount, as major changes will inevitably 
@@ -98,6 +101,6 @@ means shedding some Oracle products. It may very well involve retaining and even
 
 *"Replacing technologies or existing software solutions should ideally never be exclusively motivated by emotional or technical 
 or business reasons; a middle way should be found which manages to consider not only cost and technology but also the impact 
-this kind of decision might have on organizational culture and the people that are the organization."*
+this kind of decision might have on organizational culture, and the people that are the organization."*
 
 Thanks for reading!!
