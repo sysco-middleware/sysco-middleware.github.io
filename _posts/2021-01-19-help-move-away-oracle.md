@@ -1,8 +1,8 @@
 ---
 layout: post
-title: When Customers Ask: Help Me Move Away From Oracle
+title: When Customers Ask "Help Me Move Away From Oracle"
 categories: Integration
-tags: [Oracle, Cloud]
+tags: [Oracle,Cloud]
 author: gugalnikov
 ---
 
