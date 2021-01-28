@@ -1,7 +1,7 @@
 ---
 layout: post
 title: What web components are, and why they have a bright future
-categories: Frontend
+categories: front-end
 tags: [Web Components, WebRTC, Webpack]
 author: JGH153
 ---
@@ -12,9 +12,9 @@ This is a blogpost that goes deeper into web components than the youtube video i
 
 <iframe width="560" height="315" src="TODO" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
 
-Here is a live demo: https://web-components-webrtc.web.app/ 
+Here is a live demo: [web-components-webrtc.web.app](https://web-components-webrtc.web.app/)
 
-And here is the project repo: https://github.com/JGH153/web-components-webrtc 
+And here is the project repo: [github.com/JGH153/web-components-webrtc](https://github.com/JGH153/web-components-webrtc)
 
 # Before Web Components
 The web started out with just some simple javascript, but more and more demanding solutions meant we needed an upgrade. The early day javascript did not provide enough features so we started making libraries and frameworks that added the missing features. One of those elements was components. We needed a scalable way to create reusable UI elements and frameworks like Vue, Angular and React came to the rescue with components. This was amazing and really sped up development, but there was a larger problem at hand. You could not mix frameworks. A component made in for example React did not just simply work in another framework. This problem gets even worse as we are getting even more frameworks, and the backlog of older solutions keeps ever growing larger. We need a way to create reusable elements that can be used across all frameworks. We need Web Components.
@@ -26,10 +26,10 @@ The javascript standard stagnated for a long time before it picked up speed in 2
 Web components is an umbrella term for several independent web technologies that allow us to create reusable UI elements that can be used anywhere on the web. It is an evolving standard that consists of three core elements: Custom elements, Shadow DOM, and HTML templates. 
 
 Here is a example of a working web component in 25 lines:
-https://codepen.io/JGH153/pen/abmXLXK 
+[codepen.io/JGH153/pen/abmXLXK](https://codepen.io/JGH153/pen/abmXLXK)
 
 Prefer a video? Here is my beginner friendly introduction to web components:
-https://www.youtube.com/watch?v=ae8NF6j_44E 
+<iframe width="560" height="315" src="https://www.youtube.com/embed/ae8NF6j_44E" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 # HTML templates
 HTMl got a new tag: ```<template>```. This is a tag that's not rendered. It only serves as a way to define reusable HTML that can be accessed and used by JavaScript. This is where we write the body/view of our components.
@@ -62,8 +62,8 @@ Web components arrived too late. They should have arrived before the three big f
 
 Angular and Vue have tried to solve this by allowing you to compile to web components, but you will have to drag along the entire framework at the same time. Not a great solution. I think we need more frameworks that use web components at its core, but add the missing features on top. One example of this is Polymer, but it is only a start. 
 
-Another great case for web components over frameworks is material design. This is a design system by Google that started out as a guide, but without an implementation. This was left up to each framework and thus we have Vuetify (Vue), Angular Material and Material-UI (React): The same logic duplicated at least three times. That's insane! Smart people at Google understand this and that is why they are making Material Web Components, re-making all elements one final time as web components.
-https://github.com/material-components/material-components-web-components 
+Another great case for web components over frameworks is material design. This is a design system by Google that started out as a guide, but without an implementation. This was left up to each framework and thus we have Vuetify (Vue), Angular Material and Material-UI (React): The same logic duplicated at least three times. That's insane! Smart people at Google understand this and that is why they are making Material Web Components, re-making all elements one final time as web components:
+[github.com/material-components/material-components-web-components](https://github.com/material-components/material-components-web-components)
 
 # Conclusions
 Web components are great, but can't survive on its own like they are now. Don’t get me wrong. You can use them today, even make entire applications in them. They work great. However, too many developers are in camp React, Vue and Angular, while web components are left outside in the cold. The frontend world runs on these frameworks, and it will continue like that for a long time. We need a framework built directly on top of web components for it to have a fighting chance, but I believe that would make frontend development significantly better for all of us.
