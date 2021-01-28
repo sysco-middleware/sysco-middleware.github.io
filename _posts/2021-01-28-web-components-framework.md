@@ -10,7 +10,7 @@ author: JGH153
 
 This is a blogpost that goes deeper into web components than the youtube video it’s posted alongside. Web components have some issues, and you can see how they can be solved while creating a mini framework here:
 
-<iframe width="560" height="315" src="TODO" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AGs7hk0DWP0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 Here is a live demo: [web-components-webrtc.web.app](https://web-components-webrtc.web.app/)
 
@@ -69,4 +69,4 @@ Another great case for web components over frameworks is material design. This i
 Web components are great, but can't survive on its own like they are now. Don’t get me wrong. You can use them today, even make entire applications in them. They work great. However, too many developers are in camp React, Vue and Angular, while web components are left outside in the cold. The frontend world runs on these frameworks, and it will continue like that for a long time. We need a framework built directly on top of web components for it to have a fighting chance, but I believe that would make frontend development significantly better for all of us.
 
 Want to be inspired to create the next web component framework? Check out my video where i make just that and show you how the inner parts of modern frameworks function:
-<iframe width="560" height="315" src="TODO" frameborder="0" allowfullscreen="allowfullscreen"></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/AGs7hk0DWP0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
