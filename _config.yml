@@ -104,6 +104,10 @@ authors:
   serpro:
     name: Sergii Prodanov
     avatar: /images/avatars/serpro.jpg
+  JGH153:
+    name: Jan Greger Hemb
+    twitter: JGH153
+    avatar: /images/avatars/JGH153.jpg
 
 # Build settings
 markdown:       kramdown
