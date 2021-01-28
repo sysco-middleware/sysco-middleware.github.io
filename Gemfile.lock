@@ -16,6 +16,7 @@ GEM
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.6.0)
     eventmachine (1.2.7)
+    eventmachine (1.2.7-x64-mingw32)
     ffi (1.11.1)
     forwardable-extended (2.6.0)
     http_parser.rb (0.6.0)
@@ -62,17 +63,20 @@ GEM
     safe_yaml (1.0.5)
     sassc (2.2.1)
       ffi (~> 1.9)
+    sassc (2.2.1-x64-mingw32)
+      ffi (~> 1.9)
     terminal-table (1.8.0)
       unicode-display_width (~> 1.1, >= 1.1.1)
     unicode-display_width (1.6.0)
 
 PLATFORMS
   ruby
+  x64-mingw32
 
 DEPENDENCIES
-  bundler (~> 1.12)
+  bundler (~> 2.0)
   rake (~> 12.3)
   tale!
 
 BUNDLED WITH
-   2.1.4
+   2.2.7
