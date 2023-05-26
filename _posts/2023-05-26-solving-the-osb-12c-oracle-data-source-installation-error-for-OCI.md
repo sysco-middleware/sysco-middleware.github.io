@@ -3,7 +3,7 @@ layout: post
 title: Solving the OSB 12c Oracle data source installation error for OCI
 categories: OSB tips
 tags: [OSB 12c, sqlnet.ora, tnsnames.ora, OCI, Wallet, ssl_server_dn_match, SSL_SERVER_DN_MATCH, ssl_server_cert_dn]
-authors: denzza
+author: denzza
 ---
 ### INTRODUCTION ###
 
