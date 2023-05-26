@@ -11,7 +11,7 @@ In the realm of data management and infrastructure, technical difficulties may o
 The specific error in question reads: 
 **"weblogic.application.ModuleException: oracle.security.crypto.asn1.ASN1FormatException: Length is too big: takes 68 bytes"** 
 
-This blog post is dedicated to addressing this error with a precise technical solution that worked in our case.
+This blog post is dedicated to addressing this error with a solution that worked in our case.
 
 ### SOLUTION ###
 
@@ -42,5 +42,5 @@ To: **(security=(ssl_server_cert_dn="CN=adwc.eucom-central-1.oraclecloud.com,OU=
 ### Conclusion ###
 
 By following these steps, you can address the ModuleException during the installation of a data source in OSB 12c to Oracle Database in OCI. 
-Keep in mind that this is a technical solution that worked in our specific case; different scenarios might require different solutions. 
+Keep in mind that this is a technical solution that worked in our specific case, different scenarios might require different solutions. 
 In all cases, always ensure the integrity and security of your data and systems while attempting fixes.
