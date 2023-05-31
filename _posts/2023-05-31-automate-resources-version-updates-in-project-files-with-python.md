@@ -15,7 +15,7 @@ Working with countless integrations myself that on regular basis needs a version
 
 Today, I'll be introducing a simple Python script that helps automate the process of updating version strings and namespaces in a project's files. This script is useful in scenarios where a project has multiple files that reference a particular version string or a namespace that needs to be updated regularly, for instance, in Web Services Description Language (WSDL) and XML Schema Definition (XSD) resources.
 This I have done manually:
-- Create a new resource file version **Service_v1.wsdl** becomes **Service_v2.xsdl** that will be used in the project moving forward. In addition .XSD resources follow these.
+- Create a new resource file version **Service_v1.wsdl** becomes **Service_v2.wsdl** that will be used in the project moving forward. In addition .XSD resources follow these.
 - Find all the files that in wich namespace needs to be updated
 - Open each file manually and do a find/repalce
 - Check again that all the correct files have been updated
@@ -26,7 +26,7 @@ It works by walking through each file in a specified project directory, checking
 
 ### How to Use the Script ###
 
-Here are the configuration steps to use the script (Dependencies: Python 3):
+Here are the configuration steps to use the script (**Dependencies: Python 3**):
 
 1. Update the configRun.py script with the namespaces that needs to be found and replaced. The old_version : new_version pairs represent the strings you want to find and replace in your project files. You can add as many pairs as you want.
 2. Set the project directory to correct path
@@ -46,7 +46,7 @@ python configRun.py
 
 ### The Code ###
 
-Here is the code for configRun.py: 
+Here is the code for **configRun.py**: 
 ```
 from versionChange import replace_versions
 
@@ -77,7 +77,7 @@ for filepath in excluded_report:
     print(filepath)
 ```
 
-Here is the replace_versions function where all the logic happens:
+Here is the **replace_versions** function where all the logic happens:
 
 ```
 import os
@@ -114,7 +114,7 @@ def replace_versions(directory, replacements, excluded_files):
 ```
  
 
-The script reads the configuration from the configRun.py file, performs the find/replace operations and prints a report indicating where replacements were made and how many replacements were made per file. If no replacements were made, it outputs the message "No replacements made in the project files".
+The script reads the configuration from the **configRun.py** file, performs the find/replace operations and prints a report indicating where replacements were made and how many replacements were made per file. If no replacements were made, it outputs the message "No replacements made in the project files".
 
 ### The Power of Automation ###
 The advantage of using a script like this is the time saved from manually searching and replacing version numbers in a large number of files. It also minimizes the potential for human error that could result from manual replacement.
