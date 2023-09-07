@@ -1,3 +1,4 @@
+<!---
 ---
 layout: post
 title: Automate resources version updates in project files with Python
@@ -5,6 +6,7 @@ categories: Python automation
 tags: [Python, automation, resource version control]
 author: denzza
 ---
+-->
 
 
 ![python-automation](/images/2023-05-31-automate-resources-version-updates-in-project-files-with-python/PythonAutomation.png)
