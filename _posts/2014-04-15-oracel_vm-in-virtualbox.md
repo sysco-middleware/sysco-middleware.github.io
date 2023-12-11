@@ -4,6 +4,7 @@ title: Oracle VM in VirtualBox
 categories: OracleVM
 tags: [oracle vm]
 author: catoaune
+keep: yes
 ---
 
 Oracle VM in VirtualBox sounds a bit wrong, why would you like to do server virtualization within desktop virtualization? Well, the performance might not be very good, but being able to play around with Oracle VM, without using several physical servers, sounds like a good idea to me.
