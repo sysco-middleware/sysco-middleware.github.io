@@ -4,6 +4,7 @@ title: Some presentations about EM 12c
 categories: enterprise_manager
 tags: [enterprise manager, em, middleware]
 author: jphjulstad
+keep: yes
 ---
 
 We recently had presentations about Enterprise Manager 12c “Deep Dive” in Oslo and Bergen together with Oracle.
