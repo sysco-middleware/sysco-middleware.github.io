@@ -4,6 +4,7 @@ title: Wrong timezone causes TopLink warning in SOA suite
 categories: weblogic
 tags: [weblogic, jdbc, timezone]
 author: catoaune
+keep: no
 ---
 
 From time to time we discovered SOA installations that got this little TopLink warning in the SOA server log every minute:
