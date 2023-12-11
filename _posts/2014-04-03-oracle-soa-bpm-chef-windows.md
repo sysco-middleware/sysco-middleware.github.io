@@ -4,6 +4,7 @@ title: Cook a SOA/BPM Development Environment with Chef in 8 minutes!
 categories: devops
 tags: [oracle, chef, soa, windows]
 author: jeqo
+keep: If it is easily updatable to latest SOA Suite stack
 ---
 
 After have installed Oracle SOA Suite over and over again, you start to finding out that these are boilerplate tasks and do not generate much value, because this are only the initial step to implement solutions with SOA and BPM.
