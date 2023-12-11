@@ -4,6 +4,7 @@ title: WebLogic and Database connection issues
 categories: WebLogic
 tags: [weblogic, database, firewall]
 author: catoaune
+keep: yes
 ---
 
 Database connection issues could sometimes be hard to solve for a middleware administrator. Below are three scenarios that we have run into, and that are easy to check, now that you know about them:
