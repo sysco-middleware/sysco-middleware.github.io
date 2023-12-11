@@ -4,6 +4,7 @@ title: Implementing Human Tasks with any Java EE framework
 categories: javaee
 tags: [human, task, oracle, soa, bpm, javaee]
 author: jeqo
+keep: no
 ---
 
 Oracle SOA Suite includes a component to handle user interactions into a SCA application:
