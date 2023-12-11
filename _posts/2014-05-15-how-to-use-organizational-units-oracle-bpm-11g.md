@@ -4,6 +4,7 @@ title: How to use Organizational Units on Oracle BPM 11g
 categories: bpm
 tags: [human, task, 11g, oracle, soa, bpm, javaee, dvm]
 author: jeqo
+keep: no
 ---
 
 In BPM projects, Organizational Units (OU) describes the departments or offices into a company that are involved in a business process. These departments or user groups maybe are not in an "official" organizational chart necessarily, but they have a meaning to the business process.
