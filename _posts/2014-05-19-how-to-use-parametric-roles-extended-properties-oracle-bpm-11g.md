@@ -4,6 +4,7 @@ title: How to use Parametric Roles and Extended User Properties with Oracle BPM 
 categories: bpm
 tags: [human, task, 11g, oracle, soa, bpm, javaee]
 author: jeqo
+keep: no
 ---
 
 In this entry, I would like to show how to use Parametric Roles, why we need Extended User Properties, some limitations and how to solve them.
