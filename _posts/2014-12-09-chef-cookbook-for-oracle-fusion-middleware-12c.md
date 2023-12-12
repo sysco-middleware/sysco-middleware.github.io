@@ -4,6 +4,7 @@ title: Chef Cookbook for Oracle Fusion Middleware 12c
 categories: devops
 tags: [chef, oracle, fmw, 12c]
 author: jeqo
+keep: no
 ---
 
 Provisioning tools have change the way we create software environments: How much time we spend installing OS, databases, configuring platforms, applications? Now you can translate this steps into code, getting the software development benefits and challenges into infrastructure: versioning, reuse, continuous improvement.
