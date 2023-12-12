@@ -4,6 +4,7 @@ title: Exalogic guest filename ownership
 categories: exalogic
 tags: [exalogic, ldap, oracle, nfsv4, nfs, linux, nobody]
 author: pah
+keep: no
 ---
 
 Catalogs/files with ownership nobody:nobody on exalogic guests
