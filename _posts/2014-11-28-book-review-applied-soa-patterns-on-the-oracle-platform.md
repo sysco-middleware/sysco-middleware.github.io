@@ -4,6 +4,7 @@ title: 'Book review: Applied SOA Patterns on the Oracle Platform'
 categories: soa
 tags: [soa, oracle, pattern, book, review]
 author: jeqo
+keep: no
 ---
 
 I've had the opportunity to present a review of the book [Applied SOA Patterns on the Oracle Platform](https://www.packtpub.com/application-development/applied-soa-patterns-oracle-platform).
