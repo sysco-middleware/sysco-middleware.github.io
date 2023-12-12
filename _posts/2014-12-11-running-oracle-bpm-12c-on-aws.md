@@ -4,6 +4,7 @@ title: Running Oracle BPM 12c on AWS EC2
 categories: devops
 tags: [chef, vagrant, oracle, bpm, 12c, aws, ec2]
 author: jeqo
+keep: no
 ---
 
 In this post, I will show how to create an AWS EC2 Instance with an Oracle BPM 12c Quickstart Domain created. And I will use previous post for related tasks.
