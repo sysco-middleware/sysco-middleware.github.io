@@ -4,6 +4,7 @@ title: Setup OTD HA
 categories: exalogic
 tags: [exalogic, otd, oracle, ha, Oracle Traffic Director]
 author: pah
+keep: yes
 ---
 
 OTD active/standby failover
