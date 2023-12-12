@@ -4,6 +4,7 @@ title: Booting Oracle WebLogic
 categories: WebLogic
 tags: [weblogic, wlst, nodemanager, middleware]
 author: catoaune
+keep: no
 ---
 
 This post is related to our presentations at Oracle OpenWorld 2014 and UKOUG Tech 14. All code/configuration used during the presentations are available here.
