@@ -4,6 +4,7 @@ title: Vagrant's Quick Start
 categories: devops
 tags: [vagrant]
 author: jeqo
+keep: no
 ---
 
 I have some months of experience working with Vagrant and I think it's owesome! Integration with almost all kind of virtualization platforms: VirtalBox, VMware, Docker, AWS EC2, Hyper-V and so on. Also it's able to use differente Provisioners: Chef, Puppet, bash, Docker, Ansible. I really like it.
