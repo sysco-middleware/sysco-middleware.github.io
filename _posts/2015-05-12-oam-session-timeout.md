@@ -4,6 +4,7 @@ title: OAM Session Timeout Configuration Woes
 categories: Oracle Access Management OAM Access Manager
 tags: [access, identity, oam, middleware]
 author: tisaksen
+keep: no
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 After a full day of work some people working late started losing their session and were unable to log back on.
