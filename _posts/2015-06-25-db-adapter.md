@@ -4,6 +4,7 @@ title: Why does DB-adapter return duplicate rows?
 categories: DB adapter 
 tags: [osb, soa suite, db adapter, primary key, rowid]
 author: jphjulstad
+keep: yes
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 Here are some DB adapter tips regarding duplicate rows.
