@@ -4,6 +4,7 @@ title: SYSCO Energy Days
 categories: Event Sysco Middleware Energi
 tags: [sysco energy]
 author: jphjulstad
+keep: no
 ---
 Sysco is hosting SYSCO Energy Days at Comfort Hotel Runway, Gardermoen june 3rd and 4th. The last day there will be a separate track dedicated to middleware.
 
