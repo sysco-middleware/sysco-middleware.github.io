@@ -4,6 +4,7 @@ title: Two new Cloud Specializations
 categories: Specializations Cloud
 tags: [cloud application foundation cloud builder]
 author: jphjulstad
+keep: no
 ---
 As one of very few Sysco is now Specialized on:
 
