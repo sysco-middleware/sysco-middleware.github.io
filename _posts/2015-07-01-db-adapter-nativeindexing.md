@@ -4,6 +4,7 @@ title: DB Adapter - Native sequencing, SequencePreallocationSize
 categories: DB adapter 
 tags: [osb, soa suite, db adapter, SequencePreallocationSize ]
 author: jphjulstad
+keep: yes
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 Here are some DB adapter tips regarding use of native sequencing.
