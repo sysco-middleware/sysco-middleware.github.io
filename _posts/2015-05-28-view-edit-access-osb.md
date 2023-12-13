@@ -4,6 +4,7 @@ title: Logged in role is not allowed to view/edit Access Control Policies in OSB
 categories: OSB Access Control Policies
 tags: [console, osb, security]
 author: jphjulstad
+keep: yes
 ---
 If you want to change Access Control Policies in OSB on 12.1.3 it works fine on the Quickstart, but in the regular install you will probably get into the same problem as me. Fortunately I fould the solution on MOS: Cannot open the Policy Editor due to, "Logged in role is not allowed to view/edit Access Control Policies." (Doc ID 1963087.1)
 
