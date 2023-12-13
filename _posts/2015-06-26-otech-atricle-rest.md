@@ -4,6 +4,7 @@ title: REST Adapter article in OTech
 categories: REST adapter 
 tags: [osb, soa suite, REST adapter]
 author: jphjulstad
+keep: no
 ---
 <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
 Read my article about REST adapter in OTech Magazine.
