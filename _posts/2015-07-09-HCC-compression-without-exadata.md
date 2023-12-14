@@ -4,6 +4,7 @@ title: HCC compression with DIRECT INSERT and without it
 categories: compression
 tags: [oracle, exadata, hcc, compression]
 author: oleg
+keep: yes
 ---
 
 I was invited to test a compression on ZFS storage when datafiles were placed on dnfs.
