@@ -4,6 +4,7 @@ title: Including Google Maps with angular-ionic framework to MAF application
 categories: compression
 tags: [MAF, Angular, Ionic, GoogleMaps]
 author: cliops
+keep: no
 ---
 Now, I will show you how to create a MAF application with several APIs in few steps. 
 There we go:
