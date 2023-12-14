@@ -4,6 +4,7 @@ title: Differences between ADF Mobile and Oracle MAF in development perspective
 categories: compression
 tags: [MAF,ADF Mobile]
 author: cliops
+keep: no
 ---
 This time, we will see some important advantages and disadvantages between these two versions. 
 There we go:
