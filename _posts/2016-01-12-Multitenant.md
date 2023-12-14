@@ -4,6 +4,7 @@ title: Weblogic Multitenant
 categories: Multitenant, platform as a service 
 tags: [Oracle, Weblogic, Multitenant]
 author: raul
+keep: yes
 ---
 
 ## Weblogic 12.2.1 Multi-Tenant ##
