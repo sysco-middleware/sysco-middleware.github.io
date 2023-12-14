@@ -4,6 +4,7 @@ title: DB locking issue
 categories: DB locking 
 tags: [db, locking, ORA-00060, deadlock]
 author: raul
+keep: yes
 ---
 
 ## Oracle database - analyzing a deadlock [ORA-00060] ##
