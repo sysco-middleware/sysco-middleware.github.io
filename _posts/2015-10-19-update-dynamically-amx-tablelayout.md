@@ -4,6 +4,7 @@ title: Updating AMX TableLayouts dynamically with Kadene's 2D Algorithm sample
 categories: Oracle MAF
 tags: [MAF,AMX,kadene 2D]
 author: cliops
+keep: no
 ---
 Now we will learn how to change dynamically some MAF AMX components.
 There we go:
