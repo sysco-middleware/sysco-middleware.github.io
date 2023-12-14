@@ -4,6 +4,7 @@ title: Implementing a Weblogic Architecture with High Availability
 categories: Weblogic Server High Availability
 tags: [HA, AdminServer, Shared Storage, Enterprise Deployment Guide]
 author: raul
+keep: yes
 ---
 
 ## Implementing a Weblogic Architecture with High Availability ##
