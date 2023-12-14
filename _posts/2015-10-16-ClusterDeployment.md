@@ -4,6 +4,7 @@ title: Deploying an application on a cluster
 categories: Weblogic Server High Availability
 tags: [Cluster,Deployment,High Availability]
 author: raul
+keep: yes
 ---
 
 ## Deploying an application on a cluster ##
