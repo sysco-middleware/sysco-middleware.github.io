@@ -4,6 +4,7 @@ title: Nice trick to create custom sql statements in polling DbAdapters with OSB
 categories: OSB
 tags: [OSB,Pollers]
 author: cliops
+keep: yes
 ---
 Now we will learn how to change the sql statement for Database pollers using OSB 12c.
 There we go:
