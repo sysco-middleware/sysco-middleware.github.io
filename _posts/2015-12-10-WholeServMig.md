@@ -4,6 +4,7 @@ title: Whole Server Migration
 categories: Weblogic Server High Availability
 tags: [Whole Server Migration, High Availability, Shared Storage, Oracle Database, Leasing]
 author: raul
+keep: yes
 ---
 
 ## Whole Server Migration ##
