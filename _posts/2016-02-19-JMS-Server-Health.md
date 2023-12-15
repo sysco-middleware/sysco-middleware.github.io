@@ -4,6 +4,7 @@ title: JMS Server Health Check 12.2.1
 categories: soa
 tags: [Oracle, Weblogic 12.2.1, JMS]
 author: jphjulstad
+keep: no
 ---
 
 # JMS Server health check not showing in WLS 12.2.1
