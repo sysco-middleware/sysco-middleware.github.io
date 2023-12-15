@@ -4,6 +4,7 @@ title: SCA view in Migrated OSB Projects not showing correctly
 categories: soa
 tags: [Oracle, Oracle Service Bus, JDeveloper, Bug, Migration]
 author: jphjulstad
+keep: yes
 ---
 
 # SCA view in Migrated OSB Projects not showing correctly
