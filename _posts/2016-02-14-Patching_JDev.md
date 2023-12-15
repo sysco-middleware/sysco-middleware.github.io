@@ -4,6 +4,7 @@ title: Patching JDeveloper 12.1.3 for OSB and SOA
 categories: soa
 tags: [Oracle, Oracle Service Bus, JDeveloper, SOA Suite]
 author: jphjulstad
+keep: no
 ---
 
 # Keeping your JDeveloper SOA/OSB Quickstart environment up to date
